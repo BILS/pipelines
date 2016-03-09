@@ -1,0 +1,25 @@
+some_module = {
+
+  doc about: "A generic module that needs a description",
+    description: "Description here",
+    constraints: "Information on constraints here",
+    author: "WhoWroteThis"
+
+
+    var directory : "changeme"
+
+    if (branch.sample_dir) {
+        output.dir = (directory.length() > 0) ? branch.outdir + "/" + directory : branch.outdir
+    } else {
+        if (directory.length() > 0) {
+                output.dir = directory
+        }
+    }
+
+    // requires here
+
+    // Running a command
+
+    exec "..."
+
+}

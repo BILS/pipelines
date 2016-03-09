@@ -1,0 +1,11 @@
+// A short description of the pipeline here
+
+about title: "A descriptive title for the pipeline, needed for bpipe_config tool"
+
+inputs "file pattern here" : "Explanation of required input"
+
+load 'pipeline.config'
+
+run {  }
+
+

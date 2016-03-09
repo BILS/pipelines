@@ -1,0 +1,23 @@
+HOW TO RUN A PIPELINE
+------------------------------------------------------------------------
+
+Pipelines are defined as a set of (possibly branching) connected
+processing steps, recored in each pipleline definition (ending in
+.bpipe).
+
+The actual processing steps are included in the modules sub-directory of
+the pipeline root folder.  It is therefore necessary to make sure that
+the environment variable $BPIPE_LIB points to this folder.
+
+In addition to the individual pipeline logics, you need to copy the two
+template files bpipe.config.template and pipeline.config.template to the
+folder you wish to execute the pipeline in (and rename them to remove
+the .template suffix).
+
+bpipe.config
+    Includes information on the resource manager to use and the
+    resources to be allocated to different steps of the pipeline.
+
+pipeline.config
+    Includes a list variables need for the execution of pipeline stages
+    (including the location of binaries etc.)

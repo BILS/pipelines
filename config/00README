@@ -1,0 +1,5 @@
+config_db
+    A tab-delimited database of variables, descriptions and default
+    values for the various pipeline stages.
+
+Format: Tab-delimited.
