@@ -1,16 +1,18 @@
-#		*BILS pipeline collection*
+#		Bpipe pipeline collection
 #		########################
 
------------------------------------------------------------------------------------------------------
-| FOR BILS's employees full details are available under Infrastructure>Pipelines>Bpipe on the Redmine|
------------------------------------------------------------------------------------------------------
 
-0. For the impatient
-1. Disclaimer
-2. Installation
-3. Usage information
+| FOR BILS's employees full details are available under Infrastructure>Pipelines>Bpipe on the Redmine
+-----------------------------------------------------------------------------------------------------
+|
 
-0. For the impatient
+1. For the impatient
+2. Disclaimer
+3. Installation
+4. Usage information
+
+</br>
+1. For the impatient
 
 This is for those who have a basic idea of how bpipe works:
 
