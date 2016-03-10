@@ -17,6 +17,6 @@ assembly_generate_stats = {
     }
     
     produce("assembly_report.txt") {
-    	exec "$BPIPE_BIN/fasta_statisticsAndPlot.pl --infile $input --output $output"
+    	exec "$BPIPE_BIN/fasta_statisticsAndPlot.pl --infile $input --outfile $output"
     }
 }

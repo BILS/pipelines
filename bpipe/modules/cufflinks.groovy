@@ -24,9 +24,12 @@ cufflinks = {
 
 	var sample_dir : false
         var cufflinks_j : "0.15"
-        var cufflinks_F : "0.1"
+        var cufflinks_F : "0.10"
 	var cufflinks_g : false
+	var cufflinks_min_intron_length : "50"
+        var cufflinks_I : "300000"
 	var GENOME_GTF : ""
+	var LIBRARY_METHOD : "fr-unstranded"
 
 	requires CUFFLINKS : "Must provide path to cufflinks (CUFFLINKS)"
         requires GENOME_FA : "Please set the GENOME_FA variable"
@@ -59,7 +62,7 @@ cufflinks = {
 
 	produce("transcripts.gtf") {
 		uses(threads:16) {
-		        exec "$CUFFLINKS -L ${branch.sample} -o $output.dir -p $threads -u -b $GENOME_FA $options $input 2> $output"+".log","cufflinks"
+		        exec "$CUFFLINKS --library-type=$LIBRARY_METHOD -L ${branch.sample} -o $output.dir -p $threads -u -b $GENOME_FA $options $input 2> $output"+".log","cufflinks"
 		}
 	}
 

@@ -7,7 +7,7 @@ gff_longest_cds = {
     var sample_dir : false
     if (branch.sample_dir) { sample_dir = branch.sample_dir }
 
-    requires KAHARI_CDS_FILTER : "Must provide path to Aaharis CDS filter script"
+    requires KAHARI_GIT : "Must set path to Kahari git directory (KAHARI_GIT)"
 
 
     // Defining output directory
@@ -16,7 +16,7 @@ gff_longest_cds = {
     }
 
     transform(".gff") to (".longest_cds.gff") {
-    	exec "$KAHARI_CDS_FILTER -f $input -o $output"
+    	exec "$KAHARI_GIT/scripts/GFF/find_longest_CDS.pl -f $input -o $output"
     }
 
 }

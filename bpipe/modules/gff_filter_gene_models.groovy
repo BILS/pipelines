@@ -8,11 +8,11 @@ gff_filter_gene_models = {
     var directory : "filter" 
 
     var filter_c : "-c"
-    var filter_a : "-a 0.3"
+    var filter_a : "0.3"
     var filter_r : "-r"
-    var filter_d : "-d 500"
+    var filter_d : "500"
 
-    def options = filter_c + " " + filter_r + " " + filter_d + " " + filter_a
+    def options = filter_c + " " + filter_r + " -d " + filter_d + " -a " + filter_a
 
     if (branch.sample_dir) {
         output.dir = (directory.length() > 0) ? branch.outdir + "/" + directory : branch.outdir

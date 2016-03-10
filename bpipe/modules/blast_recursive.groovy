@@ -22,5 +22,6 @@ blast_recursive = {
     // Running a command
     
     exec "$blast_prog -query $input -db $input -num_threads $threads -outfmt $blast_outfmt -out $output"
-
+	
+    branch.blastfile = output
 }

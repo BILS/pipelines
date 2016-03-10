@@ -1,0 +1,16 @@
+// A pipeline to create to assemble transcripts for annotation
+
+about title: "A pipeline to assemble transcripts from RNAseq data based on Cufflinks/Tophat"
+
+inputs "fq" : "Requires compressed FastQ file(s) as input"
+
+load 'pipeline.config'
+
+run { "%.*.fq" * 
+	[ verify_generic.using(binary:"tophat") + verify_generic.using(binary:"cufflinks") + sample_dir_prepare.using(sample_dir:true) + 
+		trimmomatic + 
+		tophat + 
+		cufflinks.using(cufflinks_j:0.1, cufflinks_F:0.15) + 
+		cufflinks2maker
+	] 
+}

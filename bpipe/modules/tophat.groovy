@@ -31,7 +31,7 @@ tophat = {
     // Exposed options
     var sample_dir : false
     var tophat_r : 50       // mate inner distance
-    var tophat_i : 70       // minimum intron length
+    var tophat_i : 50       // minimum intron length
     var tophat_I : 500000   // maximum intron length
     var GENOME_GTF : ""
     var TRANSCRIPTOME_INDEX : ""

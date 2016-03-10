@@ -30,7 +30,7 @@ blast2go2gff = {
 	if (branch.sample_dir) { output.dir = branch.outdir }
 
 	produce(gff_file_with_ids.prefix+".description.gff") {
-		exec "$B2GOGFF_SCRIPT --gff $gff_file_with_ids --b2go $input > $output"
+		exec "$B2GOGFF_SCRIPT --gff $input.gff --b2go $input > $output"
 	}
 
 }

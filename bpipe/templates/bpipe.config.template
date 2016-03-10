@@ -12,7 +12,7 @@
 // LSF/LAVA queue settings
 // executor="lsf"
 // queue="normal"
-// walltime="00:05:00"
+// walltime="3600"
 // procs="1"
 // lsf_request_options=" -R span[hosts=1]"
 // lsf_cwd_option=" "
@@ -30,7 +30,7 @@ commands {
 
     cufflinks {
         procs="16"          // Running on a full node
-        walltime="08:00:00" // Set this to match you input data
+        walltime="36000" // Set this to match you input data
     }
 
     trimmomatic {
