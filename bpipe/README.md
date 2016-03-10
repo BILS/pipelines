@@ -12,7 +12,7 @@
 4. Usage information
 
 </br>
-1. For the impatient
+##1. For the impatient
 
 This is for those who have a basic idea of how bpipe works:
 
@@ -31,9 +31,9 @@ This is for those who have a basic idea of how bpipe works:
 
     -   Run pipeline on your input data.
 
-1. Disclaimer
+##2. Disclaimer
 
-2. Installation
+##3. Installation
 
 Bpipe does not need to be installed.  However, in order to run the
 various pipelines, you will need to make sure that all the dependencies
@@ -56,7 +56,7 @@ $PIPELINE_GIT/config/bpipe_config -p Name_of_Pipeline -c
 
 $BPIPE_GIT/config/bpipe_config -b
 
-2.1 Bpipe.config
+###3.1 Bpipe.config
 
 This file enables the translation of a pipeline to a resource manager
 or job queue.  Common examples include Slurm, LSF or SGE.  The template
@@ -66,14 +66,14 @@ You can then define the required resources for each program that you are
 going to run in the pipeline.  For more details, please refer to the
 bpipe documentation on www.bpipe.org.
 
-2.2 pipeline.config
+###3.2 pipeline.config
 
 The pipeline config file holds variables that specify the location of
 binaries, input files or values required by the various pipeline stages.
 Each variable should be documented and it is for you to fill it out
 correctly.
 
-3. Usage information
+##4. Usage information
 
 In order to start a pipeline run, type:
 
