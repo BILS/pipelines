@@ -16,54 +16,69 @@ List of available pipelines:
 
 ###	AnnotationAnnie
 
-Title:		"A pipeline to execute blastp and interproscan searches to create input for the 'Annie' functional annotation pipeline"
+Title:		"A pipeline to execute blastp and interproscan searches to create input for the 'Annie' functional annotation pipeline"</br>
 Input(s):	gff : Requires an annotation in GFF format as input (.gff)
+
+----------------
 
 ### AnnotationBlast2Go
 
 Title:		"A pipeline to execute blastp and interproscan searches and pass them to Blast2Go"
 Input(s):	gff : Requires an annotation in GFF format as input (.gff)
 
+----------------
+
 ###	AnnotationGffStats
 
 Title:		"Pipeline to perform post-processing/statistical evaluation of GFF3-formatted annotation files"
 Input(s):	gff : Genome annotation file in GFF3 format
+
+----------------
 
 ###	AnnotationModels2Training
 
 Title:		"Takes a genome anntation in GFF3 format and extracts data for training augustus profile"
 Input(s):	gff : A gene annotation file in GFF format
 
+----------------
+
 ###	AnnotationPreprocessing
 
 Title:		"A pipeline to generate all pre-annotation production output from a genome sequence"
 Input(s):	fa : Requires genome sequence in fasta format
+
 ----------------
 
 ###	AnnotationTranscriptMapAssemble
 
 Title:		"A pipeline to assemble transcripts from RNAseq data based on Cufflinks/Tophat"
 Input(s):	fq.gz : Requires compressed FastQ file(s) as input
+
 ----------------
 
 ###	AnnotationTranscriptMapAssemble_fq
 
 Title:		"A pipeline to assemble transcripts from RNAseq data based on Cufflinks/Tophat"
 Input(s):	fq : Requires compressed FastQ file(s) as input
+
 ----------------
 
 ###	RNAseqAlignQuantify
 
 Title:		"RNA-seq pipeline to align reads against a reference, clean the alignment and quantify using cufflinks"
 Input(s):	fq.gz : RNA-seq reads in gzipped fastq format, paired-end data expected in the format %_*.fq.gz.
+
 ----------------
 
 ###	RNAseqBamQualityControl
 Title:		"Please add a tile"
 Input(s):	fq.gz : Requires read files in zipped FastQ format (fq.gz)
+
 ----------------
 
 ###	RNAseqQualityControl
 
 Title:		"RNA-seq pipeline to perform quality control and trimming on RNA-seq read files"
 Input(s):	fq.gz : RNA-seq reads in gzipped fastq format, paired-end data expected in the format %_*.fq.gz.
+
+----------------
