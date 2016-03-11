@@ -4,15 +4,15 @@
 List of available pipelines:
 
 1. [AnnotationAnnie](#annotationannie)
-2. AnnotationBlast2Go
-3. AnnotationGffStats
-4. AnnotationModels2Training
-5. AnnotationPreprocessing
-6. AnnotationTranscriptMapAssemble
-7. AnnotationTranscriptMapAssemble_fq
-8. RNAseqAlignQuantify
-9. RNAseqBamQualityControl
-10. [RNAseqQualityControl](###rnaseqqualitycontrol)
+2. [AnnotationBlast2Go](#annotationblast2go)
+3. [AnnotationGffStats](#annotationgffstats)
+4. [AnnotationModels2Training](#annotationmodels2training)
+5. [AnnotationPreprocessing](#annotationpreprocessing)
+6. [AnnotationTranscriptMapAssemble](#annotationtranscriptmapAssemble)
+7. [AnnotationTranscriptMapAssemble_fq](#annotationtranscriptmapassemble_fq)
+8. [RNAseqAlignQuantify](#rnaseqalignquantify)
+9. [RNAseqBamQualityControl](#rnaseqbamqualitycontrol)
+10. [RNAseqQualityControl](#rnaseqqualitycontrol)
 
 ###	AnnotationAnnie
 
