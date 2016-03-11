@@ -25,7 +25,7 @@ Dependencies: emboss, cufflinks, bioperl, blast, exonerate
 ### AnnotationBlast2Go
 
 Title:		"A pipeline to execute blastp and interproscan searches and pass them to Blast2Go"</br>
-Input(s):	gff : Requires an annotation in GFF format as input (.gff)
+Input(s):	gff : Requires an annotation in GFF format as input (.gff)</br>
 Dependencies: interproscan, blastp
 
 ----------------
@@ -33,7 +33,7 @@ Dependencies: interproscan, blastp
 ###	AnnotationGffStats
 
 Title:		"Pipeline to perform post-processing/statistical evaluation of GFF3-formatted annotation files"</br>
-Input(s):	gff : Genome annotation file in GFF3 format
+Input(s):	gff : Genome annotation file in GFF3 format</br>
 Dependencies:
 
 ----------------
@@ -41,7 +41,7 @@ Dependencies:
 ###	AnnotationModels2Training
 
 Title:		"Takes a genome anntation in GFF3 format and extracts data for training augustus profile"</br>
-Input(s):	gff : A gene annotation file in GFF format
+Input(s):	gff : A gene annotation file in GFF format</br>
 Dependencies:
 
 ----------------
@@ -49,14 +49,14 @@ Dependencies:
 ###	AnnotationPreprocessing
 
 Title:		"A pipeline to generate all pre-annotation production output from a genome sequence"</br>
-Input(s):	fa : Requires genome sequence in fasta format
+Input(s):	fa : Requires genome sequence in fasta format</br>
 
 ----------------
 
 ###	AnnotationTranscriptMapAssemble
 
 Title:		"A pipeline to assemble transcripts from RNAseq data based on Cufflinks/Tophat"</br>
-Input(s):	fq.gz : Requires compressed FastQ file(s) as input
+Input(s):	fq.gz : Requires compressed FastQ file(s) as input</br>
 Dependencies:
 
 ----------------
@@ -85,7 +85,7 @@ Dependencies:
 ###	RNAseqQualityControl
 
 Title:		"RNA-seq pipeline to perform quality control and trimming on RNA-seq read files"</br>
-Input(s):	fq.gz : RNA-seq reads in gzipped fastq format, paired-end data expected in the format %_*.fq.gz.
+Input(s):	fq.gz : RNA-seq reads in gzipped fastq format, paired-end data expected in the format %_*.fq.gz.</br>
 Dependencies:
 
 ----------------
