@@ -12,7 +12,7 @@ List of available pipelines:
 7. AnnotationTranscriptMapAssemble_fq
 8. RNAseqAlignQuantify
 9. RNAseqBamQualityControl
-10. RNAseqQualityControl
+10. [RNAseqQualityControl](# RNAseqQualityControl)
 
 ###	AnnotationAnnie
 
