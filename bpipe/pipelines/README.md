@@ -17,7 +17,8 @@ List of available pipelines:
 ###	AnnotationAnnie
 
 Title:		"A pipeline to execute blastp and interproscan searches to create input for the 'Annie' functional annotation pipeline"</br>
-Input(s):	gff : Requires an annotation in GFF format as input (.gff)
+Input(s):	gff : Requires an annotation in GFF format as input (.gff)</br>
+Dependencies: emboss, cufflinks, bioperl, blast, exonerate
 
 ----------------
 
@@ -25,13 +26,14 @@ Input(s):	gff : Requires an annotation in GFF format as input (.gff)
 
 Title:		"A pipeline to execute blastp and interproscan searches and pass them to Blast2Go"</br>
 Input(s):	gff : Requires an annotation in GFF format as input (.gff)
-
+Dependencies: interproscan, blastp
 ----------------
 
 ###	AnnotationGffStats
 
 Title:		"Pipeline to perform post-processing/statistical evaluation of GFF3-formatted annotation files"</br>
 Input(s):	gff : Genome annotation file in GFF3 format
+Dependencies:
 
 ----------------
 
@@ -39,7 +41,7 @@ Input(s):	gff : Genome annotation file in GFF3 format
 
 Title:		"Takes a genome anntation in GFF3 format and extracts data for training augustus profile"</br>
 Input(s):	gff : A gene annotation file in GFF format
-
+Dependencies:
 ----------------
 
 ###	AnnotationPreprocessing
