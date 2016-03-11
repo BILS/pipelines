@@ -3,7 +3,7 @@
 
 List of available pipelines:
 
-1. [AnnotationAnnie](# AnnotationAnnie)
+1. [AnnotationAnnie](#AnnotationAnnie)
 2. AnnotationBlast2Go
 3. AnnotationGffStats
 4. AnnotationModels2Training
@@ -12,7 +12,7 @@ List of available pipelines:
 7. AnnotationTranscriptMapAssemble_fq
 8. RNAseqAlignQuantify
 9. RNAseqBamQualityControl
-10. [RNAseqQualityControl](# RNAseqQualityControl)
+10. [RNAseqQualityControl](#RNAseqQualityControl)
 
 ###	AnnotationAnnie
 
