@@ -39,17 +39,21 @@ Input(s):	gff : A gene annotation file in GFF format
 Title:		"A pipeline to generate all pre-annotation production output from a genome sequence"
 Input(s):	fa : Requires genome sequence in fasta format
 ----------------
+
 ###	AnnotationTranscriptMapAssemble
+
 Title:		"A pipeline to assemble transcripts from RNAseq data based on Cufflinks/Tophat"
 Input(s):	fq.gz : Requires compressed FastQ file(s) as input
 ----------------
 
 ###	AnnotationTranscriptMapAssemble_fq
+
 Title:		"A pipeline to assemble transcripts from RNAseq data based on Cufflinks/Tophat"
 Input(s):	fq : Requires compressed FastQ file(s) as input
 ----------------
 
 ###	RNAseqAlignQuantify
+
 Title:		"RNA-seq pipeline to align reads against a reference, clean the alignment and quantify using cufflinks"
 Input(s):	fq.gz : RNA-seq reads in gzipped fastq format, paired-end data expected in the format %_*.fq.gz.
 ----------------
@@ -60,5 +64,6 @@ Input(s):	fq.gz : Requires read files in zipped FastQ format (fq.gz)
 ----------------
 
 ###	RNAseqQualityControl
+
 Title:		"RNA-seq pipeline to perform quality control and trimming on RNA-seq read files"
 Input(s):	fq.gz : RNA-seq reads in gzipped fastq format, paired-end data expected in the format %_*.fq.gz.
