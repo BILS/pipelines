@@ -35,6 +35,8 @@ This is for those who have a basic idea of how bpipe works:
 
 ##2. Disclaimer
 
+In the case where this work is used for communications (presentation, publication, etc.), we invite you to acknowledge BILS within your communication according to this example: "Support by BILS (Bioinformatics Infrastructure for Life Sciences) is gratefully acknowledged."
+
 ##3. Installation
 
 Bpipe does not need to be installed.  However, in order to run the
