@@ -10,6 +10,8 @@
 2. Disclaimer
 3. Installation
 4. Usage information
+5. Licence
+6. Acknowledgment
 
 </br>
 ##1. For the impatient
@@ -92,4 +94,9 @@ Where *.fq.gz specifies a pattern of gzipped fastq files.  The pipeline
 will separate these into individual branches and run them in parallel
 where applicable.
 
+##5. Licence
+This project is licensed under the terms of the GNU GPLv3 license. Please read the [LICENSE](LICENSE) file for more information.
 
+##6. Acknowledgment
+We acknowledge the bpipe developers => [Bpipe project](https://github.com/ssadedin/bpipe).
+Special thanks to Marc Hoeppner whose start this bpipe pipeline library.
