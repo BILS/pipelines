@@ -2,7 +2,7 @@
 #		########################
 
 
-| FOR BILS's employees full details are available under Infrastructure>Pipelines>Bpipe on the Redmine
+| FOR NBIS's employees full details are available under Infrastructure>Pipelines>Bpipe on the Redmine
 -----------------------------------------------------------------------------------------------------
 |
 
