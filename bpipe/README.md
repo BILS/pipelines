@@ -2,7 +2,7 @@
 #		########################
 
 
-| FOR BILS's employees full details are available under Infrastructure>Pipelines>Bpipe on the Redmine
+| FOR NBIS's employees full details are available under Infrastructure>Pipelines>Bpipe on the Redmine
 -----------------------------------------------------------------------------------------------------
 |
 
@@ -21,8 +21,8 @@ This is for those who have a basic idea of how bpipe works:
     -   Make sure that the module directory of this code base is
         exported to $BPIPE_LIB (run ./setup.sh to check).
 
-    -   Generate a pipeline config and bpipe config file using the
-	included tool (config/bpipe_config)
+    -   Generate a pipeline config and bpipe config file using the 
+    	included tool (config/bpipe_config)
 
     -   Rename the files to bpipe.config and pipeline.config.
 
