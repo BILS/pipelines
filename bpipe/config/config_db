@@ -1,32 +1,35 @@
-CHUNKS	Define the number of files to split a FASTA file into	10
-INTERPROSCAN	Location of the Interpro wrapper script
-GATK	Location of the GATK package
-REF	Location of reference file
-GOLD_STANDARD_INDELS	Location of gold standard indels for variant calling
-INDELS_100G	Location of indels from 100 G project
-LOG	Location for log file
-DBSNP	Location of SNP database DBSNP
-TOPHAT	Location of tophat executable	tophat
-CUFFLINKS	Location of cufflinks executable	cufflinks
-SAMTOOLS	Location of samtools executable	samtools
+ADAPTER	Location of trimmomatic adapter sequence to use	TruSeq3-PE.fa
+BLASTP	Location of blastp+ executable	blastp
+BLASTP_DB	Location of blast+ formatted protein database
+BLAST_CUTOFF_EVALUE	Define the evalue cutoff to use into blast tools	10e-6
 BOWTIE2	Location of bowtie2 executable	bowtie2
 BWA	Location of bwa executable	bwa
-PLATFORM	Define sequencing platform
-TMP	Location for temporary files	/tmp
-PICARD_HOME	Location of the picard folder
-TEST_SIZE	Number of gene models to keep for testing	100
-BLASTP_DB	Location of blast+ formatted protein database
-BLASTP	Location of blastp+ executable	blastp
-GENOME_FA	Location of the genome sequence in FASTA format
-LIBRARY_METHOD	Library method for sequencing	fr-firststrand
-PHRED_SCORE	Quality encoding of read files	--solexa-quals
 BWT2_INDEX	Location of Bowtie2 index
-TM_PATH	Location of Trimmomatic installation
-TM_JAR	Path to trimmomatic java file	$TM_PATH/trimmomatic-0.32.jar
-ADAPTER	Location of trimmomatic adapter sequence to use	TruSeq3-PE.fa
+CHUNKS	Define the number of files to split a FASTA file into	10
+CODON_TABLE	Translation table to use (1-25)	1
+CUFFLINKS	Location of cufflinks executable	cufflinks
+DBSNP	Location of SNP database DBSNP
 FASTQC	Location of FastQC executable	fastqc
-RSEQC_READ_QUALITY	Location of RseQC read_quality script	read_quality.py
+GATK	Location of the GATK package
+GENOME_FA	Location of the genome sequence in FASTA format
 GENOME_GTF	Location of annotation file in GTF format
-HTSEQ_COUNT	Location of htseq-count script	htseq-count
 GENOME_TOOLS	Location of the genometools package	gt
+GOLD_STANDARD_INDELS	Location of gold standard indels for variant calling
+HTSEQ_COUNT	Location of htseq-count script	htseq-count
 ID_TRUNK	ID base name for annotations in GFF3-formatted file	
+INDELS_100G	Location of indels from 100 G project
+INTERPROSCAN	Location of the Interpro wrapper script	interproscan.sh
+INTERPRO_DB_LIST	Comma separated list of DB to use (by default it would be all)	all
+LIBRARY_METHOD	Library method for sequencing	fr-firststrand
+LOG	Location for log file
+PHRED_SCORE	Quality encoding of read files	--solexa-quals
+PICARD_HOME	Location of the picard folder
+PLATFORM	Define sequencing platform
+REF	Location of reference file
+RSEQC_READ_QUALITY	Location of RseQC read_quality script	read_quality.py
+SAMTOOLS	Location of samtools executable	samtools
+TEST_SIZE	Number of gene models to keep for testing	100
+TM_JAR	Path to trimmomatic java file	$TM_PATH/trimmomatic-0.32.jar
+TMP	Location for temporary files	/tmp
+TM_PATH	Location of Trimmomatic installation
+TOPHAT	Location of tophat executable	tophat

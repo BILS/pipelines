@@ -1,0 +1,15 @@
+// A pipeline to create to assemble transcripts for annotation
+
+about title: "A pipeline to assemble transcripts from RNAseq data based on Tophat/Stringtie"
+
+inputs "fq.gz" : "Requires compressed FastQ file(s) as input"
+
+load 'pipeline.config'
+
+run { "%.*.fq.gz" * 
+	[ verify_generic.using(binary:"tophat") + verify_generic.using(binary:"stringtie") + sample_dir_prepare.using(sample_dir:true) + 
+		trimmomatic + 
+		tophat + 
+		stringtie
+	] 
+}
