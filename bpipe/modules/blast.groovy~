@@ -22,11 +22,14 @@ blast = {
 	
 	var evalue : ""
 	if (BLAST_CUTOFF_EVALUE){
+		print "My blast cutoff = $BLAST_CUTOFF_EVALUE"
+		
 		evalue = "-evalue $BLAST_CUTOFF_EVALUE"
+		$output = $output+"."+$BLAST_CUTOFF_EVALUE
 	}
 
-	uses(threads:8) {
-               	exec "$program -db $BLASTP_DB -query $input -outfmt $outfmt -max_target_seqs $max_target_seqs -num_threads $threads $evalue -out $output","blast"
+        uses(threads:8) {
+                exec "$program -db $BLASTP_DB -query $input -outfmt $outfmt -max_target_seqs $max_target_seqs -num_threads $threads $evalue -out $output","blast"
         }
 }
 
@@ -53,7 +56,11 @@ blastp = {
 
 	var evalue : ""
         if (BLAST_CUTOFF_EVALUE){
+                print "My blast cutoff = $BLAST_CUTOFF_EVALUE\n"
 		evalue = "-evalue $BLAST_CUTOFF_EVALUE"
+		print "${output}.${BLAST_CUTOFF_EVALUE}"
+//                output.append('.'+BLAST_CUTOFF_EVALUE)
+        	print "$BLASTP -db $BLASTP_DB -query $input -outfmt $outfmt -num_threads ZZZ -out $output"
 	}
 
 	uses(threads:8) {
@@ -71,14 +78,9 @@ recursive_blastp = {
 	if (sample_dir) { output.dir = branch.outdir + "/theVoid" }
 
 	requires BLASTP : "Must provide path to blastp binary"
-	requires BLAST_CUTOFF_EVALUE : "Must specify a blast cutoff evalue (BLAST_CUTOFF_EVALUE)"
 
-	var evalue : ""
-        if (BLAST_CUTOFF_EVALUE){
-                evalue = "-evalue $BLAST_CUTOFF_EVALUE"
-        }
+	exec "$BLASTP -db $input -query $input.fa -outfmt 5 -num_threads $threads -out $output"
 
-	exec "$BLASTP -db $input -query $input.fa -outfmt 5 -num_threads $threads $evalue -out $output"
 }
 
 protein2blast_db = {
