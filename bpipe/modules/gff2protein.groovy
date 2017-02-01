@@ -20,7 +20,7 @@ gff2protein = {
 
     // Running a command
     transform(".gff") to (".proteins.fa") {
-            exec "$BPIPE_BIN/gff3_sp_extract_sequences.pl -o $input.prefix"+".tmp -f $GENOME_FA -p -cs -ct $CODON_TABLE --gff $input && $BPIPE_BIN/fix_fasta.rb $input.prefix"+".tmp.fa > $output && rm $input.prefix"+".tmp.fa"
+            exec "$BPIPE_BIN/gff3_sp_extract_sequences.pl -o $input.prefix"+".tmp -f $GENOME_FA -p -cfs -cis -ct $CODON_TABLE --gff $input && $BPIPE_BIN/fix_fasta.rb $input.prefix"+".tmp.fa > $output && rm $input.prefix"+".tmp.fa"
     }
 
 }
