@@ -61,7 +61,7 @@ $PIPELINE_GIT/config/bpipe_config -p Name_of_Pipeline -c
 
 $BPIPE_GIT/config/bpipe_config -b
 
-### 3.1 Bpipe config file
+### 3a Bpipe config file
 
 This file (bpipe.config) enables the translation of a pipeline to a resource manager
 or job queue.  Common examples include Slurm, LSF or SGE.  The template
@@ -71,7 +71,7 @@ You can then define the required resources for each program that you are
 going to run in the pipeline.  For more details, please refer to the
 bpipe documentation on www.bpipe.org.
 
-### 3.2 Pipeline config file
+### 3b Pipeline config file
 
 The pipeline config (pipeline.config) file holds variables that specify the location of
 binaries, input files or values required by the various pipeline stages.
