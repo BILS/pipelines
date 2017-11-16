@@ -2,16 +2,16 @@
 #		########################
 
 
-| FOR NBIS's employees full details are available under Infrastructure>Pipelines>Bpipe on the Redmine
+ FOR NBIS's employees full details are available under Infrastructure>Pipelines>Bpipe on the Redmine
 -----------------------------------------------------------------------------------------------------
-|
 
-1. For the impatient
-2. Disclaimer
-3. Installation
-4. Usage information
-5. Licence
-6. Acknowledgment
+
+[1. For the impatient](#for-the-impatient)</br>
+[2. Disclaimer](#disclaimer)</br>
+[3. Installation](#installation)</br>
+[4. Usage information](#usage-information)</br>
+[5. Licence](#licence)</br>
+[6. Acknowledgment](#acknowledgment)
 
 </br>
 ##1. For the impatient
