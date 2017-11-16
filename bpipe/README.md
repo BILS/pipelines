@@ -9,7 +9,7 @@
 [1. For the impatient](#1-for-the-impatient)</br>
 [2. Disclaimer](#2-disclaimer)</br>
 [3. Installation](#3-installation)</br>
-&nbsp;&nbsp;&nbsp;[3.1 Bpipe.config](#3.1-Bpipe.config)</br>
+&nbsp;&nbsp;&nbsp;[3.1 Bpipe.config](#3\.1-Bpipe.config)</br>
 &nbsp;&nbsp;&nbsp;[3.2 pipeline.config](#3.2-pipeline.config)</br>
 [4. Usage information](#4-usage-information)</br>
 [5. Licence](#5-licence)</br>
