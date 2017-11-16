@@ -7,14 +7,13 @@
 
 
 [1. For the impatient](#1-for-the-impatient)</br>
-[2. Disclaimer](#disclaimer)</br>
-[3. Installation](#installation)</br>
-[4. Usage information](#usage-information)</br>
-[5. Licence](#licence)</br>
-[6. Acknowledgment](#acknowledgment)
+[2. Disclaimer](#2-disclaimer)</br>
+[3. Installation](#3-installation)</br>
+[4. Usage information](#4-usage-information)</br>
+[5. Licence](#5-licence)</br>
+[6. Acknowledgment](#6-acknowledgment)</br>
 
-</br>
-##1 For the impatient
+## 1 For the impatient
 
 This is for those who have a basic idea of how bpipe works:
 
@@ -33,11 +32,11 @@ This is for those who have a basic idea of how bpipe works:
 
     -   Run pipeline on your input data.
 
-##2 Disclaimer
+## 2 Disclaimer
 
 In the case where this work is used for communications (presentation, publication, etc.), we invite you to acknowledge BILS within your communication according to this example: "Support by BILS (Bioinformatics Infrastructure for Life Sciences) is gratefully acknowledged."
 
-##3. Installation
+## 3 Installation
 
 Bpipe does not need to be installed.  However, in order to run the
 various pipelines, you will need to make sure that all the dependencies
@@ -77,7 +76,7 @@ binaries, input files or values required by the various pipeline stages.
 Each variable should be documented and it is for you to fill it out
 correctly.
 
-##4. Usage information
+## 4 Usage information
 
 In order to start a pipeline run, type:
 
@@ -96,10 +95,10 @@ Where *.fq.gz specifies a pattern of gzipped fastq files.  The pipeline
 will separate these into individual branches and run them in parallel
 where applicable.
 
-##5. Licence
+## 5 Licence
 This project is licensed under the terms of the GNU GPLv3 license. Please read the [LICENSE](LICENSE) file for more information.
 
-##6. Acknowledgment
+## 6 Acknowledgment
 We acknowledge the bpipe developers => [Bpipe project](https://github.com/ssadedin/bpipe).</br>
 Sadedin, S. P., Pope, B. & Oshlack, A. Bpipe: A tool for running and managing bioinformatics pipelines. Bioinformatics 28, 1525–1526 (2012).</br>
 Special thanks to Marc Hoeppner whose start this bpipe pipeline library.
