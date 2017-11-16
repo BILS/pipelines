@@ -6,7 +6,7 @@
 -----------------------------------------------------------------------------------------------------
 
 
-[1. For the impatient](#for-the-impatient)</br>
+[1. For the impatient](#1-for-the-impatient)</br>
 [2. Disclaimer](#disclaimer)</br>
 [3. Installation](#installation)</br>
 [4. Usage information](#usage-information)</br>
@@ -14,7 +14,7 @@
 [6. Acknowledgment](#acknowledgment)
 
 </br>
-##1. For the impatient
+##1 For the impatient
 
 This is for those who have a basic idea of how bpipe works:
 
@@ -33,7 +33,7 @@ This is for those who have a basic idea of how bpipe works:
 
     -   Run pipeline on your input data.
 
-##2. Disclaimer
+##2 Disclaimer
 
 In the case where this work is used for communications (presentation, publication, etc.), we invite you to acknowledge BILS within your communication according to this example: "Support by BILS (Bioinformatics Infrastructure for Life Sciences) is gratefully acknowledged."
 
