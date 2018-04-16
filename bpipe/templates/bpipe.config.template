@@ -32,6 +32,11 @@ commands {
         procs="16"          // Running on a full node
         walltime="36000" // Set this to match you input data
     }
+    
+    stringtie {
+        procs="16"          // Running on a full node
+        walltime="36000" // Set this to match you input data
+    }    
 
     trimmomatic {
         procs="8"
@@ -42,7 +47,7 @@ commands {
     }
 
     interpro {
-        procs="4"
+        procs="8"
     }
 
     rseqc {

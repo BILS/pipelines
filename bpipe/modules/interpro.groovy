@@ -11,9 +11,16 @@ interpro = {
 	if (sample_dir) { output.dir = branch.outdir }
 
 	requires INTERPROSCAN : "Must specify the location of interproscan (INTERPROSCAN)"
+	requires INTERPRO_DB_LIST : "Must specify the list of DB to use (INTERPRO_DB_LIST)"
+	
+	// set dblist if needed - if db_list is empty, all the DB will be used
+	var db_list : ""
+	if (INTERPRO_DB_LIST.toLowerCase() != "all"){
+		db_list = "-appl $INTERPRO_DB_LIST"
+	} 
 
 	produce(input+".gff3",input+".tsv",input+".xml") {
-	        exec "$INTERPROSCAN -appl PfamA-27.0,ProDom-2006.1,SuperFamily-1.75,PIRSF-2.84 -i $input -d ${output.dir} -iprlookup -goterms -pa -dp > /dev/null 2> /dev/null ","interpro"
+		exec "$INTERPROSCAN $db_list -i $input -d ${output.dir} -iprlookup -goterms -pa -dp > /dev/null 2> /dev/null ","interpro"
         }
 }
 
