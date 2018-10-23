@@ -2,7 +2,7 @@
 
 about title: "A pipeline to assemble transcripts from RNAseq data based on Cufflinks/Tophat"
 
-inputs "fq" : "Requires compressed FastQ file(s) as input"
+inputs "fq" : "Requires FastQ file(s) as input"
 
 load 'pipeline.config'
 

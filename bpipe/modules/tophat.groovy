@@ -8,10 +8,10 @@ tophat = {
 
             Stage options:
                 sample_dir : create sample-specific output folrder (boolean)
-                paired : paired-end data (boolean)
 
             Required variables are:
-                TOPHAT : this should point to the location of the tophat executable
+                PAIRED : paired-end data (boolean)
+		TOPHAT : this should point to the location of the tophat executable
                 LIBRARY_METHOD : This specifies the type of sequencing library, e.g. fr-reverse
                 PHRED_SCORE : Specifies the quality encoding, e.g. usually this will be solexa-quals/phred33
                 BWT2_INDEX : The location of a bowtie2-formatted genome index
@@ -25,8 +25,6 @@ tophat = {
             argument needs to be the right mate
         """,
         author: "marc.hoeppner@bils.se"
-
-    var paired : true // paired-end data?
 
     // Exposed options
     var sample_dir : false
@@ -66,6 +64,7 @@ tophat = {
     requires BWT2_INDEX : "Must specify a Bowtie2 index (BWT2_INDEX)"
     requires BOWTIE2 : "Must specify path to Bowtie2 (BOWTIE2)"
     requires SAMTOOLS : "Must specify path to samtools (SAMTOOLS)"
+    requires PAIRED : "Must specify if the sample is stranded or not (true or false)"
 
     // We subsequently need to keep track of folders
     // Here we set a name accessible to all subsequent modules.
@@ -80,7 +79,7 @@ tophat = {
 
     produce("accepted_hits.bam") {
         uses(threads:16) {
-            if (paired) {
+            if (PAIRED.toBoolean()) {
                 exec "$TOPHAT $PHRED_SCORE $options -o $output.dir -p $threads --library-type=$LIBRARY_METHOD $BWT2_INDEX $input1 $input2 >$output.dir/tophat.out 2>$output.dir/tophat.err && md5sum $output >$output.dir/tophat.md5","tophat"
             } else {
                 exec "$TOPHAT $PHRED_SCORE $options -o $output.dir -p $threads --library-type=$LIBRARY_METHOD $BWT2_INDEX $input >$output.dir/tophat.out 2>$output.dir/tophat.err && md5sum $output >$output.dir/tophat.md5","tophat"

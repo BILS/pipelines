@@ -53,9 +53,14 @@ bpipe = Bpipe::Pipeline.new
 
 abort "No pipeline specified - use --list to get a list of installed pipelines" unless options.pipeline
 
-my_pipeline = bpipe.pipelines.find{|p| p.name == options.pipeline}
+pipeline_name=options.pipeline
+if pipeline_name.end_with? ".bpipe"
+	pipeline_name=pipeline_name.gsub(".bpipe", "")
+end
 
-abort "The pipeline you have specified does not exist (was: #{options.pipeline}). Use --list to get a list of installed pipelines" unless my_pipeline
+my_pipeline = bpipe.pipelines.find{|p| p.name == pipeline_name}
+
+abort "The pipeline you have specified does not exist (was: #{pipeline_name}). Use --list to get a list of installed pipelines" unless my_pipeline
 
 if write_config
   puts "Writing a config file for this pipeline to pipeline.config.template"

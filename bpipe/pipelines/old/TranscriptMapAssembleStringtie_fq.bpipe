@@ -2,7 +2,7 @@
 
 about title: "A pipeline to assemble transcripts from RNAseq data based on Tophat/Stringtie"
 
-inputs "fq.gz" : "Requires compressed FastQ file(s) as input"
+inputs "fastq.gz" : "Requires FastQ file(s) as input"
 
 load 'pipeline.config'
 

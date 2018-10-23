@@ -53,4 +53,8 @@ commands {
     rseqc {
         proc="1"
     }
+    hisat2 {
+        proc="16"
+        walltime="36000" // Set this to match you input data
+    }
 }
