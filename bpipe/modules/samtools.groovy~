@@ -49,13 +49,8 @@ samtools_sort_bam = {
 
 	requires SAMTOOLS : "Must provide path to samtools (SAMTOOLS)"
 
-        // create output_name. Will be the input where we remove extension (should be .sam) and add .bam
-        String output_name = "$input" - ~/.[^.]*$/
-        String output = "${output_name}.sorted.bam" 
+	exec "$SAMTOOLS sort -o $output $input && md5sum $output > ${output}.md5sum"
 
-        produce("$output") {	
-		exec "$SAMTOOLS sort -o $output $input && md5sum $output > ${output}.md5sum"
-	}
 }
 
 
@@ -68,6 +63,7 @@ samtools_sam_to_bam = {
 	// create output_name. Will be the input where we remove extension (should be .sam) and add .bam	
 	String output_name = "$input" - ~/.[^.]*$/
 	String output = "${output_name}.bam"
+	println output
 
 	produce("$output") {	
 		exec "$SAMTOOLS view -bS -o $output $input && md5sum $output > ${output}.md5sum"

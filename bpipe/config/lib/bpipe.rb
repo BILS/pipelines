@@ -22,7 +22,7 @@ module Bpipe
 
       @modules = []
       _parse_pipeline_modules     
-      
+
       @pipelines = []
       _get_pipeline_files
     
@@ -177,7 +177,7 @@ module Bpipe
 	  
       # Parses the module and stores identified values in designated variables. 
       def _parse_string(lines)
-        self.requirements = lines.select{|line| line.include?("requires") and line.include?(":") }.collect{|line| line.split(":")[0].gsub(/^.*requires/, '').strip }
+        self.requirements = lines.select{|line| line.include?("requires") and not line.start_with?("//") and line.include?(":") }.collect{|line| line.split(":")[0].gsub(/^.*requires/, '').strip }
         self.name = lines[0].split("=")[0].strip
       end
 
@@ -278,7 +278,7 @@ module Bpipe
 	run_string = lines.collect{|l| l.strip}.join(" ").slice(/\{.*\}/).gsub(/[\[\]\{\}]/, '').gsub(/,/, ' ')
 
 	# Clean decorational elements and extract the functions
-	run_string = run_string.gsub(/[\+\*]/, '').gsub(/\"(.*?)\"/, '').gsub(/\.using\((.*?)\)/, '')
+	run_string = run_string.gsub(/[\~\+\*]/, '').gsub(/\"(.*?)\"/, '').gsub(/\.using\((.*?)\)/, '')
 
 	# Store the functions used by this pipeline
 	if run_string
