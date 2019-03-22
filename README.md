@@ -8,4 +8,7 @@ Some others are writen within dedicated bioinformatic pipeline frameworks (bpipe
 
 Here is the repository of the different flavour pipelines.
 
-*p.s: lot of pipelines framework exists, [here](https://www.biostars.org/p/91301/) you will find an interesting list of them.*
+Lot of pipelines framework exists. Here you will find an extensive list of them:  
+
+ * [https://github.com/pditommaso/awesome-pipeline](https://github.com/pditommaso/awesome-pipeline)
+ * [https://www.biostars.org/p/91301/](https://www.biostars.org/p/91301/)
