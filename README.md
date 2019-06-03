@@ -6,7 +6,12 @@ NBIS uses lot of pipelines in its everyday work in wide range of bioinformatic a
 Some are directly coded within scripts in different languages (BASH,PERL,PYTHON,JAVA,etc).<br />
 Some others are writen within dedicated bioinformatic pipeline frameworks (bpipe, snakemake, etc).<br />
 
-Here is the repository of the different flavour pipelines.
+Here is the repository of the different pipeline flavours:
+
+ * [Bpipe(groovy)](pipelines/bpipe)
+ * (Please add link to your repo here)
+
+---------------------------
 
 Lot of pipelines framework exists. Here you will find an extensive list of them:  
 
