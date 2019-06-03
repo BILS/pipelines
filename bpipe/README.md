@@ -36,7 +36,7 @@ This is for those who have a basic idea of how bpipe works:
 
 ## 2 Disclaimer
 
-In the case where this work is used for communications (presentation, publication, etc.), we invite you to acknowledge BILS within your communication according to this example: "Support by BILS (Bioinformatics Infrastructure for Life Sciences) is gratefully acknowledged."
+In the case where this work is used for communications (presentation, publication, etc.), we invite you to acknowledge NBIS within your communication according to this example: "Support by NBIS (National Bioinformatics Infrastructure Sweden) is gratefully acknowledged."
 
 ## 3 Installation
 
@@ -47,19 +47,7 @@ are available and configured in the respective pipeline.config files
 of the pipeline modules is exported to $BPIPE_LIB.  For a quick way to
 find out how, run the script 'setup.sh' that is included with this code.
 
-Also make sure that you generate the config files for your pipeline. 
-
-bpipe.config.template
-
-pipeline.config.template
-
-To generate config files, you can run:
-
-$PIPELINE_GIT/config/bpipe_config -p Name_of_Pipeline -c
-
-(to find out which pipelines are available, run bpipe_config -l).
-
-$BPIPE_GIT/config/bpipe_config -b
+Also make sure that you generate the config files for your pipeline: __bpipe.config.template__ and __pipeline.config.template__.
 
 ### 3a Bpipe config file
 
@@ -71,12 +59,25 @@ You can then define the required resources for each program that you are
 going to run in the pipeline.  For more details, please refer to the
 bpipe documentation on www.bpipe.org.
 
+To generate the bpipe config file run:  
+
+    $BPIPE_CONFIG/bpipe_config -b
+
 ### 3b Pipeline config file
 
 The pipeline config (pipeline.config) file holds variables that specify the location of
 binaries, input files or values required by the various pipeline stages.
 Each variable should be documented and it is for you to fill it out
 correctly.
+
+To generate the pipeline config file, run:
+
+    $BPIPE_CONFIG/bpipe_config -p Name_of_Pipeline -c
+
+To look at available pipelines, run :
+
+    $BPIPE_CONFIG/bpipe_config –l
+
 
 ## 4 Usage information
 
