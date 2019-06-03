@@ -22,7 +22,6 @@
 # == AUTHOR
 #   Marc Hoeppner, mphoeppner@gmail.com
 
-require 'rdoc/usage'
 require 'optparse'
 require 'ostruct'
 require 'logger'
