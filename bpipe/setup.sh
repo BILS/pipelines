@@ -9,22 +9,28 @@ BPIPE_FOLDER=( $WORKING_DIR/bin/bpipe* )
 BPIPE_EXE=$( which bpipe 2>/dev/null )
 
 if [[ -n "$BPIPE_LIB" ]]; then
-    echo "\$BPIPE_LIB is already set to '$BPIPE_LIB' (good)"
+    echo -e "(\033[32mgood\033[0m) \$BPIPE_LIB is already set to '$BPIPE_LIB'"
 else
-    echo "\$BPIPE_LIB not set, add this to ~/.bash_profile:"
+    echo -e "(\033[31mbad\033[0m) \$BPIPE_LIB not set, add this to ~/.bash_profile:"
     echo "  export BPIPE_LIB=$MODULE_DIR"
 fi
 
 if [[ -n "$BPIPE_EXE" ]]; then
-    echo "Bpipe executable already installed as '$BPIPE_EXE' (good)"
+    echo -e "(\033[32mgood\033[0m) Bpipe executable already installed as '$BPIPE_EXE'"
 else
-    echo "Bpipe executable not found in \$PATH, add this to ~/.bash_profile:"
-    echo "  export PATH=\$PATH:$BPIPE_FOLDER/bin"
+    echo -e "(\033[31mbad\033[0m) Bpipe executable not found in \$PATH, add this to ~/.bash_profile:"
+    echo "export PATH=\$PATH:$BPIPE_FOLDER/bin"
 fi
 
 if [[ -n "$BPIPE_BIN" ]]; then
-	echo "\$BPIPE_BIN is already set to '$BPIPE_BIN' (good)"
+	echo -e "(\033[32mgood\033[0m) \$BPIPE_BIN is already set to '$BPIPE_BIN'"
 else
-	echo "\$BPIPE_BIN not set, add this to ~/.bash_profile:"
+	echo -e "(\033[31mbad\033[0m) \$BPIPE_BIN not set, add this to ~/.bash_profile:"
 	echo " export BPIPE_BIN=$WORKING_DIR/bin"
+fi
+if [[ -n "$BPIPE_CONFIG" ]]; then
+        echo -e "(\033[32mgood\033[0m) \$BPIPE_CONFIG is already set to '$BPIPE_CONFIG'"
+else
+        echo -e "(\033[31mbad\033[0m) \$BPIPE_CONFIG not set, add this to ~/.bash_profile:"
+        echo " export BPIPE_CONFIG=$WORKING_DIR/config"
 fi
