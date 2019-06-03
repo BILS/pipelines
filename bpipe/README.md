@@ -83,16 +83,16 @@ To look at available pipelines, run :
 
 In order to start a pipeline run, type:
 
-    bpipe run path/to/pipeline.bpipe
+    bpipe $BPIPE_PIPELINE/pipeline.bpipe
 
 If you do not specify one or several input files, the pipeline will
 inform you about the expected input data.  With that information, do:
 
-    bpipe run path/to/pipeline.bpipe input
+    bpipe run $BPIPE_PIPELINE/pipeline.bpipe input
 
 For an RNA-seq workflow, this could be:
 
-    bpipe run $GIT/pipelines/pipelines/RNAseqAlignQuantify.bpipe *.fq.gz
+    bpipe run $BPIPE_PIPELINE/RNAseqAlignQuantify.bpipe *.fq.gz
 
 Where *.fq.gz specifies a pattern of gzipped fastq files.  The pipeline
 will separate these into individual branches and run them in parallel
