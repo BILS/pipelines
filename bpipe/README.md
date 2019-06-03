@@ -40,6 +40,7 @@ In the case where this work is used for communications (presentation, publicatio
 
 ## 3 Installation
 
+### General information
 Bpipe does not need to be installed.  However, in order to run the
 various pipelines, you will need to make sure that all the dependencies
 are available and configured in the respective pipeline.config files
@@ -49,11 +50,24 @@ find out how, run the script 'setup.sh' that is included with this code.
 
 Also make sure that you generate the config files for your pipeline: __bpipe.config.template__ and __pipeline.config.template__.
 
-### 3a Bpipe config file
+### Step by step:
+ * **clone the repo and move in it:**
+ 
+       git clone https://github.com/NBISweden/pipelines.git
+       cd pipelines/bpipe/
+       
+ * **check BPIPE variables (to make everything smoother):**
+ 
+       ./setup.sh
+       
+ * **accoding to the ouput from the ` ./setup.sh` add the missing variables in your bash_profile and source it:**
+ 
+       source ~/.bash_profile
+ 
+ * **Bpipe config file**
 
-This file (bpipe.config) enables the translation of a pipeline to a resource manager
-or job queue.  Common examples include Slurm, LSF or SGE.  The template
-includes some suggestions on parameters for Slurm and LSF.
+This file (bpipe.config) enables the translation of a pipeline to a resource manager or job queue. 
+Common examples include Slurm, LSF or SGE.  The template includes some suggestions on parameters for Slurm and LSF.
 
 You can then define the required resources for each program that you are
 going to run in the pipeline.  For more details, please refer to the
@@ -63,7 +77,7 @@ To generate the bpipe config file run:
 
     $BPIPE_CONFIG/bpipe_config -b
 
-### 3b Pipeline config file
+ * **Pipeline config file**
 
 The pipeline config (pipeline.config) file holds variables that specify the location of
 binaries, input files or values required by the various pipeline stages.
