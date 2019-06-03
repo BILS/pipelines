@@ -8,7 +8,7 @@ Some others are writen within dedicated bioinformatic pipeline frameworks (bpipe
 
 Here is the repository of the different pipeline flavours:
 
- * [Bpipe(groovy)](pipelines/bpipe)
+ * [Bpipe (groovy)](bpipe)
  * (Please add link to your repo here)
 
 ---------------------------
