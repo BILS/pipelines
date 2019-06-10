@@ -1,7 +1,6 @@
-// A pipeline to create the required input for the functional annotation tool Annie
-// http://genomeannotation.github.io/Annie/
+// A pipeline to create the required input for the functional annotation script gff3_sp_manage_functional_annotation
 
-about title: "A pipeline to execute blastp and interproscan searches to create input for the 'Annie' functional annotation pipeline"
+about title: "A pipeline to execute blastp and interproscan searches to create input for the subsequent functional annotation script gff3_sp_manage_functional_annotation.pl."
 
 inputs "gff" : "Requires an annotation in GFF format as input (.gff)"
 

@@ -34,3 +34,9 @@ else
         echo -e "(\033[31mbad\033[0m) \$BPIPE_CONFIG not set, add this to ~/.bash_profile:"
         echo " export BPIPE_CONFIG=$WORKING_DIR/config"
 fi
+if [[ -n "$BPIPE_PIPELINE" ]]; then
+        echo -e "(\033[32mgood\033[0m) \$BPIPE_PIPELINE is already set to '$BPIPE_PIPELINE'"
+else
+        echo -e "(\033[31mbad\033[0m) \$BPIPE_PIPELINE not set, add this to ~/.bash_profile:"
+        echo " export BPIPE_PIPELINE=$WORKING_DIR/pipelines"
+fi

@@ -1,5 +1,4 @@
-// A pipeline to create the required input for the functional annotation tool Annie
-// http://genomeannotation.github.io/Annie/
+// A pipeline for running interproscan from protein fasta file
 
 about title: "A pipeline to execute interproscan searches"
 
