@@ -6,14 +6,15 @@
 -----------------------------------------------------------------------------------------------------
 
 
-[For the impatient](#for-the-impatient)</br>
-[Disclaimer](#disclaimer)</br>
-[Installation](#installation)</br>
-   [Bpipe config file](#bpipe-config-file)</br>
-   [Pipeline config file](#pipeline-config-file)</br>
-[Usage information](#usage-information)</br>
-[Licence](#licence)</br>
-[Acknowledgment](#acknowledgment)</br>
+* [For the impatient](#for-the-impatient)
+* [Disclaimer](#disclaimer)
+* [List of pipelines](#list-of-pipelines)
+* [Installation](#installation)
+   * [Bpipe config file](#bpipe-config-file)
+   * [Pipeline config file](#pipeline-config-file)
+* [Usage information](#usage-information)
+* [Licence](#licence)
+* [Acknowledgment](#acknowledgment)
 
 ## For the impatient
 
@@ -37,6 +38,10 @@ This is for those who have a basic idea of how bpipe works:
 ## Disclaimer
 
 In the case where this work is used for communications (presentation, publication, etc.), we invite you to acknowledge NBIS within your communication according to this example: "Support by NBIS (National Bioinformatics Infrastructure Sweden) is gratefully acknowledged."
+
+## List of pipelines
+
+The pipeline list is available here: [NBISweden/pipelines/bpipe/pipelines/](pipelines)
 
 ## Installation
 
