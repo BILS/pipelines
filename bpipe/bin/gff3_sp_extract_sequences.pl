@@ -110,7 +110,8 @@ if($opt_OFS){
 ######################
 ### Parse GFF input #
 print "Reading file $opt_gfffile\n";
-my ($hash_omniscient, $hash_mRNAGeneLink) = BILS::Handler::GXFhandler->slurp_gff3_file_JD($opt_gfffile);
+my ($hash_omniscient, $hash_mRNAGeneLink) = slurp_gff3_file_JD({ input => $opt_gfffile
+                                                              });  
 print "Parsing Finished\n";
 ### END Parse GFF input #
 #########################
@@ -472,7 +473,7 @@ Input fasta file.
 
 =item B<-t> 
 
-Define the feature you want to extract the sequnce from. By deafault it's 'cds'. Most common choice are: gene,mrna,exon,cds,trna,three_prime_utr,five_prime_utr.
+Define the feature you want to extract the sequnece from. By deafault it's 'cds'. Most common choice are: gene,mrna,exon,cds,trna,three_prime_utr,five_prime_utr.
 When you chose exon (or cds,utr,etc.), all the exon related to a same L2 feature are attached together before to extract the exon. (It doesnt provide one sequence by exon !!)
 
 =item B<-p>, B<--protein> or B<--aa>
@@ -507,11 +508,11 @@ Output Fields Separator for the description field. By default it's a space < > b
 
 =item B<--cis>
 
-The Clean Internal Stop option allows removing the tranlation of the stop codons present among the sequence that is represented by the <*> character. This character can be disturbing for many programs (e.g interproscan)
+The Clean Internal Stop option allows replacing the translation of the stop codons present among the sequence that is represented by the <*> character by <X>. Indeed the <*> character can be disturbing for many programs (e.g interproscan)
 
 =item B<--cfs>
 
-The Clean Final Stop option allows removing the tranlation of the final stop codons that is represented by the <*> character. This character can be disturbing for many programs (e.g interproscan)
+The Clean Final Stop option allows removing the translation of the final stop codons that is represented by the <*> character. This character can be disturbing for many programs (e.g interproscan)
 
 =item B<-o> or B<--output>
 
