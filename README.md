@@ -17,3 +17,8 @@ Lot of pipelines framework exists. Here you will find an extensive list of them:
 
  * [https://github.com/pditommaso/awesome-pipeline](https://github.com/pditommaso/awesome-pipeline)
  * [https://www.biostars.org/p/91301/](https://www.biostars.org/p/91301/)
+
+Comparison of pipelines:
+
+ * [Di Tommaso, P. et al. Nextflow enables reproducible computational workflows. Nat. Biotechnol. 35, 316–319 (2017)](https://www.nature.com/articles/nbt.3820/tables/1)
+ * [Leipzig J. A review of bioinformatic pipeline frameworks Brief. Bioinform. (2016)](https://academic.oup.com/bib/article/18/3/530/2562749)
