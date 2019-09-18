@@ -35,7 +35,7 @@ sample_dir_prepare = {
 	//	exec "echo $input > $output"
 	// }
 	
-	forward input
+	forward inputs
 }
 
 

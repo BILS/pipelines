@@ -6,7 +6,7 @@ verify_generic = {
                 fail "The path provided to $binary could not be resolved"
         }
 
-        forward input	
+        forward inputs
 }
 	
 
