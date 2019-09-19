@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 # == NAME
 # fasta_filter_size.rb
 #
