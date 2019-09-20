@@ -123,4 +123,4 @@ This project is licensed under the terms of the GNU GPLv3 license. Please read t
 ## Acknowledgment
 We acknowledge the bpipe developers => [Bpipe project](https://github.com/ssadedin/bpipe).</br>
 Sadedin, S. P., Pope, B. & Oshlack, A. Bpipe: A tool for running and managing bioinformatics pipelines. Bioinformatics 28, 1525–1526 (2012).</br>
-Special thanks to Marc Hoeppner whose start this bpipe pipeline library.
+Special thanks to Marc Hoeppner whose started this bpipe pipeline library.
