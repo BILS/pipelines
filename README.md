@@ -17,6 +17,7 @@ Here is the repository of the different pipeline flavours:
 Lot of pipelines framework exists. Here you will find an extensive list of them:  
 
  * [https://github.com/pditommaso/awesome-pipeline](https://github.com/pditommaso/awesome-pipeline)
+ * [https://github.com/common-workflow-language/common-workflow-language/wiki/Existing-Workflow-systems](https://github.com/common-workflow-language/common-workflow-language/wiki/Existing-Workflow-systems)
  * [https://www.biostars.org/p/91301/](https://www.biostars.org/p/91301/)
 
 Comparison of pipelines:
