@@ -10,7 +10,7 @@ nextflow.preview.dsl=2
 include './../modules/annotation_modules'
 
 workflow {
-	data = Channel.fromPath(params.reads)
+	data = Channel.fromPath(params.gff_file)
 	gff2protein
 	fastasplit
 	blastp
