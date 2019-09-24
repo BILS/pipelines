@@ -1,441 +1,50 @@
-nextflow.preview.dsl=2
-
-process annie_interpro = {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	python $ANNIE_ROOT/annie.py ipr $input $output
-	"""
-	// doc about: "Module to run Annie's InterPro converter",
-	// description: "Annie is a tool to convert search results into tabular format for functional annotation",
-	// constraints: "Requires the annie package to be available",
-	// author: "marc.hoeppner@bils.se"
-	//
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir branch.sample_dir }
-	//
-	// // requires here
-	// requires ANNIE_ROOT : "Must provide path to Annie installation folder (ANNIE_ROOT)"
-	//
-	// // Defining output directory
-	// if (sample_dir) {
-	// 	output.dir = branch.outdir
-	// }
-	//
-	// exec "python $ANNIE_ROOT/annie.py ipr $input $output"
-
-}
 
 process assembly_generate_stats {
 
 	input:
-	file input
+	path fasta_file
 
 	output:
-	file 'assembly_report.txt'
+	path assembly_report
 
 	script:
 	"""
-	$BPIPE_BIN/fasta_statisticsAndPlot.pl --infile $input --output $output
+	fasta_statisticsAndPlot.pl --infile $fasta_file --output $assembly_report
 	"""
 
-	// doc about: "Generates statistics from a genome assembly",
-	// description: "Accepts a multi-fasta file with nucleotide sequences and computes statistics",
-	// author: "marc.hoeppner@bils.se"
-
-	// requires here
-
-	// var directory : "stats"
-	//
-	// if (branch.sample_dir) {
-	// 	output.dir = (directory.length() > 0) ? branch.outdir + "/" + directory : branch.outdir
-	// } else {
-	// 	if (directory.length() > 0) {
-	// 		output.dir = directory
-	// 	}
-	// }
-	//
-	// produce("assembly_report.txt") {
-	// 	exec "$BPIPE_BIN/fasta_statisticsAndPlot.pl --infile $input --output $output"
-	// }
-}
-
-process assembly_remove_mitochondria {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	"""
-
-	// doc about: "Parses a genome assembly and removes organellar contigs",
-	// description: "Matches contigs against a database of organeller proteins to find orgenellar contaminations",
-	// constraints: "Requires a blast database of reliable organellar proteins",
-	// author: "marc.hoeppner@bils.se"
-	//
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = branch.sample_dir }
-
-	// requires here
-
-
-	// Defining output directory
-	//    if (sample_dir) {
-	//  output.dir = branch.outdir
-	//    } else {
-
-	//    }
-
-	// exec "..."
-
-	// forward input
-
-}
-
-process gbk2training {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	randomSplit.pl $input $TEST_SIZE
-	"""
-
-	// doc title: "Converts a GenBank file to an Augustus test and training set",
-	//
-	// desc: """ Splits a Genbank file into two random sets for training and
-	// testing of Augustus profile models.
-	//
-	// Required variables: TEST_SIZE : How many models are to be kept for
-	// testing. """, constraints : "None",
-	//
-	// author : "marc.hoeppner@bils.se"
-
-	// var sample_dir : false
-	//
-	// requires TEST_SIZE : "Must provide a value for the size of the test data
-	// set (TEST_SIZE)"
-	//
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (sample_dir) { output.dir = branch.outdir
-	// }
-	//
-	// produce(input+".train") { exec "randomSplit.pl $input $TEST_SIZE"
-	// }
-
-}
-
-process bayesembler {
-
-	input:
-	path input
-
-	output:
-	file 'assembly.gtf'
-
-	script:
-	var baysembler_c : "0.5"
-	var bayesembler_m : "-m"
-	"""
-	bayesembler -b $input -p $threads $baysembler_m -c $bayesembler_c
-	"""
-
-	// doc about: "Module to run the Bayesembler transcriptome assembler",
-	// description: "Bayesembler uses a bayesian approach to reconstruct transcripts from BAM-formatted read alignments",
-	// constraints: "Requires a Tophat-generated BAM file and index",
-	// author: "marc.hoeppner@bils.se"
-
-	// var baysembler_c : "0.5"
-	// var bayesembler_m : "-m"
-
-	// if (branch.sample_dir) {
-	// 	output.dir = (directory.length() > 0) ? branch.outdir + "/" + directory : branch.outdir
-	// } else {
-	// 	if (directory.length() > 0) {
-	// 		output.dir = directory
-	// 	}
-	// }
-
-	// requires here
-
-	// Running a command
-
-	// produce("assembly.gtf") {
-	// 	exec "bayesembler -b $input -p $threads $baysembler_m -c $bayesembler_c"
-	// }
-
-}
-
-process blast {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	blast -db $BLASTP_DB -query $input -outfmt $outfmt -max_target_seqs $max_target_seqs -num_threads $threads $evalue -out $output
-	"""
-
-	// doc title: "Run a blast+ search on a FASTA file",
-	// desc: "Takes a sequence fasta file as input and blasts it against a database",
-	// author: "marc.hoeppner@bils.se"
-
-	// var sample_dir : false
-	var outfmt : 5
-	// var program : "blastp"
-	var max_target_seqs : 10
-
-	requires BLASTP_DB : "Must specify a blast+ formatted protein database (BLASTP_DB)"
-	requires BLAST_CUTOFF_EVALUE : "Must specify a blast cutoff evalue (BLAST_CUTOFF_EVALUE)"
-
-	// if (branch.sample_dir) { sample_dir = true}
-	//
-	// if (sample_dir) {
-	// 	output.dir = branch.outdir + "/theVoid"
-	// }
-
-	var evalue : ""
-	if (BLAST_CUTOFF_EVALUE){
-		evalue = "-evalue $BLAST_CUTOFF_EVALUE"
-	}
-
-	// uses(threads:8) {
-	// 	exec "$program -db $BLASTP_DB -query $input -outfmt $outfmt -max_target_seqs $max_target_seqs -num_threads $threads $evalue -out $output","blast"
-	// }
 }
 
 process blastp {
 
 	input:
-	path input
+	path query_fasta
+	path blastp_dbpath
+	val outfmt // 5
+	val evalue
 
 	output:
-	path output
+	path blast_results
 
 	script:
 	"""
-	blastp -db $BLASTP_DB -query $input -outfmt $outfmt -num_threads $threads $evalue -out $output
+	blastp -db $blastp_dbpath -query $query_fasta -outfmt $outfmt \
+		-num_threads ${task.cpus} $evalue -out $blast_results
 	"""
-
-	// doc title: "Run a blastp+ search on a protein FASTA file",
-	// desc: "Takes a protein fasta file as input and blasts it against a protein database",
-	// author: "marc.hoeppner@bils.se"
-
-	var sample_dir : false
-	var outfmt : 5
-
-	requires BLASTP_DB : "Must specify a blast+ formatted protein database (BLASTP_DB)"
-	requires BLASTP : "Must provide path to blastp binary"
-	requires BLAST_CUTOFF_EVALUE : "Must specify a blast cutoff evalue (BLAST_CUTOFF_EVALUE)"
-
-	// if (branch.sample_dir) { sample_dir = true}
-	//
-	// if (sample_dir) {
-	// 	output.dir = branch.outdir + "/theVoid"
-	// }
-
-	var evalue : ""
-	if (BLAST_CUTOFF_EVALUE){
-		evalue = "-evalue $BLAST_CUTOFF_EVALUE"
-	}
-
-	// uses(threads:8) {
-	// 	exec "$BLASTP -db $BLASTP_DB -query $input -outfmt $outfmt -num_threads $threads $evalue -out $output","blastp"
-	// }
-}
-
-process recursive_blastp {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	blastp -db $input -query $input.fa -outfmt 5 -num_threads $threads $evalue -out $output
-	"""
-
-	// doc "Runs a blastp search against itself (blast+)"
-
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (sample_dir) { output.dir = branch.outdir + "/theVoid" }
-
-	requires BLASTP : "Must provide path to blastp binary"
-	requires BLAST_CUTOFF_EVALUE : "Must specify a blast cutoff evalue (BLAST_CUTOFF_EVALUE)"
-
-	var evalue : ""
-	if (BLAST_CUTOFF_EVALUE){
-		evalue = "-evalue $BLAST_CUTOFF_EVALUE"
-	}
-
-	// exec "$BLASTP -db $input -query $input.fa -outfmt 5 -num_threads $threads $evalue -out $output"
-}
-
-process protein2blast_db {
-
-	input:
-	path input
-
-	output:
-	file "${input}.phr"
-
-	script:
-	"""
-	makeblastdb -in $input.fa -dbtype prot
-	"""
-
-	// doc "Creates a blast database from a protein fasta file (blast+)"
-
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (sample_dir) {
-	// 	output.dir = branch.outdir + "/theVoid"
-	// }
-
-	// produce(input+".phr") {
-	// 	exec "makeblastdb -in $input.fa -dbtype prot"
-	// }
-
-	// forward input
-}
-
-recursive_protein2blastp = segment { protein2blast_db + recursive_blastp }
-
-process merge_blast_xml {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	cat $inputs > $output
-	"""
-
-	// doc "Crude method to merge the XML output from multiple BLAST searches"
-
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (sample_dir) {
-	// 	output.dir = branch.outdir
-	// }
-
-	// produce(branch.sample + "_blast.out") {
-	// 	exec "cat $inputs > $output"
-	// }
 
 }
 
 process merge_blast_tab {
 
 	input:
-	path input
+	path fragments
 
 	output:
-	path output
+	path output //branch.sample + "_blast.out"
 
 	script:
 	"""
-	cat $inputs > $output
+	cat $fragments > $output
 	"""
-
-	// doc "Crude method to merge the tabular output from multiple BLAST searches"
-
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (sample_dir) {
-	// 	output.dir = branch.outdir
-	// }
-	//
-	// produce(branch.sample + "_blast.out") {
-	// 	exec "cat $inputs > $output"
-	// }
-
-}
-
-process run_blast2go {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	java -Xmx20G -cp ${B2G4PIPEPATH}/*:${B2G4PIPEPATH}/ext/* es.blast2go.prog.B2GAnnotPipe -in $input1 -out $output.prefix -prop ${B2G4PIPEPATH}/b2gPipe.properties -ips $input2 -annot
-	"""
-
-	// doc title: "Runs the Blast2Go pipeline using blast and interpro XML inputs"
-
-	// var sample_dir : false
-	//
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (branch.sample_dir) { output.dir = branch.outdir }
-
-	// Assumes that the Blast output is input1 and interpro is input2 - BAD IDEA...
-
-	// produce(branch.sample+"_blast2go.annot") {
-	// 	exec "java -Xmx20G -cp ${B2G4PIPEPATH}/*:${B2G4PIPEPATH}/ext/* es.blast2go.prog.B2GAnnotPipe -in $input1 -out $output.prefix -prop ${B2G4PIPEPATH}/b2gPipe.properties -ips $input2 -annot"
-	// }
-
-}
-
-
-process blast2go2gff {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	$B2GOGFF_SCRIPT --gff $input.gff --b2go $input > $output
-	"""
-
-	// var sample_dir : false
-	//
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// doc title: "Updates a GFF file with meta data from Blast2Go"
-
-	requires B2GOGFF_SCRIPT : "Specify the full path to the b2gogff script"
-
-	// if (branch.sample_dir) { output.dir = branch.outdir }
-	//
-	// produce(gff_file_with_ids.prefix+".description.gff") {
-	// 	exec "$B2GOGFF_SCRIPT --gff $input.gff --b2go $input > $output"
-	// }
 
 }
 
@@ -443,6 +52,7 @@ process blast_makeblastdb {
 
 	input:
 	path input
+	val dbtype // "prot"
 
 	output:
 	path output
@@ -452,399 +62,38 @@ process blast_makeblastdb {
 	makeblastdb -in $input -dbtype $dbtype
 	"""
 
-	// doc about: "Transforms a sequence file into a blast+ database",
-	// description: "Runs makeblastdb to generate a blast database",
-	// constraints: "Assumes protein input unless specified otherwise (dbtype)",
-	// author: "marc.hoeppner@bils.se"
-
-	var dbtype : "prot"
-
-	// requires here
-
-	// Running a command
-	// produce(input + ".phr") {
-	// 	exec "makeblastdb -in $input -dbtype $dbtype"
-	// }
-	//
-	// forward input
-
 }
 
 process blast_recursive {
 
 	input:
-	path input
+	path fasta_file
+	path dbpath
+	val outfmt // 5
 
 	output:
 	path output
 
 	script:
 	"""
-	blastp -query $input -db $input -num_threads $threads -outfmt $blast_outfmt -out $output
+	blastp -query $fasta_file -db $db_path -num_threads ${task.cpus} -outfmt $outfmt -out $output
 	"""
 
-	// doc about: "A model to blast a sequence file against a db of itself",
-	// description: "Takes a sequence file and blasts it against a database of the same name (recursive)",
-	// constraints: "Expects a blast database to exist for the input file and in the same location",
-	// author: "marc.hoeppner@bils.se"
-	//
-	var directory : "blast_recursive"
-	// var blast_prog : "blastp"
-	var blast_outfmt : "5"
-
-	// if (branch.sample_dir) {
-	// 	output.dir = (directory.length() > 0) ? branch.outdir + "/" + directory : branch.outdir
-	// 	} else {
-	// 		if (directory.length() > 0) {
-	// 			output.dir = directory
-	// 		}
-	// 	}
-
-	// requires here
-
-	// Running a command
-
-	// exec "$blast_prog -query $input -db $input -num_threads $threads -outfmt $blast_outfmt -out $output"
-	//
-	// branch.blastfile = output
 }
 
 process bowtie2_index {
 
 	input:
-	path input
+	tuple species_id, path(genome)
 
 	output:
-	path output
+	path '*.bt2'
 
 	script:
 	"""
-	bowtie2-build $input $output.prefix.prefix >/dev/null
+	bowtie2-build $genome $species_id
 	"""
 
-	// doc about: "A pipeline to generate a bowtie2 index from a genome sequence",
-	// description: "Takes a genome sequence in fasta format and generates a bowtie2 index",
-	// author: "marc.hoeppner@bils.se"
-
-	var directory : "bowtie-index"
-
-	// if (branch.sample_dir) {
-	// 	output.dir = (directory.length() > 0) ? branch.outdir + "/" + directory : branch.outdir
-	// 	} else {
-	// 		if (directory.length() > 0) {
-	// 			output.dir = directory
-	// 		}
-	// 	}
-
-		// requires here
-
-	// produce(input.prefix + ".1.bt2") {
-	// 	exec "bowtie2-build $input $output.prefix.prefix >/dev/null"
-	// }
-	//
-	// forward input
-
-}
-
-@transform("sai")
-
-process alignBWA {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	bwa aln $options -t $threads $BWA_INDEX $input.gz > $output.sai
-	"""
-
-	// doc "Aligns using BWA. Note: assumes input file are gzipped"
-
-	// var sample_dir : false
-	// Exposed variables with defaults
-	var bwa_l : 32 // seed length
-	var bwa_k : 2 // max differences in seed
-
-	options = "-l $bwa_l -k $bwa_k"
-
-	// if (branch.sample_dir) { sample_dir = true }
-
-	// if (branch.outdir) {
-	// 	output.dir = branch.outdir + "/align"
-	// 	} else {
-	// 		output.dir="align"
-	// 	}
-
-	// requires BWA : "Must provide path to bwa (BWA)"
-	requires REF : "Must provide PATH to reference (REF)"
-
-	// exec "$BWA aln $options -t $threads $BWA_INDEX $input.gz > $output.sai"
-}
-
-@transform("sam")
-
-process alignToSamPE {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	bwa sampe $REF -r "@RG\\tID:1\\tPL:$PLATFORM\\tPU:${branch.lane}\\tSM:${branch.sample}" \
-		$input1.sai $input2.sai $input2.gz $input2.gz > $output.sam
-	"""
-
-	// doc "Create SAM files from BWA alignment. Note that these will be very large."
-
-	// var sample_dir : false
-	//
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (branch.outdir) {
-	// 	output.dir = branch.outdir + "/align"
-	// 	} else {
-	// 		output.dir="align"
-	// 	}
-
-	// requires BWA : "Must provide path to bwa (BWA)"
-	requires PLATFORM : "Must specify a sequencing platform (PLATFORM)"
-
-	// branch.lane = (input.sai =~ /.*L([0-9]*)_*R.*/)[0][1].toInteger()
-	// branch.sample = branch.name
-	//
-	// exec
-	// """
-	// $BWA sampe $REF -r "@RG\\tID:1\\tPL:$PLATFORM\\tPU:${branch.lane}\\tSM:${branch.sample}"  $input1.sai $input2.sai $input2.gz $input2.gz > $output.sam
-	// """
-}
-
-process cds2protein {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	transeq -sequence $input -outseq $output -clean -trim
-	"""
-
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// doc "Converts cDNA sequences to protein"
-	//
-	// if (sample_dir) { output.dir = branch.name }
-
-	// filter("protein") {
-	// 	exec "transeq -sequence $input -outseq $output -clean -trim"
-	// 	//exec "$BPIPE_BIN/cds2protein.pl --infile $input --outfile $output 2>/dev/null"
-	// }
-}
-
-process cegma {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	cegma -T $threads -g $input -o $output.dir/cegma
-	"""
-
-	// doc about: "A wrapper around the Cegma package",
-	// description: "Cegma checks the expected gene space coverage of an assembly",
-	// constraints: "Requires the Cegma package",
-	// author: "marc.hoeppner@bils.se"
-	//
-	// var directory : "cegma"
-	//
-	// if (branch.sample_dir) {
-	// 	output.dir = (directory.length() > 0) ? branch.outdir + "/" + directory : branch.outdir
-	// 	} else {
-	// 		if (directory.length() > 0) {
-	// 			output.dir = directory
-	// 		}
-	// 	}
-	//
-	// 	// requires here
-	//
-	// 	// Running a command
-
-	// produce("cegma.completeness_report") {
-	// 	uses(threads:16) {
-	// 		exec "cegma -T $threads -g $input -o $output.dir/cegma"
-	// 	}
-	// }
-
-}
-
-process cmsearch {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	cmsearch --cpu $threads --rfam --cut_tc --tblout $output $db $input >/dev/nulls
-	"""
-
-	// doc about: "Module to run Infernal's cmsearch algorithm",
-	// description: "Cmsearch identifies putative non-coding RNAs in nucleotide sequences",
-	// author: "marc.hoeppner@bils.se"
-
-	// var threads : 1
-	// var db : "/projects/references/databases/rfam/11.0/models_1_1/E_plus.cm"
-	// var directory : "rfam"
-
-	// if (branch.sample_dir) {
-	// 	output.dir = (directory.length() > 0) ? branch.outdir + "/" + directory : branch.outdir
-	// 	} else {
-	// 		if (directory.length() > 0) {
-	// 			output.dir = directory
-	// 		}
-	// 	}
-	//
-	// requires here
-
-	exec "cmsearch --cpu $threads --rfam --cut_tc --tblout $output $db $input >/dev/null"
-}
-
-process cufflinks {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	cufflinks --library-type=$LIBRARY_METHOD -L ${branch.sample} -o $output.dir -p $threads -u -b $GENOME_FA $options $input 2> $output.log
-	"""
-
-	// doc title: "Build transcripts from aligned reads using cufflinks",
-	// desc: """
-	// Reconstructs transcripts from aligned RNA-seq reads in BAM format.
-	//
-	// Input:
-	// A read alignment in BAM format
-	//
-	// Output:
-	// transcripts.gtf
-	//
-	// Requires:
-	// GENOME_FA : Genome sequence in FASTA format
-	// CUFFLINKS : Path to the cufflinks binary
-	//
-	// Stage options:
-	// sample_dir : true or false, determines whether output will be written to
-	// a sample-specific subfolder (true) or not (false)
-	// j : set the isoform fraction cut-off
-	// F : set the intra-splice-junction read cut-off
-	// """,
-	// author: "marc.hoeppner@bils.se"
-
-	// var sample_dir : false
-	// var cufflinks_j : "0.15"
-	// var cufflinks_F : "0.10"
-	// var cufflinks_g : false
-	// var cufflinks_min_intron_length : "50"
-	// var cufflinks_I : "300000"
-	// var GENOME_GTF : ""
-	// var LIBRARY_METHOD : "fr-unstranded"
-	//
-	// // requires CUFFLINKS : "Must provide path to cufflinks (CUFFLINKS)"
-	// requires GENOME_FA : "Please set the GENOME_FA variable"
-	//
-	// def options
-	//
-	// // Checking which variables are set and build options string
-	// if (cufflinks_g && GENOME_GTF.length() > 0) {
-	// 	options = "-j $cufflinks_j -F $cufflinks_F -g"
-	// } else {
-	// 	options = "-j $cufflinks_j -F $cufflinks_F"
-	// }
-	//
-	// // Check if an annotation file is passed and modify options if so
-	// if (GENOME_GTF.length() > 0) {
-	// 	options += " -G $GENOME_GTF"
-	// }
-	//
-	// branch.assembly_method = "j" + cufflinks_j + "_F" + cufflinks_F
-	//
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (sample_dir) {
-	// 	output.dir = branch.outdir + "/cufflinks/" + assembly_method
-	// } else {
-	// 	output.dir = "cufflinks/" + branch.sample + "_" + assembly_method
-	// }
-	//
-	// // The file to pass on is generally 'transcripts.gtf' - we use it as output.
-	//
-	// produce("transcripts.gtf") {
-	// 	uses(threads:16) {
-	// 		exec "$CUFFLINKS --library-type=$LIBRARY_METHOD -L ${branch.sample} -o $output.dir -p $threads -u -b $GENOME_FA $options $input 2> $output"+".log","cufflinks"
-	// 	}
-	// }
-
-}
-
-process emboss_cpgplot {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	cpgplot -sequence $input -outfeat $output -outfile $output.out \
-		-window $cpgisland_window -minlen $cpgisland_minlen -minoe $cpgisland_minoe \
-		-minpc $cpgisland_minpc -noplot -nocg
-	"""
-
-	// doc about: "A module to run Emboss' cpgplot tool",
-	// description: "cpgplot predicts cpg islands in genomic sequences",
-	// constraints: "Should only be used for vertebrate genomes",
-	// author: "marc.hoeppner@bils.se"
-
-	// var cpgisland_window : 100
-	// var cpgisland_minlen : 200
-	// var cpgisland_minoe : 0.6
-	// var cpgisland_minpc : 50.0
-	//
-	// var directory : "cpgplot"
-	//
-	// if (branch.sample_dir) {
-	// 	output.dir = (directory.length() > 0) ? branch.outdir + "/" + directory : branch.outdir
-	// 	} else {
-	// 		if (directory.length() > 0) {
-	// 			output.dir = directory
-	// 		}
-	// 	}
-	//
-	// 	// requires here
-	//
-	// 	produce($input+".cpg.gff") {
-	// 		exec "cpgplot -sequence $input -outfeat $output -outfile $output" + ".out -window $cpgisland_window -minlen $cpgisland_minlen -minoe $cpgisland_minoe -minpc $cpgisland_minpc -noplot -nocg"
-	// 	}
 }
 
 process fasta_explode {
@@ -860,72 +109,28 @@ process fasta_explode {
 	fastaexplode -d $output.dir -f $input 2> $output
 	"""
 
-	// doc about: "Explodes a fasta file into its individual sequences",
-	// description: "Creates one file per sequence in the input FASTA file",
-	// constraints: "Requires exonerate to be loaded",
-	// author: "marc.hoeppner@bils.se"
-	//
-	// var directory : "sequences"
-	//
-	// if (branch.sample_dir) {
-	// 	output.dir = (directory.length() > 0) ? branch.outdir + "/" + directory : branch.outdir
-	// 	} else {
-	// 		if (directory.length() > 0) {
-	// 			output.dir = directory
-	// 		}
-	// 	}
-
-	// requires here
-
-	// Running a command
-
-	// Doesn't produce a pre-definable output, so we use a log file as dummy target
-	// produce("fastaexplode.log") {
-	// 	exec "fastaexplode -d $output.dir -f $input 2> $output"
-	// }
-	//
-	// forward input
 }
 
 process fasta_filter_size {
 
 	input:
-	path input
+	path fasta_file
+	val min_length
 
 	output:
-	path output
+	path 'filtered.fasta'
 
 	script:
 	"""
-	fasta_filter_size.rb -i $input -s $size -o $output
+	# fasta_filter_size.rb -i $fasta_file -s $min_length -o $output
+	seqtk seq -A $fasta_file -L $min_length > filtered.fasta
 	"""
-
-	// doc about: "Parses a FASTA file and removes sequences smaller than the cutoff",
-	// description: "Filters fasta file by size",
-	// constraints: "Requires bioruby to be installed",
-	// author: "marc.hoeppner@bils.se"
-	//
-	// var size : 1000
-	// var directory : ""
-
-	// requires here
-
-	// Defining output directory
-	// if (branch.sample_dir) {
-	// 	output.dir = (directory.length() > 0) ? branch.outdir + "/" + directory : branch.outdir
-	// } else {
-	// 	if (directory.length() > 0) {
-	// 		output.dir = directory
-	// 	}
-	// }
-
-	// filter("filtered") {
-	// 	exec "$BPIPE_BIN/fasta_filter_size.rb -i $input -s $size -o $output"
-	// }
 
 }
 
 process fastasplit {
+
+	// REPLACE with channel operator
 
 	input:
 	path input
@@ -938,441 +143,32 @@ process fastasplit {
 	fastasplit -f $input -o ${output.dir} -c $CHUNKS
 	"""
 
-	// doc title: "Splits a FASTA file into chunks, using the CHUNKS variable",
-	// desc: """
-	// Splits a fasta-formatted file into chunks of similar
-	// size using the exonerate tool fastasplit.
-	//
-	// Input:
-	// A fasta-formatted sequence file
-	//
-	// Requires:
-	// CHUNKS : defines the number of chunks to split into.
-	//
-	// """,
-	//
-	// constraints: """
-	// The number of chunks should be chosen so that at least
-	// 10 sequences are included in each chunk - else the splitting
-	// may fail.
-	// """,
-	// author: "marc.hoeppner@bils.se"
-	//
-	// requires CHUNKS : "Must set variable CHUNKS"
-	//
-	// if (branch.sample_dir) { output.dir = branch.outdir }
-	//
-	// def chunkfiles = []
-	//
-	// for ( value in (0..(CHUNKS.toInteger()-1)) ) {
-	// if (value < 10) {
-	// 	chunkfiles.push(input+"_chunk_000000${value}")
-	// } else if (value < 100) {
-	// 	chunkfiles.push(input+"_chunk_00000${value}")
-	// } else if (value < 1000) {
-	// 	chunkfiles.push(input+"_chunk_0000${value}")
-	// 	} else {
-	// 		chunkfiles.push(input+"_chunk_000${value}")
-	// 	}
-	// }
-
-	//  def chunkfiles = (0..(CHUNKS.toInteger()-1)).collect{ input+"_chunk_000000${it}" }
-
-	// produce(chunkfiles) {
-	// 	exec "fastasplit -f $input -o ${output.dir} -c $CHUNKS"
-	// }
-
 }
 
 process fastqc {
 
+	tag "FASTQC on $sample_id"
+    publishDir params.outdir
+
 	input:
-	path input
+	tuple sample_id, path(reads)
 
 	output:
-	path output
+	path "fastqc_${sample_id}_logs"
 
 	script:
 	"""
-	fastqc --outdir=${output.dir} $input
+	mkdir fastqc_${sample_id}_logs
+	fastqc -o fastqc_${sample_id}_logs -f fastq -q ${reads}
 	"""
 
-	// doc title: "Quality control of read data using FastQC",
-	//
-	// desc: """
-	// FastQC is a light-weight java tool that analyses RNAseq
-	// read data and reports statistics on the sequencing quality.
-	// """,
-	//
-	// constraints: "Requires one (single-end) or two (paired-end) gzipped fastq files",
-	//
-	// author: "marc.hoeppner@bils.se"
-	//
-	// var sample_dir : false // Write output to a sample-specific directory
-	// var paired : true // input data is paired
-	//
-	// requires FASTQC : "Must provide path to fastqc (FASTQC)"
-	//
-	// input_extension = ".gz"
-	//
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (sample_dir) {
-	// 	output.dir = branch.outdir + "/fastqc"
-	// } else {
-	// 	output.dir = "fastqc"
-	// }
-	//
-	// def products
-
-	// if (paired) {
-	// 	products = [
-	// 	("$input1".replaceAll(/.*\//,"") - input_extension + '_fastqc.html'),
-	// 	("$input2".replaceAll(/.*\//,"") - input_extension + '_fastqc.html')
-	// 	]
-	// 	} else {
-	// 		products = [
-	// 		("$input".replaceAll(/.*\//,"") - input_extension + '_fastqc.html')
-	// 		]
-	// 	}
-	//
-	// if (paired) {
-	// 	produce(products) {
-	// 		multi "fastqc --outdir=${output.dir} $input1","fastqc --outdir=${output.dir} $input2"
-	// 	}
-	// 	} else {
-	// 		produce(products) {
-	// 			exec "fastqc --outdir=${output.dir} $input"
-	// 		}
-	// 	}
-}
-
-process realignIntervals {
-
-	// Hard-coded to take 2 known indels files right now
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	java -Xmx4g -jar $GATK/GenomeAnalysisTK.jar -T RealignerTargetCreator -R $REF -I $input.bam \
-		--known $GOLD_STANDARD_INDELS --known $INDELS_100G -log $LOG -o $output.intervals
-	"""
-
-	// doc "Identify realign intervals with GATK"
-	//
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (branch.outdir) {
-	// 	output.dir = branch.outdir + "/align"
-	// } else {
-	// 	output.dir="align"
-	// }
-	//
-	// requires GATK : "Must provide a path to GATK (GATK)"
-	// requires REF : "Must provide a path to reference (REF)"
-	// requires GOLD_STANDARD_INDELS : "Must provide a path to gold standard indels (GOLD_STANDARD_INDELS)"
-	// requires INDELS_100G : "Must provide a path to indels 100G (INDELS_100G)"
-	// requires LOG : "Must provide a location for log file (LOG)"
-	//
-	// exec """
-	// java -Xmx4g -jar $GATK/GenomeAnalysisTK.jar -T RealignerTargetCreator -R $REF -I $input.bam --known $GOLD_STANDARD_INDELS --known $INDELS_100G -log $LOG -o $output.intervals
-	// """
-}
-
-process realign {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	java -Xmx8g -jar $GATK/GenomeAnalysisTK.jar -T IndelRealigner -R $REF -I $input.bam -targetIntervals $input.intervals -log $LOG -o $output.bam
-	"""
-
-	// doc "Realign indels with GATK"
-	//
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (branch.outdir) {
-	// 	output.dir = branch.outdir + "/align"
-	// } else {
-	// 	output.dir="align"
-	// }
-	//
-	// requires GATK : "Must provide a path to GATK (GATK)"
-	// requires REF : "Must provide a path to reference (REF)"
-	// requires LOG : "Must provide a location for log file (LOG)"
-	//
-	// exec """
-	// java -Xmx8g -jar $GATK/GenomeAnalysisTK.jar -T IndelRealigner -R $REF -I $input.bam -targetIntervals $input.intervals -log $LOG -o $output.bam
-	// """
-}
-
-
-process baseQualRecalCount {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	java -Xmx12g -jar $GATK/GenomeAnalysisTK.jar -T BaseRecalibrator -I $input.bam -R $REF --knownSites $DBSNP -l INFO -cov ReadGroupCovariate -cov QualityScoreCovariate -cov CycleCovariate -cov ContextCovariate -log $LOG -o $output.counts
-	"""
-
-	// doc "Recalibrate base qualities in a BAM file so that quality metrics match actual observed error rates"
-	//
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (branch.outdir) {
-	// 	output.dir = branch.outdir + "/align"
-	// } else {
-	// 	output.dir="align"
-	// }
-	//
-	// requires GATK : "Must provide a path to GATK (GATK)"
-	// requires REF : "Must provide a path to reference (REF)"
-	// requires LOG : "Must provide a location for log file (LOG)"
-	// requires DBSNP : "Must provide a path to known SNP DB (DBSNP)"
-	//
-	// exec "java -Xmx12g -jar $GATK/GenomeAnalysisTK.jar -T BaseRecalibrator -I $input.bam -R $REF --knownSites $DBSNP -l INFO -cov ReadGroupCovariate -cov QualityScoreCovariate -cov CycleCovariate -cov ContextCovariate -log $LOG -o $output.counts"
-}
-
-process baseQualRecalTabulate {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	java -Xmx4g -jar $GATK/GenomeAnalysisTK.jar -T PrintReads -I $input.bam -BQSR $input.counts -R $REF -l INFO -log $LOG -o $output
-	"""
-
-	// doc "Recalibrate base qualities in a BAM file so that quality metrics match actual observed error rates"
-	//
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (branch.outdir) {
-	// 	output.dir = branch.outdir + "/align"
-	// } else {
-	// 	output.dir="align"
-	// }
-	//
-	// requires GATK : "Must provide a path to GATK (GATK)"
-	// requires REF : "Must provide a path to reference (REF)"
-	// requires LOG : "Must provide a location for log file (LOG)"
-	//
-	// exec "java -Xmx4g -jar $GATK/GenomeAnalysisTK.jar -T PrintReads -I $input.bam -BQSR $input.counts -R $REF -l INFO -log $LOG -o $output"
-}
-
-process callSNPs {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	java -Xmx12g -jar $GATK/GenomeAnalysisTK.jar -T UnifiedGenotyper \
-	-nt $threads -R $REF -I $input.bam --dbsnp $DBSNP \
-	-stand_call_conf 50.0 -stand_emit_conf 10.0 \
-	-dcov 1600 -l INFO -A AlleleBalance -A DepthOfCoverage -A FisherStrand \
-	-glm SNP -log $LOG -o $output.vcf
-	"""
-
-	// doc "Call SNPs/SNVs using GATK Unified Genotyper"
-	//
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (branch.outdir) {
-	// 	output.dir = branch.outdir + "/variants"
-	// } else {
-	// 	output.dir="variants"
-	// }
-	//
-	// requires GATK : "Must provide a path to GATK (GATK)"
-	// requires REF : "Must provide a path to reference (REF)"
-	// requires LOG : "Must provide a location for log file (LOG)"
-	// requires DBSNP : "Must provide path to refence SNP DB (DBSNP)"
-	//
-	// exec """
-	// java -Xmx12g -jar $GATK/GenomeAnalysisTK.jar -T UnifiedGenotyper
-	// -nt $threads
-	// -R $REF
-	// -I $input.bam
-	// --dbsnp $DBSNP
-	// -stand_call_conf 50.0 -stand_emit_conf 10.0
-	// -dcov 1600
-	// -l INFO
-	// -A AlleleBalance -A DepthOfCoverage -A FisherStrand
-	// -glm SNP -log $LOG
-	// -o $output.vcf
-	// """
-}
-
-process callIndels {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	java -Xmx12g -jar $GATK/GenomeAnalysisTK.jar -T UnifiedGenotyper -nt $threads \
-	-R $REF -I $input.bam --dbsnp $DBSNP -stand_call_conf 50.0 -stand_emit_conf 10.0 \
-	-dcov 1600  -l INFO -A AlleleBalance -A DepthOfCoverage -A FisherStrand -glm INDEL \
-	-log $LOG -o $output.vcf
-	"""
-
-	// doc "Call variants using GATK Unified Genotyper"
-	//
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (branch.outdir) {
-	// 	output.dir = branch.outdir + "/variants"
-	// } else {
-	// 	output.dir="variants"
-	// }
-	//
-	// requires GATK : "Must provide a path to GATK (GATK)"
-	// requires REF : "Must provide a path to reference (REF)"
-	// requires LOG : "Must provide a location for log file (LOG)"
-	// requires DBSNP : "Must provide path to refence SNP DB (DBSNP)"
-
-	// exec """
-	// java -Xmx12g -jar $GATK/GenomeAnalysisTK.jar -T UnifiedGenotyper
-	// -nt $threads
-	// -R $REF
-	// -I $input.bam
-	// --dbsnp $DBSNP
-	// -stand_call_conf 50.0 -stand_emit_conf 10.0
-	// -dcov 1600
-	// -l INFO
-	// -A AlleleBalance -A DepthOfCoverage -A FisherStrand
-	// -glm INDEL
-	// -log $LOG -o $output.vcf
-	// """
-}
-
-@filter("filter")
-
-process filterSNPs {
-	// Very minimal hard filters based on GATK recommendations. VQSR is preferable if possible.
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	java -Xmx4g -jar $GATK/GenomeAnalysisTK.jar -T VariantFiltration \
-	-R $REF \
-	--filterExpression 'QD < 2.0 || MQ < 40.0 || FS > 60.0 || HaplotypeScore > 13.0 || MQRankSum < -12.5 || ReadPosRankSum < -8.0' \
-	--filterName 'GATK_MINIMAL_FILTER' \
-	--variant $input.vcf \
-	-log $LOG \
-	-o $output.vcf \
-	"""
-
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (branch.outdir) {
-	// 	output.dir = branch.outdir + "/variants"
-	// } else {
-	// 	output.dir="variants"
-	// }
-	//
-	// requires GATK : "Must provide a path to GATK (GATK)"
-	// requires LOG : "Must provide a location for log file (LOG)"
-
-	// exec """
-	// java -Xmx4g -jar $GATK/GenomeAnalysisTK.jar -T VariantFiltration
-	// -R $REF
-	// --filterExpression 'QD < 2.0 || MQ < 40.0 || FS > 60.0 || HaplotypeScore > 13.0 || MQRankSum < -12.5 || ReadPosRankSum < -8.0'
-	// --filterName 'GATK_MINIMAL_FILTER'
-	// --variant $input.vcf
-	// -log $LOG
-	// -o $output.vcf
-	// """
-}
-
-@filter("filter")
-
-process filterIndels {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	java -Xmx4g -jar $GATK/GenomeAnalysisTK.jar -T VariantFiltration \
-	-R $REF \
-	--filterExpression 'QD < 2.0 || ReadPosRankSum < -20.0 || FS > 200.0' \
-	--filterName 'GATK_MINIMAL_FILTER' -log $LOG \
-	--variant $input.vcf \
-	-o $output.vcf \
-	"""
-
-	// doc """
-	// Filter data using very minimal hard filters based on GATK recommendations. VQSR is preferable if possible.
-	// If you have 10 or more samples GATK also recommends the filter InbreedingCoeff < -0.8
-	// """
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// if (branch.outdir) {
-	// 	output.dir = branch.outdir + "/variants"
-	// } else {
-	// 	output.dir="variants"
-	// }
-
-	// requires GATK : "Must provide a path to GATK (GATK)"
-	// requires REF : "Must provide a path to reference (REF)"
-	// requires LOG : "Must provide a location for log file (LOG)"
-
-	// exec """
-	// java -Xmx4g -jar $GATK/GenomeAnalysisTK.jar -T VariantFiltration
-	// -R $REF
-	// --filterExpression 'QD < 2.0 || ReadPosRankSum < -20.0 || FS > 200.0'
-	// --filterName 'GATK_MINIMAL_FILTER' -log $LOG
-	// --variant $input.vcf
-	// -o $output.vcf
-	// """
 }
 
 process gbk2augustus {
 
 	input:
 	path input
+	val test_size // 100
 
 	output:
 	path output
@@ -1382,206 +178,23 @@ process gbk2augustus {
 	randomSplit.pl $input $test_size
 	"""
 
-	// doc about: "A generic module that needs a description",
-	// description: "Description here",
-	// constraints: "Information on constraints here",
-	// author: "marc.hoeppner@bils.se"
-	//
-	// var test_size : 100
-
-	// requires here
-
-	// Running a command
-	// produce(input+".train") {
-	// 	exec "randomSplit.pl $input $test_size"
-	// }
-
-}
-
-process genome_sanity_check {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	"""
-
-	// doc about: "A module to analyse and produce statistics for a genome assembly",
-	// description: "Verifies the integrity of a genome assembly for annotation",
-	// author: "marc.hoeppner@bils.se"
-	//
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = branch.sample_dir }
-	//
-	// // Defining output directory
-	// if (sample_dir) {
-	// 	output.dir = branch.outdir
-	// }
-	//
-	// exec "..."
-
-	// forward input
-}
-
-process genome_tools_gff_sort {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	$GENOME_TOOLS gff3 -sort $input > $output 2>/dev/null
-	"""
-
-	// doc about: "A module to sort a GFF3-formatted annotation by coordinates using GenomeTools",
-	//
-	// author: "marc.hoeppner@bils.se"
-
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir true }
-	//
-	// requires GENOME_TOOLS : "Must provide path to genometools (GENOMETOOLS)"
-	//
-	// if (sample_dir) { output.dir = branch.outdir }
-	//
-	// filter("sorted") {
-	// 	exec "$GENOME_TOOLS gff3 -sort $input > $output 2>/dev/null"
-	// }
-
-}
-
-process genome_tools_gff_stats {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	gt stat $input > $output 2>/dev/null
-	"""
-
-	// doc title: "Generate statistics from a gff3 file using the genometools package",
-	//
-	// desc: "Genometools compiles feature counts from a gff3-formatted annotation file",
-	//
-	// author: "marc.hoeppner@bils.se"
-
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// requires GENOME_TOOLS : "Must provide path to genometools (GENOME_TOOLS)"
-	//
-	// if (sample_dir) {
-	// 	output.dir = branch.outdir
-	// }
-
-	// transform(".gff") to (".gtcounts") {
-	// 	exec "gt stat $input > $output 2>/dev/null"
-	// }
-
-}
-
-process genome_tools_gff_to_gtf {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	$GENOME_TOOLS gff3_to_gtf -o $output -force $input 2>/dev/null
-	"""
-
-	// doc about: "A module to convert a GFF3 file to GTF using genometools",
-	// author: "marc.hoeppner@bils.se"
-	//
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// requires GENOME_TOOLS : "Must provide path to genometools (GENOME_TOOLS)"
-	//
-	// if (sample_dir) { output.dir = branch.outdir }
-
-	// transform(".gff") to (".gtf") {
-	// 	exec "$GENOME_TOOLS gff3_to_gtf -o $output -force $input 2>/dev/null"
-	// }
-}
-
-process gff2cds {
-
-	input:
-	path input
-
-	output:
-	path output
-
-	script:
-	"""
-	gffread -x $output -g $GENOME_FA $input
-	"""
-
-	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
-	//
-	// doc "Extracts cDNA sequences from the annotation/genome"
-	//
-	// requires GENOME_FA : "Must set variable GENOME_FA"
-	//
-	// if (sample_dir) {
-	// 	output.dir = branch.outdir
-	// }
-
-	// transform(".gff") to (".cds.fa") {
-	// 	exec "gffread -x $output -g $GENOME_FA $input"
-	// }
 }
 
 process gff2gbk {
 
 	input:
-	path input
+	path gff_file
+	path genome
+	val flank_region_size // 1000
 
 	output:
 	path output
 
 	script:
 	"""
-	gff2gbSmallDNA.pl $input $GENOME_FA $flank $output
+	gff2gbSmallDNA.pl $gff_file $genome $flank_region_size $output
 	"""
 
-	// doc "Converts a GFF3 formatted file into GenBank format"
-	//
-	// var directory : "gff2genbank"
-	// var flank : 1000
-	//
-	// if (branch.sample_dir) {
-	// 	output.dir = (directory.length() > 0) ? branch.outdir + "/" + directory : branch.outdir
-	// } else {
-	// 	if (directory.length() > 0) {
-	// 		output.dir = directory
-	// 	}
-	// }
-
-	// requires here
-	// requires GENOME_FA : "Must provide a genome sequence in fasta format (GENOME_FA)"
-
-	// Running a command
-
-	// transform("gbk") {
-	// 	exec "gff2gbSmallDNA.pl $input $GENOME_FA $flank $output"
-	// }
 }
 
 process gff2protein {
@@ -1594,7 +207,7 @@ process gff2protein {
 
 	script:
 	"""
-	$BPIPE_BIN/gff3_sp_extract_sequences.pl -o $input.prefix.tmp \
+	gff3_sp_extract_sequences.pl -o $input.prefix.tmp \
 		-f $GENOME_FA -p -cfs -cis -ct $CODON_TABLE --gff $input && \
 		$BPIPE_BIN/fix_fasta.rb $input.prefix.tmp.fa > $output && \
 		rm $input.prefix.tmp.fa
