@@ -18,7 +18,7 @@ process annie_interpro = {
 	// author: "marc.hoeppner@bils.se"
 	//
 	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = branch.sample_dir }
+	// if (branch.sample_dir) { sample_dir branch.sample_dir }
 	//
 	// // requires here
 	// requires ANNIE_ROOT : "Must provide path to Annie installation folder (ANNIE_ROOT)"
@@ -32,7 +32,7 @@ process annie_interpro = {
 
 }
 
-process assembly_generate_stats = {
+process assembly_generate_stats {
 
 	input:
 	file input
@@ -66,7 +66,7 @@ process assembly_generate_stats = {
 	// }
 }
 
-process assembly_remove_mitochondria = {
+process assembly_remove_mitochondria {
 
 	input:
 	path input
@@ -102,7 +102,7 @@ process assembly_remove_mitochondria = {
 
 }
 
-process gbk2training = {
+process gbk2training {
 
 	input:
 	path input
@@ -140,7 +140,7 @@ process gbk2training = {
 
 }
 
-process bayesembler = {
+process bayesembler {
 
 	input:
 	path input
@@ -181,7 +181,7 @@ process bayesembler = {
 
 }
 
-process blast = {
+process blast {
 
 	input:
 	path input
@@ -222,7 +222,7 @@ process blast = {
 	// }
 }
 
-process blastp = {
+process blastp {
 
 	input:
 	path input
@@ -262,7 +262,7 @@ process blastp = {
 	// }
 }
 
-process recursive_blastp = {
+process recursive_blastp {
 
 	input:
 	path input
@@ -293,7 +293,7 @@ process recursive_blastp = {
 	// exec "$BLASTP -db $input -query $input.fa -outfmt 5 -num_threads $threads $evalue -out $output"
 }
 
-process protein2blast_db = {
+process protein2blast_db {
 
 	input:
 	path input
@@ -324,7 +324,7 @@ process protein2blast_db = {
 
 recursive_protein2blastp = segment { protein2blast_db + recursive_blastp }
 
-process merge_blast_xml = {
+process merge_blast_xml {
 
 	input:
 	path input
@@ -352,7 +352,7 @@ process merge_blast_xml = {
 
 }
 
-process merge_blast_tab = {
+process merge_blast_tab {
 
 	input:
 	path input
@@ -380,7 +380,7 @@ process merge_blast_tab = {
 
 }
 
-process run_blast2go = {
+process run_blast2go {
 
 	input:
 	path input
@@ -410,7 +410,7 @@ process run_blast2go = {
 }
 
 
-process blast2go2gff = {
+process blast2go2gff {
 
 	input:
 	path input
@@ -439,7 +439,7 @@ process blast2go2gff = {
 
 }
 
-process blast_makeblastdb = {
+process blast_makeblastdb {
 
 	input:
 	path input
@@ -470,7 +470,7 @@ process blast_makeblastdb = {
 
 }
 
-process blast_recursive = {
+process blast_recursive {
 
 	input:
 	path input
@@ -509,7 +509,7 @@ process blast_recursive = {
 	// branch.blastfile = output
 }
 
-process bowtie2_index = {
+process bowtie2_index {
 
 	input:
 	path input
@@ -548,7 +548,7 @@ process bowtie2_index = {
 
 @transform("sai")
 
-process alignBWA = {
+process alignBWA {
 
 	input:
 	path input
@@ -586,7 +586,7 @@ process alignBWA = {
 
 @transform("sam")
 
-process alignToSamPE = {
+process alignToSamPE {
 
 	input:
 	path input
@@ -624,7 +624,7 @@ process alignToSamPE = {
 	// """
 }
 
-process cds2protein = {
+process cds2protein {
 
 	input:
 	path input
@@ -650,7 +650,7 @@ process cds2protein = {
 	// }
 }
 
-process cegma = {
+process cegma {
 
 	input:
 	path input
@@ -690,7 +690,7 @@ process cegma = {
 
 }
 
-process cmsearch = {
+process cmsearch {
 
 	input:
 	path input
@@ -724,7 +724,7 @@ process cmsearch = {
 	exec "cmsearch --cpu $threads --rfam --cut_tc --tblout $output $db $input >/dev/null"
 }
 
-process cufflinks = {
+process cufflinks {
 
 	input:
 	path input
@@ -805,7 +805,7 @@ process cufflinks = {
 
 }
 
-process emboss_cpgplot = {
+process emboss_cpgplot {
 
 	input:
 	path input
@@ -847,7 +847,7 @@ process emboss_cpgplot = {
 	// 	}
 }
 
-process fasta_explode = {
+process fasta_explode {
 
 	input:
 	path input
@@ -887,7 +887,7 @@ process fasta_explode = {
 	// forward input
 }
 
-process fasta_filter_size = {
+process fasta_filter_size {
 
 	input:
 	path input
@@ -925,7 +925,7 @@ process fasta_filter_size = {
 
 }
 
-process fastasplit = {
+process fastasplit {
 
 	input:
 	path input
@@ -984,7 +984,7 @@ process fastasplit = {
 
 }
 
-process fastqc = {
+process fastqc {
 
 	input:
 	path input
@@ -1047,7 +1047,7 @@ process fastqc = {
 	// 	}
 }
 
-process realignIntervals = {
+process realignIntervals {
 
 	// Hard-coded to take 2 known indels files right now
 
@@ -1085,7 +1085,7 @@ process realignIntervals = {
 	// """
 }
 
-process realign = {
+process realign {
 
 	input:
 	path input
@@ -1119,7 +1119,7 @@ process realign = {
 }
 
 
-process baseQualRecalCount = {
+process baseQualRecalCount {
 
 	input:
 	path input
@@ -1151,7 +1151,7 @@ process baseQualRecalCount = {
 	// exec "java -Xmx12g -jar $GATK/GenomeAnalysisTK.jar -T BaseRecalibrator -I $input.bam -R $REF --knownSites $DBSNP -l INFO -cov ReadGroupCovariate -cov QualityScoreCovariate -cov CycleCovariate -cov ContextCovariate -log $LOG -o $output.counts"
 }
 
-process baseQualRecalTabulate = {
+process baseQualRecalTabulate {
 
 	input:
 	path input
@@ -1182,7 +1182,7 @@ process baseQualRecalTabulate = {
 	// exec "java -Xmx4g -jar $GATK/GenomeAnalysisTK.jar -T PrintReads -I $input.bam -BQSR $input.counts -R $REF -l INFO -log $LOG -o $output"
 }
 
-process callSNPs = {
+process callSNPs {
 
 	input:
 	path input
@@ -1230,7 +1230,7 @@ process callSNPs = {
 	// """
 }
 
-process callIndels = {
+process callIndels {
 
 	input:
 	path input
@@ -1279,7 +1279,7 @@ process callIndels = {
 
 @filter("filter")
 
-process filterSNPs = {
+process filterSNPs {
 	// Very minimal hard filters based on GATK recommendations. VQSR is preferable if possible.
 
 	input:
@@ -1324,7 +1324,7 @@ process filterSNPs = {
 
 @filter("filter")
 
-process filterIndels = {
+process filterIndels {
 
 	input:
 	path input
@@ -1369,7 +1369,7 @@ process filterIndels = {
 	// """
 }
 
-process gbk2augustus = {
+process gbk2augustus {
 
 	input:
 	path input
@@ -1398,7 +1398,7 @@ process gbk2augustus = {
 
 }
 
-process genome_sanity_check = {
+process genome_sanity_check {
 
 	input:
 	path input
@@ -1427,7 +1427,7 @@ process genome_sanity_check = {
 	// forward input
 }
 
-process genome_tools_gff_sort = {
+process genome_tools_gff_sort {
 
 	input:
 	path input
@@ -1445,7 +1445,7 @@ process genome_tools_gff_sort = {
 	// author: "marc.hoeppner@bils.se"
 
 	// var sample_dir : false
-	// if (branch.sample_dir) { sample_dir = true }
+	// if (branch.sample_dir) { sample_dir true }
 	//
 	// requires GENOME_TOOLS : "Must provide path to genometools (GENOMETOOLS)"
 	//
@@ -1457,7 +1457,7 @@ process genome_tools_gff_sort = {
 
 }
 
-process genome_tools_gff_stats = {
+process genome_tools_gff_stats {
 
 	input:
 	path input
@@ -1491,7 +1491,7 @@ process genome_tools_gff_stats = {
 
 }
 
-process genome_tools_gff_to_gtf = {
+process genome_tools_gff_to_gtf {
 
 	input:
 	path input
@@ -1519,7 +1519,7 @@ process genome_tools_gff_to_gtf = {
 	// }
 }
 
-process gff2cds = {
+process gff2cds {
 
 	input:
 	path input
@@ -1548,7 +1548,7 @@ process gff2cds = {
 	// }
 }
 
-process gff2gbk = {
+process gff2gbk {
 
 	input:
 	path input
@@ -1584,7 +1584,7 @@ process gff2gbk = {
 	// }
 }
 
-process gff2protein = {
+process gff2protein {
 
 	input:
 	path input
@@ -1625,7 +1625,7 @@ process gff2protein = {
 
 }
 
-process gff_annotation_stats = {
+process gff_annotation_stats {
 
 	input:
 	path input
@@ -1655,7 +1655,7 @@ process gff_annotation_stats = {
 
 }
 
-process gff_filter_by_blast = {
+process gff_filter_by_blast {
 
 	input:
 	path input
@@ -1697,7 +1697,7 @@ process gff_filter_by_blast = {
 	// }
 }
 
-process gff_filter_gene_models = {
+process gff_filter_gene_models {
 
 	input:
 	path input
@@ -1743,7 +1743,7 @@ process gff_filter_gene_models = {
 	// }
 }
 
-process gff_get_trna = {
+process gff_get_trna {
 
 	input:
 	path input
@@ -1771,7 +1771,7 @@ process gff_get_trna = {
 
 }
 
-process gff_longest_cds = {
+process gff_longest_cds {
 
 	input:
 	path input
@@ -1805,7 +1805,7 @@ process gff_longest_cds = {
 
 }
 
-process gff_stable_id = {
+process gff_stable_id {
 
 	input:
 	path input
@@ -1833,11 +1833,11 @@ process gff_stable_id = {
 	// 	exec "$BPIPE_BIN/gff_create_stable_id.pl --gff $input --id_trunk $ID_TRUNK --outfile $output"
 	// }
 
-	// branch.gff_file_with_ids = output
+	// branch.gff_file_with_ids output
 
 }
 
-process gffread_extract_sequences = {
+process gffread_extract_sequences {
 
 	input:
 	path input
@@ -1870,7 +1870,7 @@ process gffread_extract_sequences = {
 
 
 // Hisat2 module
-process hisat2 = {
+process hisat2 {
 
 	input:
 	path input
@@ -1986,7 +1986,7 @@ process hisat2 = {
 	// }
 }
 
-process htseq_count = {
+process htseq_count {
 
 	input:
 	path input
@@ -2029,7 +2029,7 @@ process htseq_count = {
 
 }
 
-process igvcount = {
+process igvcount {
 
 	input:
 	path input
@@ -2046,7 +2046,7 @@ process igvcount = {
 }
 
 
-process interpro = {
+process interpro {
 
 	input:
 	path input
@@ -2081,7 +2081,7 @@ process interpro = {
 }
 
 
-process merge_interpro_xml = {
+process merge_interpro_xml {
 
 	input:
 	path input
@@ -2129,7 +2129,7 @@ process merge_interpro_xml = {
 	// branch.ipr_xml = output
 }
 
-process merge_interpro_tsv = {
+process merge_interpro_tsv {
 
 	input:
 	path input
@@ -2163,7 +2163,7 @@ process merge_interpro_tsv = {
 }
 
 
-process interpro2gff = {
+process interpro2gff {
 
 	input:
 	path input
@@ -2201,7 +2201,7 @@ process interpro2gff = {
 
 // Maker module
 
-process cufflinks2maker = {
+process cufflinks2maker {
 
 	input:
 	path input
@@ -2231,7 +2231,7 @@ process cufflinks2maker = {
 
 }
 
-process dedup = {
+process dedup {
 
 	input:
 	path input
@@ -2285,7 +2285,7 @@ process dedup = {
 
 @filter("merge")
 
-process mergeBams = {
+process mergeBams {
 
 	input:
 	path input
@@ -2330,7 +2330,7 @@ process mergeBams = {
 
 @transform("bam")
 
-process samToSortedBam = {
+process samToSortedBam {
 
 	input:
 	path input
@@ -2370,7 +2370,7 @@ process samToSortedBam = {
 	// """
 }
 
-process repeatmodeler_format_genome = {
+process repeatmodeler_format_genome {
 
 	input:
 	path input
@@ -2407,7 +2407,7 @@ process repeatmodeler_format_genome = {
 }
 
 
-process repeatmodeler_run = {
+process repeatmodeler_run {
 
 	input:
 	path input
@@ -2446,7 +2446,7 @@ repeatmodeler = segment {
 	repeatmodeler_format_genome + repeatmodeler_run
 }
 
-process rseqc_read_quality = {
+process rseqc_read_quality {
 
 	input:
 	path input
@@ -2493,7 +2493,7 @@ process rseqc_read_quality = {
 	// }
 }
 
-process rseqc_bam_stat = {
+process rseqc_bam_stat {
 
 	input:
 	path input
@@ -2528,7 +2528,7 @@ process rseqc_bam_stat = {
 	// }
 }
 
-process rseqc_read_distribution = {
+process rseqc_read_distribution {
 
 	input:
 	path input
@@ -2564,7 +2564,7 @@ process rseqc_read_distribution = {
 	// }
 }
 
-process rseqc_junction_annotation = {
+process rseqc_junction_annotation {
 
 	input:
 	path input
@@ -2603,7 +2603,7 @@ process rseqc_junction_annotation = {
 	// }
 }
 
-process sample_dir_prepare = {
+process sample_dir_prepare {
 
 	input:
 	path input
@@ -2653,7 +2653,7 @@ process sample_dir_prepare = {
 	// forward inputs
 }
 
-process indexBam = {
+process indexBam {
 
 	input:
 	path input
@@ -2676,7 +2676,7 @@ process indexBam = {
 	// forward input
 }
 
-process flagstat = {
+process flagstat {
 
 	input:
 	path input
@@ -2694,7 +2694,7 @@ process flagstat = {
 	// exec "$SAMTOOLS flagstat $input.bam > $output"
 }
 
-process samtools_filter_quality = {
+process samtools_filter_quality {
 
 	input:
 	path input
@@ -2729,7 +2729,7 @@ process samtools_filter_quality = {
 
 }
 
-process samtools_sort_bam = {
+process samtools_sort_bam {
 
 	input:
 	path input
@@ -2756,7 +2756,7 @@ process samtools_sort_bam = {
 }
 
 
-process samtools_sam_to_bam = {
+process samtools_sam_to_bam {
 
 	input:
 	path input
@@ -2783,7 +2783,7 @@ process samtools_sam_to_bam = {
 }
 // Sequence conversion module
 
-process cdna2protein = {
+process cdna2protein {
 
 	input:
 	path input
@@ -2813,7 +2813,7 @@ process cdna2protein = {
 }
 
 
-process stringtie = {
+process stringtie {
 
 	input:
 	path input
@@ -2892,7 +2892,7 @@ process stringtie = {
 }
 // Tophat module
 
-process tophat = {
+process tophat {
 
 	input:
 	path input
@@ -3002,7 +3002,7 @@ process tophat = {
 }
 // Trimmomatic module
 
-process trimmomatic = {
+process trimmomatic {
 
 	input:
 	path input
@@ -3087,7 +3087,7 @@ process trimmomatic = {
 	// 	}
 }
 
-process verify_generic = {
+process verify_generic {
 
 	input:
 	path input
