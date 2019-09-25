@@ -15,7 +15,7 @@ log.info """\
  outdir         : ${params.outdir}
  """
 
-include './../modules/annotation_modules'
+include './../workflows/annotation_workflows' params(params)
 
 workflow {
 
@@ -29,4 +29,8 @@ workflow {
 	transcript_assembly_hisat2_stringtie.out.stringtie to: "${params.outdir}/stringtie"
 	transcript_assembly_hisat2_stringtie.out.multiqc to: "${params.outdir}/multiqc"
 
+}
+
+workflow.onComplete {
+	log.info ( workflow.success ? "\nTranscript assembly complete!\n" : "Oops .. something went wrong\n" )
 }

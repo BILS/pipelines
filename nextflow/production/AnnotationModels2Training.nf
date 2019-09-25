@@ -26,3 +26,7 @@ workflow {
 	gbk2augustus.out.dataset to: "${params.outdir}/augustus_training_dataset"
 
 }
+
+workflow.onComplete {
+	log.info ( workflow.success ? "\nAugustus training dataset complete!\n" : "Oops .. something went wrong\n" )
+}

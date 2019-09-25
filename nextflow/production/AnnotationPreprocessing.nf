@@ -15,7 +15,7 @@ log.info """\
  outdir          : ${params.outdir}
  """
 
-include './../modules/annotation_modules'
+include './../workflows/annotation_workflows' params(params)
 
 workflow {
 
@@ -28,4 +28,8 @@ workflow {
 	annotation_preprocessing.out.filtered_assembly to: "${params.outdir}/assembly"
 	annotation_preprocessing.out.bowtie2_index to: "${params.outdir}/bowtie2-index"
 	annotation_preprocessing.out.assembly_generate_stats to: "${params.outdir}/assembly_stats"
+}
+
+workflow.onComplete {
+	log.info ( workflow.success ? "\nAnnotation preprocessing complete!\n" : "Oops .. something went wrong\n" )
 }

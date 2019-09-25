@@ -15,13 +15,17 @@ log.info """\
  outdir         : ${params.outdir}
  """
 
-include './../modules/annotation_modules'
+include './../workflows/annotation_workflows' params(params)
 
 workflow {
 
 	main:
-		functional_annotation_input_preparation(params.gff_file)
+	functional_annotation_input_preparation(params.gff_file)
 
 	publish:
-		functional_annotation_input_preparation.out to: "${params.outdir}"
+	functional_annotation_input_preparation.out to: "${params.outdir}"
+}
+
+workflow.onComplete {
+	log.info ( workflow.success ? "\nFunctional annotation input preparation complete!\n" : "Oops .. something went wrong\n" )
 }
