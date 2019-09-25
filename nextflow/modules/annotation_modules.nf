@@ -1,20 +1,24 @@
 
 process assembly_generate_stats {
 
+	tag "Generating statistics for ${fasta_file.simpleName}"
+
 	input:
 	path fasta_file
 
 	output:
-	path assembly_report
+	path "assembly_report.txt"
 
 	script:
 	"""
-	fasta_statisticsAndPlot.pl --infile $fasta_file --output $assembly_report
+	fasta_statisticsAndPlot.pl --infile $fasta_file --output assembly_report.txt
 	"""
 
 }
 
 process blastp {
+
+	tag "Running blastp on ${query_fasta} against ${blastp_dbpath}"
 
 	input:
 	path query_fasta
@@ -23,17 +27,19 @@ process blastp {
 	val evalue
 
 	output:
-	path blast_results
+	path "results.blast"
 
 	script:
 	"""
 	blastp -db $blastp_dbpath -query $query_fasta -outfmt $outfmt \
-		-num_threads ${task.cpus} $evalue -out $blast_results
+		-num_threads ${task.cpus} $evalue -out results.blast
 	"""
 
 }
 
 process merge_blast_tab {
+
+	tag "Merging Blast results"
 
 	input:
 	path fragments
@@ -50,8 +56,10 @@ process merge_blast_tab {
 
 process blast_makeblastdb {
 
+	tag "Making Blast database: from: ${fasta_file} type: ${dbtype}"
+
 	input:
-	path input
+	path fasta_file
 	val dbtype // "prot"
 
 	output:
@@ -59,12 +67,14 @@ process blast_makeblastdb {
 
 	script:
 	"""
-	makeblastdb -in $input -dbtype $dbtype
+	makeblastdb -in $fasta_file -dbtype $dbtype
 	"""
 
 }
 
 process blast_recursive {
+
+	tag "Performing recursive blast"
 
 	input:
 	path fasta_file
@@ -83,6 +93,8 @@ process blast_recursive {
 
 process bowtie2_index {
 
+	tag "Creating Bowtie2 Index: ${species_id}"
+
 	input:
 	tuple species_id, path(genome)
 
@@ -98,6 +110,8 @@ process bowtie2_index {
 
 process fasta_explode {
 
+	tag "Exploding Fasta"
+
 	input:
 	path input
 
@@ -112,6 +126,8 @@ process fasta_explode {
 }
 
 process fasta_filter_size {
+
+	tag "Filtering Fasta ${fasta_file} by min length ${min_length}"
 
 	input:
 	path fasta_file
@@ -130,6 +146,9 @@ process fasta_filter_size {
 
 process fastasplit {
 
+	// This should not be necessary.
+	tag "Split fasta into chunks"
+
 	input:
 	path input
 
@@ -145,8 +164,7 @@ process fastasplit {
 
 process fastqc {
 
-	tag "FASTQC on $sample_id"
-    publishDir params.outdir
+	tag "FastQC on $sample_id"
 
 	input:
 	tuple sample_id, path(reads)
@@ -164,6 +182,8 @@ process fastqc {
 
 process gbk2augustus {
 
+	tag "Converting Genbank to Augustus"
+
 	input:
 	path input
 	val test_size // 100
@@ -179,6 +199,8 @@ process gbk2augustus {
 }
 
 process gff2gbk {
+
+	tag "Converting GFF to Genbank format"
 
 	input:
 	path gff_file
@@ -197,9 +219,11 @@ process gff2gbk {
 
 process gff2protein {
 
+	tag "Converting GFF to protein sequence"
+
 	input:
-	path gff_file
-	path genome
+	tuple sample_id, path(gff_file)
+	tuple genome_id, path(genome)
 	val codon_table
 
 	output:
@@ -217,6 +241,8 @@ process gff2protein {
 }
 
 process gff_filter_by_blast {
+
+	tag "Filtering GFF by Blast results"
 
 	input:
 	path gff_file
@@ -236,6 +262,8 @@ process gff_filter_by_blast {
 }
 
 process gff_filter_gene_models {
+
+	tag "Filter gene models by GFF"
 
 	input:
 	path input
@@ -316,10 +344,14 @@ process gff_longest_cds {
 }
 
 // Hisat2 module
+process hisat2_index {
+}
+
 process hisat2 {
 
 	input:
 	tuple sample_id, path(reads)
+	path hisat_index
 
 	output:
 	path output
