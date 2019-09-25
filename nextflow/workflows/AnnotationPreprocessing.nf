@@ -7,11 +7,26 @@
 // load 'pipeline.config'
 //
 nextflow.preview.dsl=2
+
+/*
+ * Default pipeline parameters. They can be overriden on the command line eg.
+ * given `params.foo` specify on the run command line `--foo some_value`.
+ */
+
+params.genome_assembly = "$baseDir/test_data/test_assembly.fa"
+params.outdir = "results"
+
+log.info """\
+ Annotation Preprocessing
+ ===================================
+ genome_assembly : ${params.genome_assembly}
+ outdir          : ${params.outdir}
+ """
+
 include './../modules/annotation_modules'
 
 workflow {
-	data = Channel.fromPath(params.reads)
-	fasta_filter_size
+	fasta_filter_size(params.genome_assembly,1000)
 	fasta_explode
 	assembly_generate_stats
 	bowtie2_index
