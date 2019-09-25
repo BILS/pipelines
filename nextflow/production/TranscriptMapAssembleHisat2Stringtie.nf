@@ -7,14 +7,12 @@ nextflow.preview.dsl=2
 
 params.reads = "$baseDir/test_data/reads*.fastq.gz"
 params.outdir = "results"
-params.multiqc = "$baseDir/multiqc"
 
 log.info """\
  Transcript assembly using Hisat2/Stringtie workflow
  ===================================================
  reads          : ${params.reads}
  outdir         : ${params.outdir}
- multiqc        : ${params.multiqc}
  """
 
 include './../modules/annotation_modules'
@@ -22,8 +20,13 @@ include './../modules/annotation_modules'
 workflow {
 
 	main:
-		transcript_assembly_hisat2_stringtie(params.reads)
+	transcript_assembly_hisat2_stringtie(params.reads)
 
 	publish:
+	transcript_assembly_hisat2_stringtie.out.fastqc to: "${params.outdir}/fastqc"
+	transcript_assembly_hisat2_stringtie.out.trimmomatic to: "${params.outdir}/trimmomatic"
+	transcript_assembly_hisat2_stringtie.out.hisat2 to: "${params.outdir}/hisat2"
+	transcript_assembly_hisat2_stringtie.out.stringtie to: "${params.outdir}/stringtie"
+	transcript_assembly_hisat2_stringtie.out.multiqc to: "${params.outdir}/multiqc"
 
 }

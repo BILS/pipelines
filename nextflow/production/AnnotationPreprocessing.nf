@@ -20,8 +20,12 @@ include './../modules/annotation_modules'
 workflow {
 
 	main:
-		annotation_preprocessing(params.genome_assembly)
+	annotation_preprocessing(params.genome_assembly)
 
 	publish:
-
+	annotation_preprocessing.out.single_fasta_dir to: "${params.outdir}/scaffolds"
+	annotation_preprocessing.out.chunk_fasta_dir to: "${params.outdir}/chunks"
+	annotation_preprocessing.out.filtered_assembly to: "${params.outdir}/assembly"
+	annotation_preprocessing.out.bowtie2_index to: "${params.outdir}/bowtie2-index"
+	annotation_preprocessing.out.assembly_generate_stats to: "${params.outdir}/assembly_stats"
 }

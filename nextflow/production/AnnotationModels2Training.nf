@@ -20,9 +20,9 @@ include './../workflows/annotation_workflows' params(params)
 workflow {
 
 	main:
-		augustus_training_dataset(gff_annotation)
+	augustus_training_dataset(gff_annotation)
 
 	publish:
-		gbk2augustus.out.dataset to: "${params.outdir}/augustus_training_dataset"
+	gbk2augustus.out.dataset to: "${params.outdir}/augustus_training_dataset"
 
 }

@@ -9,21 +9,17 @@ workflow annotation_preprocessing {
 
 	main:
 		fasta_filter_size(genome_assembly,1000)
-		fasta_explode
-		assembly_generate_stats
-		bowtie2_index
-		fastasplit
+		fasta_explode(fasta_filter_size.out)
+		assembly_generate_stats(fasta_filter_size.out)
+		bowtie2_index(fasta_filter_size.out)
+		fastasplit(fasta_filter_size.out)
 
 	emit:
-
-	// run { "%.fa" * [ verify_annotation_preprocess + sample_dir_prepare.using(sample_dir:true)
-	// 	+ fasta_filter_size.using(size:1000,directory:"assembly") + [
-	// 		fasta_explode.using(directory:"scaffolds"),
-	// 		assembly_generate_stats,
-	// 		bowtie2_index.using(directory:"bowtie2-index") ,
-	// 		fastasplit
-	// 	]
-	// ] }
+		filtered_assembly = fasta_filter_size.out
+		bowtie2_index = bowtie2_index.out
+		single_fasta_dir = fasta_explode.out
+		chunk_fasta_dir = fastasplit.out
+		assembly_stats = assembly_generate_stats.out
 
 }
 
@@ -63,28 +59,20 @@ workflow functional_annotation_input_preparation {
 
 	get:
 		gff_file
+		chunk_size
 
 	main:
-		gff2protein
-		fastasplit
-		blastp
-		merge_blast_tab
-		interpro
-		merge_interpro_tsv
-		merge_interpro_xml
+		gff2protein(gff_file)
+		blastp(gff2protein.out.splitFasta(by: chunk_size))
+		merge_blast_tab(blastp.out.collect())
+		interpro(gff2protein.out.splitFasta(by: chunk_size))
+		merge_interpro_tsv(interpro.out.collect())
+		merge_interpro_xml(interpro.out.collect())
 
 	emit:
-
-	// run {  "%.gff*" * [ verify_generic.using(binary:"fastasplit") + sample_dir_prepare.using(sample_dir:true) +
-	// 	gff2protein +
-	// 	fastasplit +
-	//         [
-	//                 [ "%" * [ blastp.using(outfmt:6)] + merge_blast_tab ],
-	// 		[ "%" * [ interpro ] + [  "*.tsv" * [ merge_interpro_tsv] , "*.xml" * [ merge_interpro_xml ] ] ]
-	//
-	//         ]
-	// ]
-	// }
+		blast_results = merge_blast_tab.out
+		interpro_tsv = merge_interpro_tsv.out
+		interpro_xml = merge_interpro.xml.out
 
 }
 
@@ -95,22 +83,20 @@ workflow transcript_assembly_hisat2_stringtie {
 		genome
 
 	main:
-		trimmomatic
-		hisat2
-		samtools_sam_to_bam
-		samtools_sort_bam
-		stringtie
+		fastqc(reads)
+		trimmomatic(reads)
+		hisat2_index(genome)
+		hisat2(trimmomatic.out.trimmed_pairs,hisat2_index.out.index)
+		//samtools_sam_to_bam
+		//samtools_sort_bam
+		stringtie(hisat2.out)
+		multiqc()
 
 	emit:
-
-	// run { ~"(.*)_.+.f*q*[.gz]?" *
-	// 	[ verify_generic.using(binary:"hisat2")  + verify_generic.using(binary:"samtools")  + verify_generic.using(binary:"stringtie") + sample_dir_prepare.using(sample_dir:true) +
-	// 		trimmomatic +
-	// 		hisat2 +
-	// 		samtools_sam_to_bam +
-	// 		samtools_sort_bam +
-	// 		stringtie
-	// 	]
-	// }
+		fastqc = fastqc.out
+		trimmomatic = trimmomatic.out
+		hisat2 = hisat2.out
+		stringtie = stringtie.out
+		multiqc = multiqc.out
 
 }
