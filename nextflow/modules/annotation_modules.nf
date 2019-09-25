@@ -130,8 +130,6 @@ process fasta_filter_size {
 
 process fastasplit {
 
-	// REPLACE with channel operator
-
 	input:
 	path input
 
