@@ -9,6 +9,13 @@ params.gff_annotation = "$baseDir/test_data/test.gff"
 params.outdir = "results"
 
 log.info """\
+ _   _ ____ _____  _____
+ | \\ | |  _ \\_   _|/ ____|
+ |  \\| | |_) || | | (___
+ | . ` |  _ < | |  \\___ \\
+ | |\\  | |_) || |_ ____) |
+ |_| \\_|____/_____|_____/  Annotation Service
+
  Functional annotation input preparation workflow
  ===================================
  gff_annotation : ${params.gff_annotation}

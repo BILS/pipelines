@@ -8,7 +8,16 @@ nextflow.preview.dsl=2
 params.genome_assembly = "$baseDir/test_data/test_assembly.fa"
 params.outdir = "results"
 
+params.chunk_size = 200
+
 log.info """\
+ _   _ ____ _____  _____
+ | \\ | |  _ \\_   _|/ ____|
+ |  \\| | |_) || | | (___
+ | . ` |  _ < | |  \\___ \\
+ | |\\  | |_) || |_ ____) |
+ |_| \\_|____/_____|_____/  Annotation Service
+
  Annotation preprocessing workflow
  ===================================
  genome_assembly : ${params.genome_assembly}

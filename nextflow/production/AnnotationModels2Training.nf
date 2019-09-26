@@ -8,7 +8,18 @@ nextflow.preview.dsl=2
 params.gff_annotation = "$baseDir/test_data/test.gff"
 params.outdir = "results"
 
+params.gff_gene_model_filter_options = '-c -r -d 500 -a 0.3'
+params.codon_table = 1
+params.test_size = 100
+
 log.info """\
+  _   _ ____ _____  _____
+ | \\ | |  _ \\_   _|/ ____|
+ |  \\| | |_) || | | (___
+ | . ` |  _ < | |  \\___ \\
+ | |\\  | |_) || |_ ____) |
+ |_| \\_|____/_____|_____/  Annotation Service
+
  Augustus training dataset workflow
  ===================================
  gff_annotation : ${params.gff_annotation}

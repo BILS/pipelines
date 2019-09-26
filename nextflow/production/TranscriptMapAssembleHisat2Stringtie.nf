@@ -6,9 +6,25 @@ nextflow.preview.dsl=2
  */
 
 params.reads = "$baseDir/test_data/reads*.fastq.gz"
+params.paired = true
 params.outdir = "results"
 
+params.trimmomatic_jar = '$TRIMMOMATIC_HOME/trimmomatic-0.36.jar'
+params.trimmomatic_adapter_path = '$TRIMMOMATIC_HOME/adapters/TruSeq3-PE-2.fa'
+params.trimmomatic_clip_options = 'LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36'
+
+params.hisat2_options = ''
+
+params.stringtie_options = ''
+
 log.info """\
+ _   _ ____ _____  _____
+ | \\ | |  _ \\_   _|/ ____|
+ |  \\| | |_) || | | (___
+ | . ` |  _ < | |  \\___ \\
+ | |\\  | |_) || |_ ____) |
+ |_| \\_|____/_____|_____/  Annotation Service
+
  Transcript assembly using Hisat2/Stringtie workflow
  ===================================================
  reads          : ${params.reads}
