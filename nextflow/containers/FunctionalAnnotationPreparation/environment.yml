@@ -1,0 +1,10 @@
+# conda env create -f environment.yml
+name: functional-annotation-preparation
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - blast=2.9.0
+

@@ -1,0 +1,11 @@
+# conda env create -f environment.yml
+name: augustus-training
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - blast=2.9.0
+  - augustus=3.3.2
+
