@@ -36,7 +36,11 @@ include './../workflows/annotation_workflows' params(params)
 workflow {
 
 	main:
-	transcript_assembly_hisat2_stringtie(params.reads)
+	transcript_assembly_hisat2_stringtie(
+		Channel.fromFilePairs(params.reads)
+		.ifEmpty { exit 1, "Cannot find reads matching ${params.reads}!\n" },
+		Channel.fromFile(params.genome, checkIfExists: true)
+		.ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" })
 
 	publish:
 	transcript_assembly_hisat2_stringtie.out.fastqc to: "${params.outdir}/fastqc"

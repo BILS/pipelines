@@ -11,6 +11,7 @@ params.outdir = "results"
 params.gff_gene_model_filter_options = '-c -r -d 500 -a 0.3'
 params.codon_table = 1
 params.test_size = 100
+params.flank_region_size = 500
 
 log.info """\
   _   _ ____ _____  _____
@@ -31,7 +32,7 @@ include './../workflows/annotation_workflows' params(params)
 workflow {
 
 	main:
-	augustus_training_dataset(gff_annotation)
+	augustus_training_dataset(Channel.fromPath(gff_annotation, checkIfExists: true))
 
 	publish:
 	gbk2augustus.out.dataset to: "${params.outdir}/augustus_training_dataset"

@@ -1,4 +1,3 @@
-
 process assembly_generate_stats {
 
 	tag "Generating statistics for ${fasta_file.simpleName}"
@@ -7,11 +6,11 @@ process assembly_generate_stats {
 	path fasta_file
 
 	output:
-	path "assembly_report.txt"
+	path "${fasta_file.baseName}_assembly_report.txt"
 
 	script:
 	"""
-	fasta_statisticsAndPlot.pl --infile $fasta_file --output assembly_report.txt
+	fasta_statisticsAndPlot.pl --infile $fasta_file --output ${fasta_file.baseName}_assembly_report.txt
 	"""
 
 }
@@ -23,16 +22,14 @@ process blastp {
 	input:
 	path query_fasta
 	path blastp_dbpath
-	val outfmt // 5
-	val evalue
 
 	output:
-	path "results.blast"
+	path "${query_fasta.baseName}_blast.tsv"
 
 	script:
 	"""
-	blastp -db $blastp_dbpath -query $query_fasta -outfmt $outfmt \
-		-num_threads ${task.cpus} $evalue -out results.blast
+	blastp -db $blastp_dbpath -query $query_fasta -outfmt 6 \\
+		-num_threads ${task.cpus} -out ${query_fasta.baseName}_blast.tsv
 	"""
 
 }
@@ -45,27 +42,27 @@ process merge_blast_tab {
 	path fragments
 
 	output:
-	path output //branch.sample + "_blast.out"
+	path 'merged_blast_results.tsv'
 
 	script:
 	"""
-	cat $fragments > $output
+	cat $fragments > merged_blast_results.tsv
 	"""
 
 }
 
 process blast_makeblastdb {
 
-	tag "Making Blast database: from: ${fasta_file} type: ${dbtype}"
+	tag "Making Blast database: from: ${fasta_file.baseName} type: $dbtype"
 
 	input:
 	path fasta_file
-	val dbtype // "prot"
 
 	output:
 	path "*.*"
 
 	script:
+	dbtype = "${params.dbtype}" ? "${params.dbtype}" ? 'prot'
 	"""
 	makeblastdb -in $fasta_file -dbtype $dbtype
 	"""
@@ -85,14 +82,15 @@ process blast_recursive {
 
 	script:
 	"""
-	blastp -query $fasta_file -db $db_path -num_threads ${task.cpus} -outfmt 6 -out ${fasta_file.baseName}_blast.tsv
+	blastp -query $fasta_file -db $db_path -num_threads ${task.cpus} \\
+		-outfmt 6 -out ${fasta_file.baseName}_blast.tsv
 	"""
 
 }
 
 process bowtie2_index {
 
-	tag "Creating Bowtie2 Index: ${genome.name}"
+	tag "Creating Bowtie2 Index: ${genome.baseName}"
 
 	input:
 	path genome
@@ -108,6 +106,8 @@ process bowtie2_index {
 }
 
 process fasta_explode {
+
+	// should not be necessary
 
 	tag "Exploding Fasta"
 
@@ -172,7 +172,7 @@ process fastqc {
 	script:
 	"""
 	mkdir fastqc_${sample_id}_logs
-	fastqc -o fastqc_${sample_id}_logs -f fastq -q ${reads}
+	fastqc -t ${task.cpus} -o fastqc_${sample_id}_logs -f fastq -q ${reads}
 	"""
 
 }
@@ -246,7 +246,8 @@ process gff_filter_by_blast {
 
 	script:
 	"""
-	gff_filter_by_mrna_id.pl --gff $gff_file --blast $blast_file --outfile ${gff_file.baseName}_blast-filtered.gff3
+	gff_filter_by_mrna_id.pl --gff $gff_file --blast $blast_file \\
+		--outfile ${gff_file.baseName}_blast-filtered.gff3
 	"""
 
 }
@@ -264,7 +265,8 @@ process gff_filter_gene_models {
 
 	script:
 	"""
-	filter_sort.pl -f $gff3_file -F $genome_fasta -o ${gff_file.baseName}_model-filtered.gff3 ${params.gff_gene_model_filter_options}
+	filter_sort.pl -f $gff3_file -F $genome_fasta \\
+		-o ${gff_file.baseName}_model-filtered.gff3 ${params.gff_gene_model_filter_options}
 	"""
 }
 
@@ -309,20 +311,20 @@ process hisat2 {
 	tuple hisat2_basename, path(hisat2_index_files)
 
 	output:
-	path 'sorted_alignment.bam'
+	path "${sample_id}_sorted_alignment.bam"
 	path 'splicesite.txt'
 
 	script:
-	if ($params.paired){
+	if (params.paired){
 		"""
 		hisat2 ${params.hisat2_options} --novel-splicesite-outfile splicesite.txt
-			-p ${task.cpus} -x $hisat2_basename -1 ${reads[0]} -2 ${reads[1]} | \
+			-p ${task.cpus} -x $hisat2_basename -1 ${reads[0]} -2 ${reads[1]} | \\
 			samtools sort -@ ${task.cpus} -o sorted_alignment.bam -
 		"""
 	} else {
 		"""
 		hisat2 ${params.hisat2_options} --novel-splicesite-outfile splicesite.txt
-			-p ${task.cpus} -x $hisat2_basename -U $reads | \
+			-p ${task.cpus} -x $hisat2_basename -U $reads | \\
 			samtools sort -@ ${task.cpus} -o sorted_alignment.bam -
 		"""
 	}
@@ -420,17 +422,17 @@ process trimmomatic {
 	script:
 	if (params.paired) {
 		"""
-		java -jar ${params.trimmomatic_jar} PE -threads ${task.cpus} $reads \
-		 	${sample_id}_paired_1.fastq.gz ${sample_id}_unpaired_1.fastq.gz \
-			${sample_id}_paired_2.fastq.gz ${sample_id}_unpaired_2.fastq.gz \
-			ILLUMINACLIP:$${params.trimmomatic_adapter_path}:2:30:10 \
+		java -jar ${params.trimmomatic_jar} PE -threads ${task.cpus} $reads \\
+		 	${sample_id}_paired_1.fastq.gz ${sample_id}_unpaired_1.fastq.gz \\
+			${sample_id}_paired_2.fastq.gz ${sample_id}_unpaired_2.fastq.gz \\
+			ILLUMINACLIP:$${params.trimmomatic_adapter_path}:2:30:10 \\
 			${params.trimmomatic_clip_options}
 		"""
 	} else {
 		"""
-		java -jar ${params.trimmomatic_jar} SE -threads ${task.cpus} $reads \
-		 	${sample_id}_trimmed.fastq.gz \
-			ILLUMINACLIP:$${params.trimmomatic_adapter_path}:2:30:10 \
+		java -jar ${params.trimmomatic_jar} SE -threads ${task.cpus} $reads \\
+		 	${sample_id}_trimmed.fastq.gz \\
+			ILLUMINACLIP:$${params.trimmomatic_adapter_path}:2:30:10 \\
 			${params.trimmomatic_clip_options}
 		"""
 	}

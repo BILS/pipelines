@@ -27,7 +27,7 @@ include './../workflows/annotation_workflows' params(params)
 workflow {
 
 	main:
-	functional_annotation_input_preparation(params.gff_file)
+	functional_annotation_input_preparation(Channel.fromPath(params.gff_file, checkIfExists: true))
 
 	publish:
 	functional_annotation_input_preparation.out to: "${params.outdir}"

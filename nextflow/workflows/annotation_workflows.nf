@@ -8,7 +8,7 @@ workflow annotation_preprocessing {
 		genome_assembly
 
 	main:
-		fasta_filter_size(genome_assembly,1000)
+		fasta_filter_size(genome_assembly)
 		fasta_explode(fasta_filter_size.out)
 		assembly_generate_stats(fasta_filter_size.out)
 		bowtie2_index(fasta_filter_size.out)
@@ -32,7 +32,7 @@ workflow augustus_training_dataset {
 		gff_filter_gene_models(gff_annotation)
 		gff_longest_cds(gff_filter_gene_models.out)
 		gff2protein(gff_longest_cds.out)
-		blast_makeblastdb(gff2protein.out,"prot")
+		blast_makeblastdb(gff2protein.out)
 		blast_recursive(gff2protein.out,blast_makeblastdb.out)
 		gff_filter_by_blast(gff_annotation,blast_recursive.out)
 		gff2gbk(gff_filter_by_blast.out)
@@ -41,25 +41,12 @@ workflow augustus_training_dataset {
 	emit:
 		dataset = gbk2augustus.out
 
-		// run {  "%.gff" * [ verify_dependencies_annotation_models + sample_dir_prepare.using(sample_dir:true)
-		// 		+ gff_filter_gene_models
-		// 		+ gff_longest_cds
-		// 		+ gff2protein
-		// 		+ blast_makeblastdb
-		// 		+ blast_recursive.using(blast_outfmt:6)
-		// 		+ gff_filter_by_blast
-		// 		+ gff2gbk.using(flank:"500")
-		// 		+ gbk2augustus.using(test_size:100)
-		// 	]
-		// }
-
 }
 
 workflow functional_annotation_input_preparation {
 
 	get:
 		gff_file
-		chunk_size
 
 	main:
 		gff2protein(gff_file)
@@ -86,9 +73,8 @@ workflow transcript_assembly_hisat2_stringtie {
 		fastqc(reads)
 		trimmomatic(reads)
 		hisat2_index(genome)
-		hisat2(trimmomatic.out.trimmed_pairs,hisat2_index.out.index.collect())
+		hisat2(trimmomatic.out[0].mix(trimmomatic.out[2]),hisat2_index.out.index.collect())
 		stringtie(hisat2.out)
-		multiqc()
 
 	emit:
 		fastqc = fastqc.out

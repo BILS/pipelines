@@ -29,7 +29,7 @@ include './../workflows/annotation_workflows' params(params)
 workflow {
 
 	main:
-	annotation_preprocessing(params.genome_assembly)
+	annotation_preprocessing(Channel.fromPath(params.genome_assembly, checkIfExists: true))
 
 	publish:
 	annotation_preprocessing.out.single_fasta_dir to: "${params.outdir}/scaffolds"
