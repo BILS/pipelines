@@ -33,10 +33,10 @@ workflow augustus_training_dataset {
 		gff_longest_cds(gff_filter_gene_models.out)
 		gff2protein(gff_longest_cds.out)
 		blast_makeblastdb(gff2protein.out,"prot")
-		blast_recursive(gff2protein.out,blast_makeblastdb.out,6)
+		blast_recursive(gff2protein.out,blast_makeblastdb.out)
 		gff_filter_by_blast(gff_annotation,blast_recursive.out)
-		gff2gbk(gff_filter_by_blast.out,500)
-		gbk2augustus(gff2gbk.out,100)
+		gff2gbk(gff_filter_by_blast.out)
+		gbk2augustus(gff2gbk.out)
 
 	emit:
 		dataset = gbk2augustus.out
@@ -63,9 +63,9 @@ workflow functional_annotation_input_preparation {
 
 	main:
 		gff2protein(gff_file)
-		blastp(gff2protein.out.splitFasta(by: chunk_size))
+		blastp(gff2protein.out.splitFasta(by: params.chunk_size))
 		merge_blast_tab(blastp.out.collect())
-		interpro(gff2protein.out.splitFasta(by: chunk_size))
+		interpro(gff2protein.out.splitFasta(by: params.chunk_size))
 		merge_interpro_tsv(interpro.out.collect())
 		merge_interpro_xml(interpro.out.collect())
 
@@ -86,9 +86,7 @@ workflow transcript_assembly_hisat2_stringtie {
 		fastqc(reads)
 		trimmomatic(reads)
 		hisat2_index(genome)
-		hisat2(trimmomatic.out.trimmed_pairs,hisat2_index.out.index)
-		//samtools_sam_to_bam
-		//samtools_sort_bam
+		hisat2(trimmomatic.out.trimmed_pairs,hisat2_index.out.index.collect())
 		stringtie(hisat2.out)
 		multiqc()
 
