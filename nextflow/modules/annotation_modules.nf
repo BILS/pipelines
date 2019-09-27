@@ -225,7 +225,7 @@ process gff2protein {
 
 	script:
 	"""
-	TMP_FASTA = $(mktemp -u --suffix ".fa" )
+	TMP_FASTA = \$(mktemp -u --suffix ".fa" )
 	gff3_sp_extract_sequences.pl -o \$TMP_FASTA -f $genome_fasta \\
 		-p -cfs -cis -ct ${params.codon_table} --gff $gff_file
 	fix_fasta.rb \$TMP_FASTA > ${gff_file}_proteins.fasta
