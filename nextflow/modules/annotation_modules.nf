@@ -62,7 +62,7 @@ process blast_makeblastdb {
 	path "*.*"
 
 	script:
-	dbtype = "${params.dbtype}" ? "${params.dbtype}" ? 'prot'
+	dbtype = "${params.dbtype}" ? "${params.dbtype}" : 'prot'
 	"""
 	makeblastdb -in $fasta_file -dbtype $dbtype
 	"""
@@ -422,7 +422,7 @@ process trimmomatic {
 	script:
 	if (params.paired) {
 		"""
-		java -jar ${params.trimmomatic_jar} PE -threads ${task.cpus} $reads \\
+		trimmomatic PE -threads ${task.cpus} $reads \\
 		 	${sample_id}_paired_1.fastq.gz ${sample_id}_unpaired_1.fastq.gz \\
 			${sample_id}_paired_2.fastq.gz ${sample_id}_unpaired_2.fastq.gz \\
 			ILLUMINACLIP:$${params.trimmomatic_adapter_path}:2:30:10 \\
@@ -430,7 +430,7 @@ process trimmomatic {
 		"""
 	} else {
 		"""
-		java -jar ${params.trimmomatic_jar} SE -threads ${task.cpus} $reads \\
+		trimmomatic SE -threads ${task.cpus} $reads \\
 		 	${sample_id}_trimmed.fastq.gz \\
 			ILLUMINACLIP:$${params.trimmomatic_adapter_path}:2:30:10 \\
 			${params.trimmomatic_clip_options}
