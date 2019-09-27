@@ -54,7 +54,7 @@ workflow {
 	transcript_assembly_hisat2_stringtie(
 		Channel.fromFilePairs(params.reads)
 		.ifEmpty { exit 1, "Cannot find reads matching ${params.reads}!\n" },
-		Channel.fromFile(params.genome, checkIfExists: true)
+		Channel.fromPath(params.genome, checkIfExists: true)
 		.ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" })
 
 	publish:
