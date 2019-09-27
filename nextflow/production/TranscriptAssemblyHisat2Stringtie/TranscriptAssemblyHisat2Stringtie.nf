@@ -5,12 +5,12 @@ nextflow.preview.dsl=2
  * given `params.foo` specify on the run command line `--foo some_value`.
  */
 
-params.reads = "$baseDir/test_data/reads*.fastq.gz"
+params.reads = "$baseDir/test_data/*.fastq.gz"
+params.genome = "$baseDir/test_data/genome.fa"
 params.paired = true
 params.outdir = "results"
 
-params.trimmomatic_jar = '$TRIMMOMATIC_HOME/trimmomatic-0.39.jar'
-params.trimmomatic_adapter_path = '$TRIMMOMATIC_HOME/adapters/TruSeq3-PE-2.fa'
+params.trimmomatic_adapter_path = '$TRIMMOMATIC_SHARE/adapters/TruSeq3-PE-2.fa'
 params.trimmomatic_clip_options = 'LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36'
 
 params.hisat2_options = ''
@@ -29,12 +29,12 @@ log.info """\
  ===================================================
 
  General Parameters
+     genome                     : ${params.genome}
      reads                      : ${params.reads}
      paired                     : ${params.paired}
      outdir                     : ${params.outdir}
 
  Trimmomatic parameters
-     trimmomatic_jar            : ${params.trimmomatic_jar}
 	 trimmomatic_adapter_path   : ${params.trimmomatic_adapter_path}
 	 trimmomatic_clip_options   : ${params.trimmomatic_clip_options}
 
