@@ -9,7 +9,7 @@ params.reads = "$baseDir/test_data/reads*.fastq.gz"
 params.paired = true
 params.outdir = "results"
 
-params.trimmomatic_jar = '$TRIMMOMATIC_HOME/trimmomatic-0.36.jar'
+params.trimmomatic_jar = '$TRIMMOMATIC_HOME/trimmomatic-0.39.jar'
 params.trimmomatic_adapter_path = '$TRIMMOMATIC_HOME/adapters/TruSeq3-PE-2.fa'
 params.trimmomatic_clip_options = 'LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36'
 
@@ -27,8 +27,23 @@ log.info """\
 
  Transcript assembly using Hisat2/Stringtie workflow
  ===================================================
- reads          : ${params.reads}
- outdir         : ${params.outdir}
+
+ General Parameters
+     reads                      : ${params.reads}
+     paired                     : ${params.paired}
+     outdir                     : ${params.outdir}
+
+ Trimmomatic parameters
+     trimmomatic_jar            : ${params.trimmomatic_jar}
+	 trimmomatic_adapter_path   : ${params.trimmomatic_adapter_path}
+	 trimmomatic_clip_options   : ${params.trimmomatic_clip_options}
+
+ Hisat2 parameters
+     hisat2_options             : ${params.hisat2_options}
+
+ StringTie parameters
+     stringtie_options          : ${params.stringtie_options}
+
  """
 
 include './../workflows/annotation_workflows' params(params)
