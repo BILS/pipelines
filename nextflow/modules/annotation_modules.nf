@@ -425,14 +425,14 @@ process trimmomatic {
 		trimmomatic PE -threads ${task.cpus} $reads \\
 		 	${sample_id}_paired_1.fastq.gz ${sample_id}_unpaired_1.fastq.gz \\
 			${sample_id}_paired_2.fastq.gz ${sample_id}_unpaired_2.fastq.gz \\
-			ILLUMINACLIP:$${params.trimmomatic_adapter_path}:2:30:10 \\
+			ILLUMINACLIP:${params.trimmomatic_adapter_path}:2:30:10 \\
 			${params.trimmomatic_clip_options}
 		"""
 	} else {
 		"""
 		trimmomatic SE -threads ${task.cpus} $reads \\
 		 	${sample_id}_trimmed.fastq.gz \\
-			ILLUMINACLIP:$${params.trimmomatic_adapter_path}:2:30:10 \\
+			ILLUMINACLIP:${params.trimmomatic_adapter_path}:2:30:10 \\
 			${params.trimmomatic_clip_options}
 		"""
 	}
