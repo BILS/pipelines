@@ -18,6 +18,7 @@ params.hisat2_options = ''
 params.stringtie_options = ''
 
 log.info """\
+
   _   _ ____ _____  _____
  | \\ | |  _ \\_   _|/ ____|
  |  \\| | |_) || | | (___
