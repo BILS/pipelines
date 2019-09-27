@@ -36,8 +36,8 @@ log.info """\
      outdir                     : ${params.outdir}
 
  Trimmomatic parameters
-	 trimmomatic_adapter_path   : ${params.trimmomatic_adapter_path}
-	 trimmomatic_clip_options   : ${params.trimmomatic_clip_options}
+     trimmomatic_adapter_path   : ${params.trimmomatic_adapter_path}
+     trimmomatic_clip_options   : ${params.trimmomatic_clip_options}
 
  Hisat2 parameters
      hisat2_options             : ${params.hisat2_options}
