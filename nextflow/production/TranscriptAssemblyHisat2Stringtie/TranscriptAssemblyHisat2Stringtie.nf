@@ -97,7 +97,7 @@ Channel.fromFilePairs(params.reads, size: params.paired ? 2 : 1, checkIfExists: 
     .into { rnaseq_reads_2_fastqc; rnaseq_reads_2_trimmomatic }
 Channel.fromPath(params.genome, checkIfExists: true)
     .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
-    .into { genome_hisat2 }
+    .set { genome_hisat2 }
 
 process fastqc {
 
