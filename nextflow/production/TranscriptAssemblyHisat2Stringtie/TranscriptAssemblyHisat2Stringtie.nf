@@ -92,7 +92,7 @@ log.info """\
 //
 // }
 
-Channel.fromFilePairs(params.reads, checkIfExists: true)
+Channel.fromFilePairs(params.reads, size: params.paired ? 2 : 1, checkIfExists: true)
 		.ifEmpty { exit 1, "Cannot find reads matching ${params.reads}!\n" }
 		.into { rnaseq_reads_2_fastqc; rnaseq_reads_2_trimmomatic }
 Channel.fromPath(params.genome, checkIfExists: true)
@@ -209,10 +209,10 @@ process stringtie {
 
 	input:
 	file sorted_bam_file from hisat2_alignments
-	file ".command.log" into stringtie_logs
 
 	output:
 	file "${sorted_bam_file.name}_transcripts.gtf" into stringtie_transcripts
+	file ".command.log" into stringtie_logs
 
 	script:
 	"""
@@ -227,7 +227,7 @@ process multiqc {
 
     input:
     file (fastqc:'fastqc/*') from fqc_logs.collect().ifEmpty([])
-    file ('trimmomatic/*') from trimmoatic_logs.collect()
+    file ('trimmomatic/*') from trimmomatic_logs.collect()
 	file ('hisat2/*') from hisat2_alignment_logs.collect()
     file ('stringtie/stringtie_log*') from stringtie_logs.collect()
 
