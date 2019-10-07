@@ -231,7 +231,6 @@ process gbk2augustus {
             else if (filename.indexOf(".gbk") > 0)     "GenbankFile/$filename"
             else filename }
 
-
     input:
     file genbank_file from genbank_files
 
