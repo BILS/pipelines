@@ -12,7 +12,9 @@ params.genome = "$baseDir/test_data/test.gff"
 params.outdir = "results"
 
 params.gff_gene_model_filter_options = '-c -r -d 500 -a 0.3'
+
 params.codon_table = 1
+
 params.test_size = 100
 params.flank_region_size = 500
 
