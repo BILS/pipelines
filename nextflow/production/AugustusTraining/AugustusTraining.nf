@@ -116,13 +116,10 @@ process gff2protein {
 
     script:
     """
-    TMP_FASTA = \$(mktemp -u --suffix ".fa" )
-    gff3_sp_extract_sequences.pl -o \$TMP_FASTA -f $genome_fasta \\
+    gff3_sp_extract_sequences.pl -o ${gff_file.baseName}_proteins.fasta -f $genome_fasta \\
     -p -cfs -cis -ct ${params.codon_table} --gff $gff_file
-    fix_fasta.rb \$TMP_FASTA > ${gff_file.baseName}_proteins.fasta
     """
     // gff3_sp_extract_sequences.pl is a script in the NBIS pipelines repository in bin
-    // fix_fasta.rb is a script in the NBIS pipelines repository in bin
 
 }
 
