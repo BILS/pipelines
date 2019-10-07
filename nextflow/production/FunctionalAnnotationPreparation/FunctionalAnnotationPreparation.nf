@@ -107,82 +107,82 @@ process blastp {
 
 process merge_blast_tab {
 
-	tag "Merge: Blast TSVs"
-	publishDir "${params.outdir}/blast_tsv", mode: 'copy'
+    tag "Merge: Blast TSVs"
+    publishDir "${params.outdir}/blast_tsv", mode: 'copy'
 
-	input:
-	file blast_fragments from blast_tsvs.collect()
+    input:
+    file blast_fragments from blast_tsvs.collect()
 
-	output:
-	file 'merged_blast_results.tsv'
+    output:
+    file 'merged_blast_results.tsv'
 
-	script:
-	"""
-	cat $blast_fragments > merged_blast_results.tsv
-	"""
+    script:
+    """
+    cat $blast_fragments > merged_blast_results.tsv
+    """
 
 }
 
 process interpro {
 
-	tag "InterProScan: Protein function classification"
+    tag "InterProScan: Protein function classification"
 
-	input:
-	file protein_fasta from fasta_for_interpro.splitFasta(by: params.chunk_size)
-	file interprodb from interprodb_files.collect()
+    input:
+    file protein_fasta from fasta_for_interpro.splitFasta(by: params.chunk_size)
+    file interprodb from interprodb_files.collect()
 
-	output:
-	// file '*.gff3' into interpro_gffs
-	file 'results/*.xml' into interpro_xmls
-	file 'results/*.tsv' into interpro_tsvs
+    output:
+    // file '*.gff3' into interpro_gffs
+    file 'results/*.xml' into interpro_xmls
+    file 'results/*.tsv' into interpro_tsvs
 
-	script:
-	"""
-	interproscan $interpro_dbpath -i $protein_fasta -d results -iprlookup -goterms -pa -dp
-	"""
+    script:
+    """
+    interproscan $interpro_dbpath -i $protein_fasta -d results -iprlookup -goterms -pa -dp
+    """
 
 }
 
 process merge_interpro_xml {
 
-	tag "Merge: InterProScan XMLs"
-	publishDir "${params.outdir}/interproscan_xml", mode: 'copy'
+    tag "Merge: InterProScan XMLs"
+    publishDir "${params.outdir}/interproscan_xml", mode: 'copy'
 
-	input:
-	file xml_files from interpro_xmls.collect()
+    input:
+    file xml_files from interpro_xmls.collect()
 
-	output:
-	file 'interpro_search.xml'
+    output:
+    file 'interpro_search.xml'
 
-	// This code is not robust at all. Need to rewrite (e.g. the -v "xml" already excludes "protein-matches" lines because of the "xmlns" attributes)
-	script:
-	"""
-	head -n 2 ${xml_files[0]} > interpro_search.xml
-	for XML in $xml_files; do
-		grep -v "xml" \$XML | grep -v "protein-matches" >> interpro_search.xml
-	done
-	tail -n 1 ${xml_files[0]} >> interpro_search.xml
-	"""
+    // This code is not robust at all. Need to rewrite (e.g. the -v "xml" already excludes "protein-matches" lines because of the "xmlns" attributes)
+    script:
+    """
+    head -n 2 ${xml_files[0]} > interpro_search.xml
+    for XML in $xml_files; do
+    grep -v "xml" \$XML | grep -v "protein-matches" >> interpro_search.xml
+    done
+    tail -n 1 ${xml_files[0]} >> interpro_search.xml
+    """
 }
 
 process merge_interpro_tsv {
 
-	tag "Merge InterProScan TSVs"
-	publishDir "${params.outdir}/interproscan_tsv", mode: 'copy'
+    tag "Merge InterProScan TSVs"
+    publishDir "${params.outdir}/interproscan_tsv", mode: 'copy'
 
-	input:
-	file tsv_files from interpro_tsvs.collect()
+    input:
+    file tsv_files from interpro_tsvs.collect()
 
-	output:
-	file 'interpro_search.tsv'
+    output:
+    file 'interpro_search.tsv'
 
-	script:
-	"""
-	cat $tsv_files > interpro_search.tsv
-	"""
+    script:
+    """
+    cat $tsv_files > interpro_search.tsv
+    """
 
 }
 
 workflow.onComplete {
-	log.info ( workflow.success ? "\nFunctional annotation input preparation complete!\n" : "Oops .. something went wrong\n" )
+    log.info ( workflow.success ? "\nFunctional annotation input preparation complete!\n" : "Oops .. something went wrong\n" )
 }
