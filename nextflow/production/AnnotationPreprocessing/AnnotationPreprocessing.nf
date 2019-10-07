@@ -20,8 +20,14 @@ log.info """\
 
  Annotation preprocessing workflow
  ===================================
- genome_assembly : ${params.genome_assembly}
- outdir          : ${params.outdir}
+
+ General parameters
+     genome_assembly : ${params.genome_assembly}
+     outdir          : ${params.outdir}
+
+ Filtering parameters
+     min_length      : ${params.min_length}
+     
  """
 
 // include './../workflows/annotation_workflows' params(params)
