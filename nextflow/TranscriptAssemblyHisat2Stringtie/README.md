@@ -10,7 +10,7 @@ nextflow run -profile nbis TranscriptAssemblyHisat2Stringtie.nf \
 
 ## Parameters
 
-* `reads`: The path to the reads in quotes. Read pairs must include the `{}` notation to dictate what a read pair is.
+* `reads`: The path to the reads in quotes. The read pairs path must use the `{}` notation to define what a read pair is.
 * `genome`: The path to the genome assembly in quotes.
 * `paired`: True if the reads are paired, or false if single end.
 * `outdir`: The name of the results folder.
