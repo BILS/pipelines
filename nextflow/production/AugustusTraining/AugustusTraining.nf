@@ -83,7 +83,7 @@ process gff_filter_gene_models {
     script:
     """
     filter_sort.pl -f $gff3_file -F $genome_fasta \\
-    -o ${gff_file.baseName}_model-filtered.gff3 ${params.gff_gene_model_filter_options}
+        -o ${gff_file.baseName}_model-filtered.gff3 ${params.gff_gene_model_filter_options}
     """
     // filter_sort.pl is a script in the NBIS
 }
@@ -96,13 +96,14 @@ process gff_longest_cds {
     file gff3_file from gff_for_longest_cds
 
     output:
-    file "${gff3_file.baseName}_longest_cds.gff3" into gff_for_gff2protein, gff_for_blast_filter
+    file "codingGeneFeatures.filter.longest_cds.gff" into gff_for_gff2protein, gff_for_blast_filter
 
     script:
     """
-    find_longest_CDS.pl -f $gff3_file -o ${gff3_file.baseName}_longest_cds.gff3
+    gff3_sp_keep_longest_isoform.pl -f $gff3_file \\
+        -o codingGeneFeatures.filter.longest_cds.gff
     """
-    // find_longest_CDS.pl is a script in the NBIS
+    // gff3_sp_keep_longest_isoform.pl is a script in the NBIS GAAS repo
 }
 
 process gff2protein {
