@@ -1,4 +1,6 @@
-nextflow.preview.dsl=2
+#! /usr/bin/env nextflow
+
+// nextflow.preview.dsl=2
 
 /*
  * Default pipeline parameters. They can be overriden on the command line eg.
