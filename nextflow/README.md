@@ -17,7 +17,7 @@ export NXF_WORK=$SNIC_NOBACKUP/work
 
 The general idea to run a workflow is in the following way:
 ```
-nextflow run [-profile <profile_name1>[,<profile_name2>,...] ] workflow.nf [--additional_parameters]
+nextflow run [-profile <profile_name1>[,<profile_name2>,...] ] workflow.nf [--workflow_parameters]
 ```
 
 ## Available pipelines
