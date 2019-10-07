@@ -13,7 +13,8 @@ params.outdir = "results"
 
 params.records_per_file = 1000
 
-log.info """\
+log.info """
+NBIS
  _   _ ____ _____  _____
  | \\ | |  _ \\_   _|/ ____|
  |  \\| | |_) || | | (___

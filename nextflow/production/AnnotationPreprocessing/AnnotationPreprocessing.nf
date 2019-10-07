@@ -10,7 +10,8 @@ params.outdir = "results"
 
 params.min_length = 1000
 
-log.info """\
+log.info """
+NBIS
  _   _ ____ _____  _____
  | \\ | |  _ \\_   _|/ ____|
  |  \\| | |_) || | | (___
@@ -27,7 +28,7 @@ log.info """\
 
  Filtering parameters
      min_length      : ${params.min_length}
-     
+
  """
 
 // include './../workflows/annotation_workflows' params(params)
