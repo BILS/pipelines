@@ -11,7 +11,7 @@ params.gff_annotation = "$baseDir/test_data/test.gff"
 params.genome = "$baseDir/test_data/genome.fasta"
 params.outdir = "results"
 
-params.chunk_size = 1000
+params.records_per_file = 1000
 
 log.info """\
  _   _ ____ _____  _____
@@ -23,8 +23,15 @@ log.info """\
 
  Functional annotation input preparation workflow
  ===================================
- gff_annotation : ${params.gff_annotation}
- outdir         : ${params.outdir}
+
+ General parameters
+     gff_annotation   : ${params.gff_annotation}
+     genome           : ${params.genome}
+     outdir           : ${params.outdir}
+
+ Parallelisation parameters
+     records_per_file  : ${params.records_per_file}
+
  """
 
 // include './../workflows/annotation_workflows' params(params)
@@ -90,7 +97,7 @@ process blastp {
     tag "Blastp ~ $database"
 
     input:
-    file fasta_file from fasta_for_blast.splitFasta(by: params.chunk_size)
+    file fasta_file from fasta_for_blast.splitFasta(by: params.records_per_file)
     file blastdb from blastdb_files.collect()
 
     output:
@@ -128,12 +135,12 @@ process interpro {
     tag "InterProScan: Protein function classification"
 
     input:
-    file protein_fasta from fasta_for_interpro.splitFasta(by: params.chunk_size)
+    file protein_fasta from fasta_for_interpro.splitFasta(by: params.records_per_file)
     file interprodb from interprodb_files.collect()
 
     output:
     // file '*.gff3' into interpro_gffs
-    file 'results/*.xml' into interpro_xmls
+    // file 'results/*.xml' into interpro_xmls
     file 'results/*.tsv' into interpro_tsvs
 
     script:
@@ -143,27 +150,27 @@ process interpro {
 
 }
 
-process merge_interpro_xml {
-
-    tag "Merge: InterProScan XMLs"
-    publishDir "${params.outdir}/interproscan_xml", mode: 'copy'
-
-    input:
-    file xml_files from interpro_xmls.collect()
-
-    output:
-    file 'interpro_search.xml'
-
-    // This code is not robust at all. Need to rewrite (e.g. the -v "xml" already excludes "protein-matches" lines because of the "xmlns" attributes)
-    script:
-    """
-    head -n 2 ${xml_files[0]} > interpro_search.xml
-    for XML in $xml_files; do
-    grep -v "xml" \$XML | grep -v "protein-matches" >> interpro_search.xml
-    done
-    tail -n 1 ${xml_files[0]} >> interpro_search.xml
-    """
-}
+// process merge_interpro_xml {
+//
+//     tag "Merge: InterProScan XMLs"
+//     publishDir "${params.outdir}/interproscan_xml", mode: 'copy'
+//
+//     input:
+//     file xml_files from interpro_xmls.collect()
+//
+//     output:
+//     file 'interpro_search.xml'
+//
+//     // This code is not robust at all. Need to rewrite (e.g. the -v "xml" already excludes "protein-matches" lines because of the "xmlns" attributes)
+//     script:
+//     """
+//     head -n 2 ${xml_files[0]} > interpro_search.xml
+//     for XML in $xml_files; do
+//     grep -v "xml" \$XML | grep -v "protein-matches" >> interpro_search.xml
+//     done
+//     tail -n 1 ${xml_files[0]} >> interpro_search.xml
+//     """
+// }
 
 process merge_interpro_tsv {
 
