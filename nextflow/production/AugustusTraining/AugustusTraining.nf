@@ -16,7 +16,8 @@ params.codon_table = 1
 params.test_size = 100
 params.flank_region_size = 500
 
-log.info """\
+log.info """
+NBIS
   _   _ ____ _____  _____
  | \\ | |  _ \\_   _|/ ____|
  |  \\| | |_) || | | (___
@@ -26,8 +27,22 @@ log.info """\
 
  Augustus training dataset workflow
  ===================================
- gff_annotation : ${params.gff_annotation}
- outdir         : ${params.outdir}
+
+ General Parameters
+     gff_annotation                : ${params.gff_annotation}
+     genome                        : ${params.genome}
+     outdir                        : ${params.outdir}
+
+ Gene Model Filtering parameters
+     gff_gene_model_filter_options : ${params.gff_gene_model_filter_options}
+
+ Protein Sequence extraction parameters
+     codon_table                   : ${params.codon_table}
+
+ Augustus training parameters
+     test_size                     : ${params.test_size}
+     flank_region_size             : ${params.flank_region_size}
+
  """
 //
 // include './../workflows/annotation_workflows' params(params)
@@ -108,7 +123,7 @@ process gff_longest_cds {
 
 process gff2protein {
 
-    tag "Converting GFF to protein sequence"
+    tag "Convert GFF to protein sequence"
 
     input:
     file gff_file from gff_for_gff2protein
@@ -128,7 +143,7 @@ process gff2protein {
 
 process blast_makeblastdb {
 
-    tag "Making Blast database: from: ${fasta_file.baseName} type: $dbtype"
+    tag "Create Blast database: ${fasta_file.baseName} type: $dbtype"
 
     input:
     file fasta_file from fasta_for_blastdb
