@@ -1,4 +1,4 @@
-# NBIS nextflow pipelines
+# NBIS Annotation service nextflow pipelines
 
 It's expected that Nextflow is available on your system, otherwise it can
 be installed using:
