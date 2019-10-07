@@ -104,7 +104,7 @@ process assembly_generate_stats {
     """
     fasta_statisticsAndPlot.pl --infile $fasta_file --output ${fasta_file.baseName}_assembly_report.txt
     """
-
+    // fasta_statisticsAndPlot.pl can be found in the NBIS GAAS repository
 }
 
 workflow.onComplete {

@@ -108,7 +108,7 @@ process blastp {
     database = blastdb[0].toString() - ~/.p\w\w$/
     """
     blastp -query $fasta_file -db ${database} -num_threads ${task.cpus} \\
-    -outfmt 6 -out ${fasta_file.baseName}_blast.tsv
+        -outfmt 6 -out ${fasta_file.baseName}_blast.tsv
     """
 
 }

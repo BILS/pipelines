@@ -137,7 +137,7 @@ process gff2protein {
     script:
     """
     gff3_sp_extract_sequences.pl -o ${gff_file.baseName}_proteins.fasta -f $genome_fasta \\
-    -p -cfs -cis -ct ${params.codon_table} --gff $gff_file
+        -p -cfs -cis -ct ${params.codon_table} --gff $gff_file
     """
     // gff3_sp_extract_sequences.pl is a script in the NBIS pipelines repository in bin
 
@@ -176,7 +176,7 @@ process blast_recursive {
     database = blastdb[0].toString() - ~/.p\w\w$/
     """
     blastp -query $fasta_file -db ${database} -num_threads ${task.cpus} \\
-    -outfmt 6 -out ${fasta_file.baseName}_blast.tsv
+        -outfmt 6 -out ${fasta_file.baseName}_blast.tsv
     """
 
 }
@@ -196,7 +196,7 @@ process gff_filter_by_blast {
     script:
     """
     gff_filter_by_mrna_id.pl --gff $gff_file --blast $blast_file \\
-    --outfile ${gff_file.baseName}_blast-filtered.gff3
+        --outfile ${gff_file.baseName}_blast-filtered.gff3
     """
     // gff_filter_by_mrna_id.pl is a script in the NBIS pipelines repository in bin
 
