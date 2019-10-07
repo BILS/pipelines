@@ -8,7 +8,7 @@ curl -fsSL get.nextflow.io | bash
 mv ./nextflow ~/bin
 ```
 
-It might be good practice to set the NXF_WORK directory, otherwise this creates
+It might be good practice to set the `NXF_WORK` directory, otherwise nextflow creates
 a work folder from where you run the nextflow pipeline.
 ```
 # Set work dir to no-backup
