@@ -1,0 +1,10 @@
+# conda env create -f environment.yml
+name: annotation-preprocessing
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - seqtk=1.3
+
