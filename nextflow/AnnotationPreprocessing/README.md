@@ -3,7 +3,7 @@
 ## Quickstart
 
 ```
-nextflow run -profile nbis AnnotationPreprocessing.nf --genome_assembly '/path/to/genome_assembly.fasta'
+nextflow run -profile nbis,docker AnnotationPreprocessing.nf --genome_assembly '/path/to/genome_assembly.fasta'
 ```
 
 ## Parameters
