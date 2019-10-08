@@ -9,7 +9,7 @@
 
 params.reads = "$baseDir/test_data/*.fastq.gz"
 params.genome = "$baseDir/test_data/genome.fa"
-params.paired = true
+params.single_end = false
 params.outdir = "results"
 
 params.trimmomatic_adapter_path = '$TRIMMOMATIC_SHARE/adapters/TruSeq3-PE-2.fa'
@@ -34,7 +34,7 @@ NBIS
  General Parameters
      genome                     : ${params.genome}
      reads                      : ${params.reads}
-     paired                     : ${params.paired}
+     single_end                 : ${params.single_end}
      outdir                     : ${params.outdir}
 
  Trimmomatic parameters
@@ -92,7 +92,7 @@ NBIS
 //
 // }
 
-Channel.fromFilePairs(params.reads, size: params.paired ? 2 : 1, checkIfExists: true)
+Channel.fromFilePairs(params.reads, size: params.single_end ? 1 : 2, checkIfExists: true)
     .ifEmpty { exit 1, "Cannot find reads matching ${params.reads}!\n" }
     .into { rnaseq_reads_2_fastqc; rnaseq_reads_2_trimmomatic }
 Channel.fromPath(params.genome, checkIfExists: true)
