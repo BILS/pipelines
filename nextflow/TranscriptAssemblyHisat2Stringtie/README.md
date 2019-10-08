@@ -19,7 +19,7 @@ nextflow run -profile nbis,docker TranscriptAssemblyHisat2Stringtie.nf \
 where '$TRIMMOMATIC_SHARE' is set in the Dockerfile).
 * `trimmomatic_clip_options`: Read clipping options (Default:'LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36').
 
-* `hisat2_options`: Additional options for hisat2.
+* `hisat2_options`: Additional options for hisat2. E.g. stranded option can be added like `--hisat2_options '--fr'`.
 
 * `stringtie_options`: Additional options for stringtie.
 
