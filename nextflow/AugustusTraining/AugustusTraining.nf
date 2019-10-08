@@ -88,26 +88,26 @@ Channel.fromPath(params.genome, checkIfExists: true)
 
 process gff_filter_gene_models {
 
-    tag "Filter GFF by gene models "
+    tag "${gff3_file.baseName}"
 
     input:
     file gff3_file from gff_for_gene_model_filter
     file genome_fasta from genome_for_gene_model.collect()
 
     output:
-    file "${gff_file.baseName}_model-filtered.gff3" into gff_for_longest_cds
+    file "${gff3_file.baseName}_model-filtered.gff3" into gff_for_longest_cds
 
     script:
     """
     filter_sort.pl -f $gff3_file -F $genome_fasta \\
-        -o ${gff_file.baseName}_model-filtered.gff3 ${params.gff_gene_model_filter_options}
+        -o ${gff3_file.baseName}_model-filtered.gff3 ${params.gff_gene_model_filter_options}
     """
     // filter_sort.pl is a script in the NBIS
 }
 
 process gff_longest_cds {
 
-    tag "Retain longest CDS sequences"
+    tag "${gff3_file.baseName}"
 
     input:
     file gff3_file from gff_for_longest_cds
@@ -125,7 +125,7 @@ process gff_longest_cds {
 
 process gff2protein {
 
-    tag "Convert GFF to protein sequence"
+    tag "${gff_file.baseName}"
 
     input:
     file gff_file from gff_for_gff2protein
@@ -145,7 +145,7 @@ process gff2protein {
 
 process blast_makeblastdb {
 
-    tag "Create Blast database: ${fasta_file.baseName} type: $dbtype"
+    tag "${fasta_file.baseName} type: $dbtype"
 
     input:
     file fasta_file from fasta_for_blastdb
@@ -163,7 +163,7 @@ process blast_makeblastdb {
 
 process blast_recursive {
 
-    tag "Performing recursive blast"
+    tag "${fasta_file.baseName}"
 
     input:
     file fasta_file from fasta_for_blast
@@ -183,7 +183,7 @@ process blast_recursive {
 
 process gff_filter_by_blast {
 
-    tag "Filtering GFF by Blast results (outfmt:6)"
+    tag "${gff_file.baseName}"
     publishDir "${params.outdir}/BlastFilteredGFF", mode: 'copy'
 
     input:
@@ -204,7 +204,7 @@ process gff_filter_by_blast {
 
 process gff2gbk {
 
-    tag "Converting GFF to Genbank format"
+    tag "${gff_file.baseName}"
 
     input:
     file gff_file from blast_filtered_gff
@@ -223,7 +223,7 @@ process gff2gbk {
 
 process gbk2augustus {
 
-    tag "Make Augustus training set"
+    tag "Make Augustus training set: ${genbank_file.baseName}"
     publishDir "${params.outdir}/Augustus", mode: 'copy',
         saveAs: { filename ->
             if (filename.indexOf(".train") > 0)        "TrainingData/$filename"
@@ -235,9 +235,9 @@ process gbk2augustus {
     file genbank_file from genbank_files
 
     output:
-    file "${genbank_file}.train"
-    file "${genbank_file}.test"
-    file "${genbank_file}"
+    file "${genbank_file.baseName}.train"
+    file "${genbank_file.baseName}.test"
+    file "${genbank_file.baseName}"
 
     script:
     """
