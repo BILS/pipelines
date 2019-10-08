@@ -3,7 +3,7 @@
 ## Quickstart
 
 ```
-nextflow run -profile nbis AugustusTraining.nf \
+nextflow run -profile nbis,docker AugustusTraining.nf \
   --genome '/path/to/genome_assembly.fasta' \
   --gff_annotation 'path/to/annotation.gff3'
 ```
