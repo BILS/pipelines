@@ -17,6 +17,8 @@ nextflow run -profile nbis,docker FunctionalAnnotationPreparation.nf \
 * `records_per_file`: The number of records per file. A parallelisation option 
 to improve blast and interproscan speed.
 
+* `blast_db`: The path to protein database files in quotes.
+
 ## Stages
 
 
