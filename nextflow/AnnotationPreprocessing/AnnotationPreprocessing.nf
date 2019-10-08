@@ -58,7 +58,7 @@ NBIS
 //
 // }
 
-Channel.fromPath(params.genome, checkIfExists: true)
+Channel.fromPath(params.genome_assembly, checkIfExists: true)
     .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
     .set { genome_for_filter }
 
