@@ -8,8 +8,10 @@ Some others are writen within dedicated bioinformatic pipeline frameworks (bpipe
 
 Here is the repository of the different pipeline flavours:
 
- * [Bpipe (groovy)](bpipe)
- * [Nextflow (groovy)](https://github.com/nf-core/tools)
+ * [Bpipe (NBIS GAAS)](bpipe)
+ * Nextflow
+     * [NBIS GAAS](nextflow)
+     * [nf-core](https://github.com/nf-core/tools)
  * (Please add link to your repo here)
 
 ---------------------------
