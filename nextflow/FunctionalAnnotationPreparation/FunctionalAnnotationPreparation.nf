@@ -13,6 +13,8 @@ params.outdir = "results"
 
 params.records_per_file = 1000
 
+params.blast_db = '/path/to/protein/database*.p*'
+
 log.info """
 NBIS
  _   _ ____ _____  _____
@@ -30,8 +32,12 @@ NBIS
      genome           : ${params.genome}
      outdir           : ${params.outdir}
 
+
  Parallelisation parameters
      records_per_file  : ${params.records_per_file}
+
+ Blast parameters
+     blast_db          : ${params.blast_db}
 
  """
 
@@ -40,7 +46,7 @@ NBIS
 // workflow {
 //
 // 	main:
-// 	functional_annotation_input_preparation(Channel.fromPath(params.gff_file, checkIfExists: true))
+// 	functional_annotation_input_preparation(Channel.fromPath(params.gff_annotation, checkIfExists: true))
 //
 // 	publish:
 // 	functional_annotation_input_preparation.out to: "${params.outdir}"
@@ -50,19 +56,18 @@ NBIS
 //
 // 	get:
 // 		gff_file
+// 		genome
 //
 // 	main:
-// 		gff2protein(gff_file)
-// 		blastp(gff2protein.out.splitFasta(by: params.chunk_size))
+// 		gff2protein(gff_file,genome.collect())
+// 		blastp(gff2protein.out.splitFasta(by: params.records_per_file))
 // 		merge_blast_tab(blastp.out.collect())
-// 		interpro(gff2protein.out.splitFasta(by: params.chunk_size))
+// 		interpro(gff2protein.out.splitFasta(by: params.records_per_file))
 // 		merge_interpro_tsv(interpro.out.collect())
-// 		merge_interpro_xml(interpro.out.collect())
 //
 // 	emit:
 // 		blast_results = merge_blast_tab.out
 // 		interpro_tsv = merge_interpro_tsv.out
-// 		interpro_xml = merge_interpro.xml.out
 //
 // }
 
@@ -72,10 +77,13 @@ Channel.fromPath(params.gff_annotation, checkIfExists: true)
 Channel.fromPath(params.genome, checkIfExists: true)
     .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
     .into { genome_for_gene_model; genome_for_gff2protein; genome_for_gff2gbk }
+Channel.fromPath(params.blast_db, checkIfExists: true)
+    .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db}"}
+	.set { blastdb_files }
 
 process gff2protein {
 
-    tag "Converting GFF to protein sequence"
+    // tag "${gff_file.baseName}"
 
     input:
     file gff_file from gff_for_gff2protein
@@ -95,7 +103,7 @@ process gff2protein {
 
 process blastp {
 
-    tag "Blastp ~ $database"
+    // tag "$database"
 
     input:
     file fasta_file from fasta_for_blast.splitFasta(by: params.records_per_file)
@@ -115,7 +123,7 @@ process blastp {
 
 process merge_blast_tab {
 
-    tag "Merge: Blast TSVs"
+    // tag "Merge: Blast TSVs"
     publishDir "${params.outdir}/blast_tsv", mode: 'copy'
 
     input:
@@ -131,9 +139,9 @@ process merge_blast_tab {
 
 }
 
-process interpro {
+process interproscan {
 
-    tag "InterProScan: Protein function classification"
+    // tag "InterProScan: Protein function classification"
 
     input:
     file protein_fasta from fasta_for_interpro.splitFasta(by: params.records_per_file)
@@ -175,7 +183,7 @@ process interpro {
 
 process merge_interpro_tsv {
 
-    tag "Merge InterProScan TSVs"
+    // tag "Merge InterProScan TSVs"
     publishDir "${params.outdir}/interproscan_tsv", mode: 'copy'
 
     input:
