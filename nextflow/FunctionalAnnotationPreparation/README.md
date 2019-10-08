@@ -3,7 +3,7 @@
 ## Quickstart
 
 ```
-nextflow run -profile nbis FunctionalAnnotationPreparation.nf \
+nextflow run -profile nbis,docker FunctionalAnnotationPreparation.nf \
   --genome '/path/to/genome_assembly.fasta' \
   --gff_annotation 'path/to/annotation.gff3'
 ```
