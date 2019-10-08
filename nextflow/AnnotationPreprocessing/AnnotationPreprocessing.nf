@@ -90,6 +90,7 @@ process assembly_generate_stats {
 
     output:
     file "${fasta_file.baseName}_assembly_report.txt"
+    file "*.pdf"
 
     script:
     """
