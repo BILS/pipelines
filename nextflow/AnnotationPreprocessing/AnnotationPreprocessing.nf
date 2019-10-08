@@ -89,12 +89,11 @@ process assembly_generate_stats {
     file fasta_file from genome_for_stats
 
     output:
-    file "${fasta_file.baseName}_assembly_report.txt"
-    file "*.pdf"
+    file "${fasta_file.baseName}_assembly_report"
 
     script:
     """
-    fasta_statisticsAndPlot.pl --infile $fasta_file --output ${fasta_file.baseName}_assembly_report.txt
+    fasta_statisticsAndPlot.pl --infile $fasta_file --output ${fasta_file.baseName}_assembly_report
     """
     // fasta_statisticsAndPlot.pl can be found in the NBIS GAAS repository
 }
