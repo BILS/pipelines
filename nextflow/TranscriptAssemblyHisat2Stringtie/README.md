@@ -3,7 +3,7 @@
 ## Quickstart
 
 ```
-nextflow run -profile nbis TranscriptAssemblyHisat2Stringtie.nf \
+nextflow run -profile nbis,docker TranscriptAssemblyHisat2Stringtie.nf \
   --reads '/path/to/reads*_{R1,R2}.fastq.gz' \
   --genome 'path/to/genome.fasta'
 ```
