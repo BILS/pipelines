@@ -17,17 +17,12 @@ nextflow run -profile nbis,docker TranscriptAssemblyHisat2Stringtie.nf \
 | `single_end` | True if the reads are single-end, or false if reads are paired-end (Default: false). |
 | `outdir` | The name of the results folder. |
 | **Trimmomatic parameters** | |
-| `trimmomatic_adapter_path` | The path to the trimmomatic adapter file. (Default:`'$TRIMMOMATIC_SHARE/adapters/TruSeq3-PE-2.fa'` 
-    where `'$TRIMMOMATIC_SHARE'` is set in the Dockerfile). |
+| `trimmomatic_adapter_path` | The path to the trimmomatic adapter file. (Default:`'$TRIMMOMATIC_SHARE/adapters/TruSeq3-PE-2.fa'` where `'$TRIMMOMATIC_SHARE'` is set in the Dockerfile). |
 | `trimmomatic_clip_options` | Read clipping options (Default:`'LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36'`). |
 | **Hisat2 parameters** | |
-| `hisat2_options` | Additional options for hisat2. E.g. strandedness (`--hisat2_options '--fr'`). 
-    See the [Hisat2 Manual](https://ccb.jhu.edu/software/hisat2/manual.shtml) for the full range of options.
-    (Default: ''). |
+| `hisat2_options` | Additional options for hisat2. E.g. strandedness (`--hisat2_options '--fr'`). See the [Hisat2 Manual](https://ccb.jhu.edu/software/hisat2/manual.shtml) for the full range of options. (Default: ''). |
 | **StringTie parameters** | |
-| `stringtie_options` | Additional options for stringtie. See the 
-    [StringTie Manual](http://ccb.jhu.edu/software/stringtie/index.shtml?t=manual) for the full range of options.
-    (Default: ''). |
+| `stringtie_options` | Additional options for stringtie. See the [StringTie Manual](http://ccb.jhu.edu/software/stringtie/index.shtml?t=manual) for the full range of options. (Default: ''). |
   
 
 * **General**
