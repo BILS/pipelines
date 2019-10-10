@@ -133,18 +133,18 @@ process trimmomatic {
     file 'trimmomatic.log' into trimmomatic_logs
 
     script:
-    if (params.paired) {
+    if (params.single_end) {
     """
-    trimmomatic PE -threads ${task.cpus} $reads \\
-        ${sample_id}_paired_R1.fastq.gz ${sample_id}_unpaired_R1.fastq.gz \\
-        ${sample_id}_paired_R2.fastq.gz ${sample_id}_unpaired_R2.fastq.gz \\
+    trimmomatic SE -threads ${task.cpus} $reads \\
+        ${sample_id}_trimmed.fastq.gz \\
         ILLUMINACLIP:${params.trimmomatic_adapter_path}:2:30:10 \\
         ${params.trimmomatic_clip_options} 2> trimmomatic.log
     """
     } else {
     """
-    trimmomatic SE -threads ${task.cpus} $reads \\
-        ${sample_id}_trimmed.fastq.gz \\
+    trimmomatic PE -threads ${task.cpus} $reads \\
+        ${sample_id}_paired_R1.fastq.gz ${sample_id}_unpaired_R1.fastq.gz \\
+        ${sample_id}_paired_R2.fastq.gz ${sample_id}_unpaired_R2.fastq.gz \\
         ILLUMINACLIP:${params.trimmomatic_adapter_path}:2:30:10 \\
         ${params.trimmomatic_clip_options} 2> trimmomatic.log
     """
@@ -185,18 +185,18 @@ process hisat2 {
 
     script:
     hisat2_basename = hisat2_index_files[0].toString() - ~/.\d.ht2l?/
-    if (params.paired){
+    if (params.single_end){
     """
     hisat2 ${params.hisat2_options} --novel-splicesite-outfile splicesite.txt \\
         --new-summary --summary-file ${sample_id}.hisat2_summary.txt \\
-        -p ${task.cpus} -x $hisat2_basename -1 ${reads[0]} -2 ${reads[1]} | \\
+        -p ${task.cpus} -x $hisat2_basename -U $reads | \\
         samtools sort -@ ${task.cpus} -o ${sample_id}_sorted_alignment.bam -
     """
     } else {
     """
     hisat2 ${params.hisat2_options} --novel-splicesite-outfile splicesite.txt \\
         --new-summary --summary-file ${sample_id}.hisat2_summary.txt \\
-        -p ${task.cpus} -x $hisat2_basename -U $reads | \\
+        -p ${task.cpus} -x $hisat2_basename -1 ${reads[0]} -2 ${reads[1]} | \\
         samtools sort -@ ${task.cpus} -o ${sample_id}_sorted_alignment.bam -
     """
     }
