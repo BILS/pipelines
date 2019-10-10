@@ -11,7 +11,7 @@ nextflow run -profile nbis,docker TranscriptAssemblyHisat2Stringtie.nf \
 ## Parameters
 
 | **General** | Description |
-| :---: | :--- |
+| :------- | :--- |
 | `reads` | The path to the reads in quotes. The read pairs path must use the `{}` notation to define what a read pair is. |
 | `genome` | The path to the genome assembly in quotes. |
 | `single_end` | `true` if the reads are single-end, or `false` if reads are paired-end (Default: `false`). |
