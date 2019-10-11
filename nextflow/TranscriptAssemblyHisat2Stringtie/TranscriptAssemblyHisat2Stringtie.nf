@@ -98,11 +98,8 @@ Channel.fromFilePairs(params.reads, size: params.single_end ? 1 : 2, checkIfExis
 Channel.fromPath(params.genome, checkIfExists: true)
     .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
     .set { genome_hisat2 }
-
-File adapter_trim_file = new File(params.trimmomatic_adapter_path)
-if(!adapter_trim_file.exists()){
-    exit 1, "The adapter file '${params.trimmomatic_adapter_path}' does not exist!\n"
-}
+Channel.fromPath(params.trimmomatic_adapter_path, checkIfExists: true)
+    .ifEmpty { exit 1, "The adapter file '${params.trimmomatic_adapter_path}' does not exist!\n" }
 
 process fastqc {
 
