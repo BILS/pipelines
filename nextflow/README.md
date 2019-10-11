@@ -3,7 +3,13 @@
 It's expected that Nextflow is available on your system, otherwise it can
 be installed using:
 ```
-# Install nextflow:
+# Install both nextflow and nf-core tools using conda
+conda create -n nextflow-env nf-core nextflow
+conda activate nextflow-env
+```
+Or:
+```
+# Install nextflow without using conda:
 curl -fsSL get.nextflow.io | bash
 mv ./nextflow ~/bin
 ```
