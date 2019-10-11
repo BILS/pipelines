@@ -12,7 +12,7 @@ params.genome = "$baseDir/test_data/genome.fa"
 params.single_end = false
 params.outdir = "results"
 
-params.trimmomatic_adapter_path = '' '$TRIMMOMATIC_SHARE/adapters/TruSeq3-PE-2.fa'
+params.trimmomatic_adapter_path = ''
 params.trimmomatic_clip_options = 'LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36'
 
 params.hisat2_options = ''
