@@ -12,7 +12,7 @@ params.genome = "$baseDir/test_data/genome.fa"
 params.single_end = false
 params.outdir = "results"
 
-params.trimmomatic_adapter_path = '$TRIMMOMATIC_SHARE/adapters/TruSeq3-PE-2.fa'
+params.trimmomatic_adapter_path = '' '$TRIMMOMATIC_SHARE/adapters/TruSeq3-PE-2.fa'
 params.trimmomatic_clip_options = 'LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36'
 
 params.hisat2_options = ''
@@ -98,6 +98,11 @@ Channel.fromFilePairs(params.reads, size: params.single_end ? 1 : 2, checkIfExis
 Channel.fromPath(params.genome, checkIfExists: true)
     .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
     .set { genome_hisat2 }
+
+File adapter_trim_file = new File(params.trimmomatic_adapter_path)
+if(!adapter_trim_file.exists()){
+    exit 1, "The adapter file '${params.trimmomatic_adapter_path}' does not exist!\n"
+}
 
 process fastqc {
 
