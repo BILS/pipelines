@@ -2,14 +2,14 @@
 
 ## Quickstart
 
-```
+```bash
 nextflow run -profile nbis,conda TranscriptAssemblyHisat2Stringtie.nf \
   --reads '/path/to/reads*_{R1,R2}.fastq.gz' \
   --genome 'path/to/genome.fasta'
 ```
 
 Parameters can also be stored in a config file:
-```
+```bash
 # Put all available parameter settings in a file.
 grep "^params." TranscriptAssemblyHisat2Stringtie.nf > params.config
 # Edit config file parameter values.
@@ -19,7 +19,7 @@ nextflow run -c params.config -profile nbis,conda TranscriptAssemblyHisat2String
 ```
 
 Use `-resume` to restart failed jobs.
-```
+```bash
 nextflow run -resume -c params.config -profile nbis,conda TranscriptAssemblyHisat2Stringtie.nf
 ```
 
