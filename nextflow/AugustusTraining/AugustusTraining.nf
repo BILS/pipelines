@@ -89,14 +89,14 @@ Channel.fromPath(params.genome, checkIfExists: true)
 process split_maker_evidence {
 
     tag "${maker_evidence.baseName}"
-	publishDir "${params.outdir}/maker_results_noAbinitio_clean", mode: 'copy'
+    publishDir "${params.outdir}/maker_results_noAbinitio_clean", mode: 'copy'
 
     input:
     file maker_evidence from gff_for_split_maker_evidence
 
     output:
     file "maker_results_noAbinitio_clean/mrna.gff" into gff_for_model_select_by_AED
-	file "maker_results_noAbinitio_clean/*"
+    file "maker_results_noAbinitio_clean/*"
 
     script:
     """
