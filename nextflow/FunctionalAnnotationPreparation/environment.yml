@@ -7,4 +7,13 @@ channels:
 
 dependencies:
   - blast=2.9.0
-
+  - perl-bioperl
+  - perl-clone
+  - perl-moose
+  - perl-graph
+  - perl-lwp-simple
+  - perl-statistics-r
+  - perl-json
+  - perl-sort-naturally
+  - rb-bio
+  - rb-json
