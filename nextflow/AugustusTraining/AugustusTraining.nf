@@ -90,6 +90,7 @@ process split_maker_evidence {
 
     tag "${maker_evidence.baseName}"
     publishDir "${params.outdir}/maker_results_noAbinitio_clean", mode: 'copy'
+    label 'GAAS'
 
     input:
     file maker_evidence from gff_for_split_maker_evidence
@@ -109,6 +110,7 @@ process model_selection_by_AED {
 
     tag "${mrna_gff.baseName}"
     publishDir "${params.outdir}/filter", mode: 'copy'
+	label 'GAAS'
 
     input:
     file mrna_gff from gff_for_model_select_by_AED
@@ -127,6 +129,7 @@ process retain_longest_isoform {
 
     tag "${coding_gene_features_gff.baseName}"
     publishDir "${params.outdir}/filter", mode: 'copy'
+	label 'GAAS'
 
     input:
     file coding_gene_features_gff from gff_for_longest_isoform
@@ -145,6 +148,7 @@ process remove_incomplete_gene_models {
 
     tag "${coding_gene_features_gff.baseName}"
     publishDir "${params.outdir}/filter", mode: 'copy'
+	label 'GAAS'
 
     input:
     file coding_gene_features_gff from gff_for_incomplete_gene_model_removal
@@ -165,6 +169,7 @@ process filter_by_locus_distance {
 
     tag "${coding_gene_features_gff.baseName}"
     publishDir "${params.outdir}/filter", mode: 'copy'
+	label 'GAAS'
 
     input:
     file coding_gene_features_gff from gff_complete_gene_models
@@ -219,6 +224,7 @@ process filter_by_locus_distance {
 process extract_protein_sequence {
 
     tag "${gff_file.baseName}"
+	label 'GAAS'
 
     input:
     file gff_file from gff_for_protein_extraction
@@ -278,6 +284,7 @@ process gff_filter_by_blast {
 
     tag "${gff_file.baseName}"
     publishDir "${params.outdir}/BlastFilteredGFF", mode: 'copy'
+	label 'GAAS'
 
     input:
     file gff_file from gff_for_blast_filter
