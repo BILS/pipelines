@@ -21,6 +21,7 @@ nextflow run -c params.config -profile nbis,conda AugustusTraining.nf
 Use `-resume` to restart failed jobs.
 ```bash
 nextflow run -resume -c params.config -profile nbis,conda AugustusTraining.nf
+```
 
 ## Parameters
 
