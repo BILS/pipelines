@@ -8,7 +8,7 @@
  */
 
 params.maker_evidence_gff = "$baseDir/test_data/test.gff"
-params.genome = "$baseDir/test_data/test.gff"
+params.genome = "$baseDir/test_data/genome.fasta"
 params.outdir = "results"
 
 params.gff_gene_model_filter_options = '-c -r -d 500 -a 0.3'
@@ -288,7 +288,7 @@ process gff_filter_by_blast {
 
     script:
     """
-    gff_filter_by_mrna_id.pl --gff $gff_file --blast $blast_file \\
+    gff3_sp_filter_by_mrnaBlastValue_bioperl.pl --gff $gff_file --blast $blast_file \\
         --outfile ${gff_file.baseName}_blast-filtered.gff3
     """
     // gff_filter_by_mrna_id.pl is a script in the NBIS pipelines repository in bin
