@@ -3,10 +3,26 @@
 ## Quickstart
 
 ```
-nextflow run -profile nbis,docker TranscriptAssemblyHisat2Stringtie.nf \
+nextflow run -profile nbis,conda TranscriptAssemblyHisat2Stringtie.nf \
   --reads '/path/to/reads*_{R1,R2}.fastq.gz' \
   --genome 'path/to/genome.fasta'
 ```
+
+Parameters can also be stored in a config file:
+```
+# Put all available parameter settings in a file.
+grep "^params." TranscriptAssemblyHisat2Stringtie.nf > params.config
+# Edit config file
+vim params.config
+# Run workflow with config file.
+nextflow run -c params.config -profile nbis,conda TranscriptAssemblyHisat2Stringtie.nf
+```
+
+Use `-resume` to restart failed jobs.
+```
+nextflow run -resume -c params.config -profile nbis,conda TranscriptAssemblyHisat2Stringtie.nf
+```
+
 
 ## Parameters
 
