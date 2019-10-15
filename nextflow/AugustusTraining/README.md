@@ -5,7 +5,7 @@
 ```
 nextflow run -profile nbis,docker AugustusTraining.nf \
   --genome '/path/to/genome_assembly.fasta' \
-  --gff_annotation 'path/to/annotation.gff3'
+  --maker_evidence_gff 'path/to/annotation.gff3'
 ```
 
 Parameters can also be stored in a config file:
