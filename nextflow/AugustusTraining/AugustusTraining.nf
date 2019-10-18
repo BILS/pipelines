@@ -253,9 +253,8 @@ process blast_makeblastdb {
     file "*.{phr,pin,psq}" into blastdb_files
 
     script:
-    dbtype = "${params.dbtype}" ? "${params.dbtype}" : 'prot'
     """
-    makeblastdb -in $fasta_file -dbtype $dbtype
+    makeblastdb -in $fasta_file -dbtype prot
     """
 
 }
