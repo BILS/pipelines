@@ -334,9 +334,9 @@ process gbk2augustus {
     file genbank_file from genbank_files
 
     output:
-    file "${genbank_file.baseName}.train"
-    file "${genbank_file.baseName}.test"
-    file "${genbank_file.baseName}"
+    file "${genbank_file}.train"
+    file "${genbank_file}.test"
+    file "${genbank_file}"
 
     script:
     """
