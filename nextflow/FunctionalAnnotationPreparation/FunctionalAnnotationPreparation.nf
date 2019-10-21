@@ -84,6 +84,7 @@ Channel.fromPath(params.blast_db, checkIfExists: true)
 process gff2protein {
 
     // tag "${gff_file.baseName}"
+    label 'GAAS'
 
     input:
     file gff_file from gff_for_gff2protein
