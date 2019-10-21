@@ -7,13 +7,3 @@ channels:
 
 dependencies:
   - seqtk=1.3
-  - perl-bioperl
-  - perl-clone
-  - perl-moose
-  - perl-graph
-  - perl-lwp-simple
-  - perl-statistics-r
-  - perl-json
-  - perl-sort-naturally
-  - rb-bio
-  - rb-json

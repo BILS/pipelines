@@ -84,6 +84,7 @@ process assembly_generate_stats {
 
     tag "${fasta_file.simpleName}"
     publishDir "${params.outdir}/stats", mode: 'copy'
+    label 'GAAS'
 
     input:
     file fasta_file from genome_for_stats
