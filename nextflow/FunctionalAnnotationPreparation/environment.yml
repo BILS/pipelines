@@ -7,4 +7,4 @@ channels:
 
 dependencies:
   - blast=2.9.0
-  - java-jdk
+  - openjdk>=11.0.1
