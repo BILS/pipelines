@@ -82,8 +82,8 @@ Channel.fromPath(params.gff_annotation, checkIfExists: true)
 Channel.fromPath(params.genome, checkIfExists: true)
     .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
     .into { genome_for_gene_model; genome_for_gff2protein; genome_for_gff2gbk }
-Channel.fromPath("${params.blast_db}{,.p*}", checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db}{,.p*}" }
+Channel.fromPath("${params.blast_db_fasta}{,.p*}", checkIfExists: true)
+    .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db_fasta}{,.p*}" }
 	.into { blastdb_files; blastdb_files_for_gff_merge }
 
 process gff2protein {
