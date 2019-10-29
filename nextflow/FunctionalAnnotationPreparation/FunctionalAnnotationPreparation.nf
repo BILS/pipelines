@@ -13,11 +13,11 @@ params.outdir = "results"
 
 params.records_per_file = 1000
 
-params.blast_db = '/path/to/protein/database*.p*'
+params.blast_db_fasta = '/path/to/protein/database.fasta'
 
 params.interproscan_db = 'all'
 
-log.info """
+log.info("""
 NBIS
  _   _ ____ _____  _____
  | \\ | |  _ \\_   _|/ ____|
@@ -30,21 +30,21 @@ NBIS
  ===================================
 
  General parameters
-     gff_annotation   : ${params.gff_annotation}
-     genome           : ${params.genome}
-     outdir           : ${params.outdir}
+     gff_annotation    : ${params.gff_annotation}
+     genome            : ${params.genome}
+     outdir            : ${params.outdir}
 
 
  Parallelisation parameters
      records_per_file  : ${params.records_per_file}
 
  Blast parameters
-     blast_db          : ${params.blast_db}
+     blast_db_fasta    : ${params.blast_db_fasta}
 
  Interproscan parameters
      interproscan_db   : ${params.interproscan_db}
 
- """
+ """)
 
 // include './../workflows/annotation_workflows' params(params)
 //
@@ -78,13 +78,13 @@ NBIS
 
 Channel.fromPath(params.gff_annotation, checkIfExists: true)
     .ifEmpty { exit 1, "Cannot find gff file matching ${params.gff_annotation}!\n" }
-    .set { gff_for_gff2protein }
+    .into { gff_for_gff2protein; gff_for_functional_merge }
 Channel.fromPath(params.genome, checkIfExists: true)
     .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
     .into { genome_for_gene_model; genome_for_gff2protein; genome_for_gff2gbk }
-Channel.fromPath(params.blast_db, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db}" }
-	.set { blastdb_files }
+Channel.fromPath("${params.blast_db}{,.p*}", checkIfExists: true)
+    .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db}{,.p*}" }
+	.into { blastdb_files; blastdb_files_for_gff_merge }
 
 process gff2protein {
 
@@ -119,31 +119,31 @@ process blastp {
     file "${fasta_file.baseName}_blast.tsv" into blast_tsvs
 
     script:
-    database = blastdb[0].toString() - ~/.p\w\w$/
+    // database = blastdb[0].toString() - ~/.p\w\w$/
     """
-    blastp -query $fasta_file -db ${database} -num_threads ${task.cpus} \\
+    blastp -query $fasta_file -db ${params.blast_db_fasta} -num_threads ${task.cpus} \\
         -outfmt 6 -out ${fasta_file.baseName}_blast.tsv
     """
 
 }
 
-process merge_blast_tab {
-
-    // tag "Merge: Blast TSVs"
-    publishDir "${params.outdir}/blast_tsv", mode: 'copy'
-
-    input:
-    file blast_fragments from blast_tsvs.collect()
-
-    output:
-    file 'merged_blast_results.tsv'
-
-    script:
-    """
-    cat $blast_fragments > merged_blast_results.tsv
-    """
-
-}
+// process merge_blast_tab {
+//
+//     // tag "Merge: Blast TSVs"
+//     publishDir "${params.outdir}/blast_tsv", mode: 'copy'
+//
+//     input:
+//     file blast_fragments from blast_tsvs.collect()
+//
+//     output:
+//     file 'merged_blast_results.tsv'
+//
+//     script:
+//     """
+//     cat $blast_fragments > merged_blast_results.tsv
+//     """
+//
+// }
 
 process interproscan {
 
@@ -159,7 +159,8 @@ process interproscan {
 
     script:
     """
-    interproscan.sh -appl ${params.interproscan_db} -i $protein_fasta -d results --iprlookup --goterms -pa -dp -t p
+    interproscan.sh -appl ${params.interproscan_db} -i $protein_fasta -d results \\
+	    --iprlookup --goterms -pa -dp -t p
     """
 
 }
@@ -186,21 +187,48 @@ process interproscan {
 //     """
 // }
 
-process merge_interpro_tsv {
+// process merge_interpro_tsv {
+//
+//     // tag "Merge InterProScan TSVs"
+//     publishDir "${params.outdir}/interproscan_tsv", mode: 'copy'
+//
+//     input:
+//     file tsv_files from interpro_tsvs.collect()
+//
+//     output:
+//     file 'interpro_search.tsv'
+//
+//     script:
+//     """
+//     cat $tsv_files > interpro_search.tsv
+//     """
+//
+// }
 
-    // tag "Merge InterProScan TSVs"
-    publishDir "${params.outdir}/interproscan_tsv", mode: 'copy'
+process merge_functional_annotation {
 
-    input:
-    file tsv_files from interpro_tsvs.collect()
+	publishDir "${params.outdir}/blast_tsv", mode: 'copy', pattern: 'blast_merged.tsv'
+	publishDir "${params.outdir}/interproscan_tsv", mode: 'copy', pattern: 'interproscan_merged.tsv'
+	publishDir "${params.outdir}/final_annotation", mode: 'copy', pattern: "${gff_annotation.baseName}_plus-functional-annotation.gff"
+	label 'GAAS'
 
-    output:
-    file 'interpro_search.tsv'
+	input:
+	file gff_annotation from gff_for_functional_merge
+	file merged_blast_results from blast_tsvs.collectFile(name:'blast_merged.tsv').collect()
+	file merged_interproscan_results from interpro_tsvs.collectFile(name:'interproscan_merged.tsv').collect()
+	file blast_files from blastdb_files_for_gff_merge.collect()
 
-    script:
-    """
-    cat $tsv_files > interpro_search.tsv
-    """
+	output:
+	file "${gff_annotation.baseName}_plus-functional-annotation.gff"
+
+	script:
+	""""
+	gff3_sp_manage_functional_annotation.pl -f ${gff_annotation} \\
+	    -b ${merged_blast_results} -i ${merged_interproscan_results} \\
+		-db ${params.blast_db_fasta} -id BALIM \\
+		-o ${gff_annotation.baseName}_plus-functional-annotation.gff
+	"""
+	// gff3_sp_manage_functional_annotation.pl is a script in the NBIS GAAS repository
 
 }
 
