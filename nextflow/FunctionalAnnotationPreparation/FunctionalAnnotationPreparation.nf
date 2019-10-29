@@ -11,11 +11,15 @@ params.gff_annotation = "$baseDir/test_data/test.gff"
 params.genome = "$baseDir/test_data/genome.fasta"
 params.outdir = "results"
 
+params.codon_table = 1
+
 params.records_per_file = 1000
 
 params.blast_db_fasta = '/path/to/protein/database.fasta'
 
 params.interproscan_db = 'all'
+
+params.merge_annotation_identifier = 'ID'
 
 log.info("""
 NBIS
@@ -30,19 +34,24 @@ NBIS
  ===================================
 
  General parameters
-     gff_annotation    : ${params.gff_annotation}
-     genome            : ${params.genome}
-     outdir            : ${params.outdir}
-
+     gff_annotation                 : ${params.gff_annotation}
+     genome                         : ${params.genome}
+     outdir                         : ${params.outdir}
 
  Parallelisation parameters
-     records_per_file  : ${params.records_per_file}
+     records_per_file               : ${params.records_per_file}
+
+ Gff2Protein parameters
+     codon_table                    : ${params.codon_table}
 
  Blast parameters
-     blast_db_fasta    : ${params.blast_db_fasta}
+     blast_db_fasta                 : ${params.blast_db_fasta}
 
  Interproscan parameters
-     interproscan_db   : ${params.interproscan_db}
+     interproscan_db                : ${params.interproscan_db}
+
+ Merge functional annotation parameters
+     merge_annotation_identifier    : ${params.merge_annotation_identifier}
 
  """)
 
@@ -84,7 +93,7 @@ Channel.fromPath(params.genome, checkIfExists: true)
     .into { genome_for_gene_model; genome_for_gff2protein; genome_for_gff2gbk }
 Channel.fromPath("${params.blast_db_fasta}{,.p*}", checkIfExists: true)
     .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db_fasta}{,.p*}" }
-	.into { blastdb_files; blastdb_files_for_gff_merge }
+    .into { blastdb_files; blastdb_files_for_gff_merge }
 
 process gff2protein {
 
@@ -160,7 +169,7 @@ process interproscan {
     script:
     """
     interproscan.sh -appl ${params.interproscan_db} -i $protein_fasta -d results \\
-	    --iprlookup --goterms -pa -dp -t p
+        --iprlookup --goterms -pa -dp -t p
     """
 
 }
@@ -207,28 +216,28 @@ process interproscan {
 
 process merge_functional_annotation {
 
-	publishDir "${params.outdir}/blast_tsv", mode: 'copy', pattern: 'blast_merged.tsv'
-	publishDir "${params.outdir}/interproscan_tsv", mode: 'copy', pattern: 'interproscan_merged.tsv'
-	publishDir "${params.outdir}/final_annotation", mode: 'copy', pattern: "${gff_annotation.baseName}_plus-functional-annotation.gff"
-	label 'GAAS'
+    publishDir "${params.outdir}/blast_tsv", mode: 'copy', pattern: 'blast_merged.tsv'
+    publishDir "${params.outdir}/interproscan_tsv", mode: 'copy', pattern: 'interproscan_merged.tsv'
+    publishDir "${params.outdir}/final_annotation", mode: 'copy', pattern: "${gff_annotation.baseName}_plus-functional-annotation.gff"
+    label 'GAAS'
 
-	input:
-	file gff_annotation from gff_for_functional_merge
-	file merged_blast_results from blast_tsvs.collectFile(name:'blast_merged.tsv').collect()
-	file merged_interproscan_results from interpro_tsvs.collectFile(name:'interproscan_merged.tsv').collect()
-	file blast_files from blastdb_files_for_gff_merge.collect()
+    input:
+    file gff_annotation from gff_for_functional_merge
+    file merged_blast_results from blast_tsvs.collectFile(name:'blast_merged.tsv').collect()
+    file merged_interproscan_results from interpro_tsvs.collectFile(name:'interproscan_merged.tsv').collect()
+    file blast_files from blastdb_files_for_gff_merge.collect()
 
-	output:
-	file "${gff_annotation.baseName}_plus-functional-annotation.gff"
+    output:
+    file "${gff_annotation.baseName}_plus-functional-annotation.gff"
 
-	script:
-	""""
-	gff3_sp_manage_functional_annotation.pl -f ${gff_annotation} \\
-	    -b ${merged_blast_results} -i ${merged_interproscan_results} \\
-		-db ${params.blast_db_fasta} -id BALIM \\
-		-o ${gff_annotation.baseName}_plus-functional-annotation.gff
-	"""
-	// gff3_sp_manage_functional_annotation.pl is a script in the NBIS GAAS repository
+    script:
+    """"
+    gff3_sp_manage_functional_annotation.pl -f ${gff_annotation} \\
+        -b ${merged_blast_results} -i ${merged_interproscan_results} \\
+        -db ${params.blast_db_fasta} -id ${params.merge_annotation_identifier} \\
+        -o ${gff_annotation.baseName}_plus-functional-annotation.gff
+    """
+    // gff3_sp_manage_functional_annotation.pl is a script in the NBIS GAAS repository
 
 }
 
