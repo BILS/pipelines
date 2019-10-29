@@ -170,7 +170,7 @@ process interproscan {
     applications = { params.interproscan_db ? "-appl ${params.interproscan_db}" : '' }
     """
     interproscan.sh ${applications} -i $protein_fasta -o ${protein_fasta.baseName}.tsv \\
-        --iprlookup --goterms -pa -dp -t p
+        -f TSV --iprlookup --goterms -pa -dp -t p
     """
 
 }
