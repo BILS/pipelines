@@ -15,6 +15,8 @@ params.records_per_file = 1000
 
 params.blast_db = '/path/to/protein/database*.p*'
 
+params.interproscan_db = 'all'
+
 log.info """
 NBIS
  _   _ ____ _____  _____
@@ -38,6 +40,9 @@ NBIS
 
  Blast parameters
      blast_db          : ${params.blast_db}
+
+ Interproscan parameters
+     interproscan_db   : ${params.interproscan_db}
 
  """
 
@@ -78,7 +83,7 @@ Channel.fromPath(params.genome, checkIfExists: true)
     .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
     .into { genome_for_gene_model; genome_for_gff2protein; genome_for_gff2gbk }
 Channel.fromPath(params.blast_db, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db}"}
+    .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db}" }
 	.set { blastdb_files }
 
 process gff2protein {
@@ -146,7 +151,6 @@ process interproscan {
 
     input:
     file protein_fasta from fasta_for_interpro.splitFasta(by: params.records_per_file)
-    file interprodb from interprodb_files.collect()
 
     output:
     // file '*.gff3' into interpro_gffs
@@ -155,7 +159,7 @@ process interproscan {
 
     script:
     """
-    interproscan $interpro_dbpath -i $protein_fasta -d results -iprlookup -goterms -pa -dp
+    interproscan.sh -appl ${params.interproscan_db} -i $protein_fasta -d results --iprlookup --goterms -pa -dp -t p
     """
 
 }
