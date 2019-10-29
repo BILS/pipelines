@@ -164,11 +164,12 @@ process interproscan {
     output:
     // file '*.gff3' into interpro_gffs
     // file 'results/*.xml' into interpro_xmls
-    file 'results/*.tsv' into interpro_tsvs
+    file '*.tsv' into interpro_tsvs
 
     script:
+    applications = { params.interproscan_db ? "-appl ${params.interproscan_db}" : '' }
     """
-    interproscan.sh -appl ${params.interproscan_db} -i $protein_fasta -d results \\
+    interproscan.sh ${applications} -i $protein_fasta -o ${protein_fasta.baseName}.tsv \\
         --iprlookup --goterms -pa -dp -t p
     """
 
