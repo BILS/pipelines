@@ -8,3 +8,4 @@ channels:
 dependencies:
   - blast=2.9.0
   - openjdk>=11.0.1
+  - elfutils=0.176
