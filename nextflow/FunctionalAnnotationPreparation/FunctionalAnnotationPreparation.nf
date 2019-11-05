@@ -232,7 +232,7 @@ process merge_functional_annotation {
     file "${gff_annotation.baseName}_plus-functional-annotation.gff"
 
     script:
-    """"
+    """
     gff3_sp_manage_functional_annotation.pl -f ${gff_annotation} \\
         -b ${merged_blast_results} -i ${merged_interproscan_results} \\
         -db ${params.blast_db_fasta} -id ${params.merge_annotation_identifier} \\
