@@ -3,7 +3,7 @@
 // nextflow.preview.dsl=2
 
 /*
- * Default pipeline parameters. They can be overriden on the command line eg.
+ * Default pipeline parameters. They can be overridden on the command line eg.
  * given `params.foo` specify on the run command line `--foo some_value`.
  */
 
@@ -101,9 +101,9 @@ process split_maker_evidence {
 
     script:
     """
-    gff3_sp_splitByLevel2Feature.pl -g ${maker_evidence} -o maker_results_noAbinitio_clean
+    agat_sp_split_by_level2_feature.pl -g ${maker_evidence} -o maker_results_noAbinitio_clean
     """
-    // gff3_sp_splitByLevel2Feature.pl is a script in the NBIS GAAS repository
+    // agat_sp_split_by_level2_feature.pl is a script from AGAT
 }
 
 process model_selection_by_AED {
@@ -120,9 +120,9 @@ process model_selection_by_AED {
 
     script:
     """
-    maker_select_models_by_AED_score.pl -f ${mrna_gff} -v 0.3 -t "<=" -o codingGeneFeatures.filter.gff
+    agat_sp_filter_feature_by_attribute_value.pl --gff ${mrna_gff} --value 0.3 -a _AED -t ">=" -o codingGeneFeatures.filter.gff
     """
-    // maker_select_models_by_AED_score.pl is a script in the NBIS GAAS repository
+    // agat_sp_filter_feature_by_attribute_value.pl is a script from AGAT
 }
 
 process retain_longest_isoform {
@@ -139,9 +139,9 @@ process retain_longest_isoform {
 
     script:
     """
-    gff3_sp_keep_longest_isoform.pl -f ${coding_gene_features_gff} -o codingGeneFeatures.filter.longest_cds.gff
+    agat_sp_keep_longest_isoform.pl -f ${coding_gene_features_gff} -o codingGeneFeatures.filter.longest_cds.gff
     """
-    // gff3_sp_keep_longest_isoform.pl is a script in the NBIS GAAS respository
+    // agat_sp_keep_longest_isoform.pl is a script from AGAT
 }
 
 process remove_incomplete_gene_models {
@@ -159,10 +159,10 @@ process remove_incomplete_gene_models {
 
     script:
     """
-    gff3_sp_filter_incomplete_gene_coding_models.pl --gff ${coding_gene_features_gff} \
+    agat_sp_filter_incomplete_gene_coding_models.pl --gff ${coding_gene_features_gff} \
         -f ${genome_fasta} -o codingGeneFeatures.filter.longest_cds.complete.gff
     """
-    // gff3_sp_filter_incomplete_gene_coding_models.pl is a script in the NBIS GAAS repository
+    // agat_sp_filter_incomplete_gene_coding_models.pl is a script from AGAT
 }
 
 process filter_by_locus_distance {
@@ -179,47 +179,10 @@ process filter_by_locus_distance {
 
     script:
     """
-    gff3_sp_filter_by_locus_distance.pl --gff ${coding_gene_features_gff} -o codingGeneFeatures.filter.longest_cds.complete.good_distance.gff
+    agat_sp_filter_by_locus_distance.pl --gff ${coding_gene_features_gff} -o codingGeneFeatures.filter.longest_cds.complete.good_distance.gff
     """
-    // gff3_sp_filter_by_locus_distance.pl is a script in the NBIS GAAS repository
+    // agat_sp_filter_by_locus_distance.pl is a script from AGAT
 }
-
-// process gff_filter_gene_models {
-//
-//     tag "${gff3_file.baseName}"
-//
-//     input:
-//     file gff3_file from gff_for_gene_model_filter
-//     file genome_fasta from genome_for_gene_model.collect()
-//
-//     output:
-//     file "${gff3_file.baseName}_model-filtered.gff3" into gff_for_longest_cds
-//
-//     script:
-//     """
-//     filter_sort.pl -f $gff3_file -F $genome_fasta \\
-//         -o ${gff3_file.baseName}_model-filtered.gff3 ${params.gff_gene_model_filter_options}
-//     """
-//     // filter_sort.pl is a script in the NBIS
-// }
-
-// process gff_longest_cds {
-//
-//     tag "${gff3_file.baseName}"
-//
-//     input:
-//     file gff3_file from gff_for_longest_cds
-//
-//     output:
-//     file "codingGeneFeatures.filter.longest_cds.gff" into gff_for_gff2protein, gff_for_blast_filter
-//
-//     script:
-//     """
-//     gff3_sp_keep_longest_isoform.pl -f $gff3_file \\
-//         -o codingGeneFeatures.filter.longest_cds.gff
-//     """
-//     // gff3_sp_keep_longest_isoform.pl is a script in the NBIS GAAS repo
-// }
 
 process extract_protein_sequence {
 
@@ -235,10 +198,10 @@ process extract_protein_sequence {
 
     script:
     """
-    gff3_sp_extract_sequences.pl -o ${gff_file.baseName}_proteins.fasta -f $genome_fasta \\
+    agat_sp_extract_sequences.pl -o ${gff_file.baseName}_proteins.fasta -f $genome_fasta \\
         -p -cfs -cis -ct ${params.codon_table} --g $gff_file
     """
-    // gff3_sp_extract_sequences.pl is a script in the NBIS pipelines repository in bin
+    // agat_sp_extract_sequences.pl is a script from AGAT
 
 }
 
@@ -294,10 +257,10 @@ process gff_filter_by_blast {
 
     script:
     """
-    gff3_sp_filter_by_mrnaBlastValue_bioperl.pl --gff $gff_file --blast $blast_file \\
+    agat_sp_filter_by_mrnaBlastValue.pl --gff $gff_file --blast $blast_file \\
         --outfile ${gff_file.baseName}_blast-filtered.gff3
     """
-    // gff_filter_by_mrna_id.pl is a script in the NBIS pipelines repository in bin
+    // agat_sp_filter_by_mrnaBlastValue.pl is a script from AGAT
 
 }
 
