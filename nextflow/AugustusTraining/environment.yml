@@ -8,4 +8,4 @@ channels:
 dependencies:
   - blast=2.9.0
   - augustus=3.3.2
-  - agat=1.0.0
+  - agat=0.1.0
