@@ -136,24 +136,6 @@ process blastp {
 
 }
 
-// process merge_blast_tab {
-//
-//     // tag "Merge: Blast TSVs"
-//     publishDir "${params.outdir}/blast_tsv", mode: 'copy'
-//
-//     input:
-//     file blast_fragments from blast_tsvs.collect()
-//
-//     output:
-//     file 'merged_blast_results.tsv'
-//
-//     script:
-//     """
-//     cat $blast_fragments > merged_blast_results.tsv
-//     """
-//
-// }
-
 process interproscan {
 
     // tag "InterProScan: Protein function classification"
@@ -174,46 +156,6 @@ process interproscan {
     """
 
 }
-
-// process merge_interpro_xml {
-//
-//     tag "Merge: InterProScan XMLs"
-//     publishDir "${params.outdir}/interproscan_xml", mode: 'copy'
-//
-//     input:
-//     file xml_files from interpro_xmls.collect()
-//
-//     output:
-//     file 'interpro_search.xml'
-//
-//     // This code is not robust at all. Need to rewrite (e.g. the -v "xml" already excludes "protein-matches" lines because of the "xmlns" attributes)
-//     script:
-//     """
-//     head -n 2 ${xml_files[0]} > interpro_search.xml
-//     for XML in $xml_files; do
-//     grep -v "xml" \$XML | grep -v "protein-matches" >> interpro_search.xml
-//     done
-//     tail -n 1 ${xml_files[0]} >> interpro_search.xml
-//     """
-// }
-
-// process merge_interpro_tsv {
-//
-//     // tag "Merge InterProScan TSVs"
-//     publishDir "${params.outdir}/interproscan_tsv", mode: 'copy'
-//
-//     input:
-//     file tsv_files from interpro_tsvs.collect()
-//
-//     output:
-//     file 'interpro_search.tsv'
-//
-//     script:
-//     """
-//     cat $tsv_files > interpro_search.tsv
-//     """
-//
-// }
 
 process merge_functional_annotation {
 
