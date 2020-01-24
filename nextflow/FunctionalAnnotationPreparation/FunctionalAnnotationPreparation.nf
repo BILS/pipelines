@@ -109,10 +109,10 @@ process gff2protein {
 
     script:
     """
-    gff3_sp_extract_sequences.pl -o ${gff_file.baseName}_proteins.fasta -f $genome_fasta \\
+    agat_sp_extract_sequences.pl -o ${gff_file.baseName}_proteins.fasta -f $genome_fasta \\
         -p -cfs -cis -ct ${params.codon_table} --gff $gff_file
     """
-    // gff3_sp_extract_sequences.pl is a script in the NBIS pipelines repository in bin
+    // agat_sp_extract_sequences.pl is a script from AGAT
 
 }
 
@@ -233,12 +233,12 @@ process merge_functional_annotation {
 
     script:
     """
-    gff3_sp_manage_functional_annotation.pl -f ${gff_annotation} \\
+    agat_sp_manage_functional_annotation.pl -f ${gff_annotation} \\
         -b ${merged_blast_results} -i ${merged_interproscan_results} \\
         -db ${params.blast_db_fasta} -id ${params.merge_annotation_identifier} \\
         -o ${gff_annotation.baseName}_plus-functional-annotation.gff
     """
-    // gff3_sp_manage_functional_annotation.pl is a script in the NBIS GAAS repository
+    // agat_sp_manage_functional_annotation.pl is a script from AGAT
 
 }
 
