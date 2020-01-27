@@ -5,7 +5,7 @@ nextflow.preview.dsl=2
  * given `params.foo` specify on the run command line `--foo some_value`.
  */
 
-params.genome_assembly = "$baseDir/test_data/test_assembly.fa"
+params.genome_assembly = ""
 params.outdir = "results"
 
 params.min_length = 1000
