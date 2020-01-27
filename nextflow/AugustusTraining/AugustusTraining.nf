@@ -71,14 +71,17 @@ workflow augustus_training_dataset {
         genome
 
 	main:
-		gff_filter_gene_models(gff_annotation)
-		gff_longest_cds(gff_filter_gene_models.out)
-		gff2protein(gff_longest_cds.out)
-		blast_makeblastdb(gff2protein.out)
-		blast_recursive(gff2protein.out,blast_makeblastdb.out)
-		gff_filter_by_blast(gff_annotation,blast_recursive.out)
-		gff2gbk(gff_filter_by_blast.out)
-		gbk2augustus(gff2gbk.out)
+        split_maker_evidence(gff_annotation)
+        model_selection_by_AED(split_maker_evidence.out[0])
+        retain_longest_isoform(model_selection_by_AED.out)
+        remove_incomplete_gene_models(retain_longest_isoform.out,genome.collect())
+        filter_by_locus_distance(remove_incomplete_gene_models.out)
+        extract_protein_sequence(filter_by_locus_distance.out,genome.collect())
+        blast_makeblastdb(extract_protein_sequence.out)
+        blast_recursive(extract_protein_sequence.out,blast_makeblastdb.out.collect())
+        gff_filter_by_blast(filter_by_locus_distance.out,blast_recursive.out.collect())
+        gff2gbk(gff_filter_by_blast.out,genome.collect())
+        gbk2augustus(gff2gbk.out)
 
 	// emit:
 	// 	dataset = gbk2augustus.out
