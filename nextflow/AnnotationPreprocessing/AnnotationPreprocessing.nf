@@ -33,34 +33,33 @@ NBIS
 
 // include './../workflows/annotation_workflows' params(params)
 //
-// workflow {
-//
-// 	main:
-// 	annotation_preprocessing(Channel.fromPath(params.genome_assembly, checkIfExists: true))
-//
-// 	publish:
-// 	annotation_preprocessing.out.filtered_assembly to: "${params.outdir}/assembly"
-// 	annotation_preprocessing.out.assembly_generate_stats to: "${params.outdir}/assembly_stats"
-// }
+workflow {
 
-// workflow annotation_preprocessing {
-//
-// 	get:
-// 		genome_assembly
-//
-// 	main:
-// 		fasta_filter_size(genome_assembly)
-// 		assembly_generate_stats(fasta_filter_size.out)
-//
-// 	emit:
-// 		filtered_assembly = fasta_filter_size.out
-// 		assembly_stats = assembly_generate_stats.out
-//
-// }
+	main:
+    Channel.fromPath(params.genome_assembly, checkIfExists: true)
+        .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
+        | annotation_preprocessing
 
-Channel.fromPath(params.genome_assembly, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
-    .set { genome_for_filter }
+	// publish:
+	// annotation_preprocessing.out.filtered_assembly to: "${params.outdir}/assembly"
+	// annotation_preprocessing.out.assembly_generate_stats to: "${params.outdir}/assembly_stats"
+}
+
+workflow annotation_preprocessing {
+
+	get:
+		genome_assembly
+
+	main:
+		fasta_filter_size(genome_assembly)
+		assembly_generate_stats(fasta_filter_size.out)
+
+	// emit:
+	// 	filtered_assembly = fasta_filter_size.out
+	// 	assembly_stats = assembly_generate_stats.out
+
+}
+
 
 process fasta_filter_size {
 
