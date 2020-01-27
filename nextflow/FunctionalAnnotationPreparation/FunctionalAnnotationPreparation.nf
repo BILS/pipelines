@@ -7,8 +7,8 @@ nextflow.preview.dsl=2
  * given `params.foo` specify on the run command line `--foo some_value`.
  */
 
-params.gff_annotation = "$baseDir/test_data/test.gff"
-params.genome = "$baseDir/test_data/genome.fasta"
+params.gff_annotation = "/path/to/annotation.gff"
+params.genome = "/path/to/genome.fasta"
 params.outdir = "results"
 
 params.codon_table = 1
