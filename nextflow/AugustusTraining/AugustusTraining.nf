@@ -7,7 +7,7 @@ nextflow.preview.dsl=2
  * given `params.foo` specify on the run command line `--foo some_value`.
  */
 
-params.maker_evidence_gff = "/path/to/maker/annotation.gff"
+params.maker_evidence_gff = "/path/to/maker/evidence.gff"
 params.genome = "/path/to/genome/assembly.fasta"
 params.outdir = "results"
 
