@@ -57,7 +57,7 @@ workflow {
     genome = Channel.fromPath(params.genome, checkIfExists: true)
         .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
 
-	augustus_training_dataset(Channel.fromPath(gff_annotation, checkIfExists: true))
+	augustus_training_dataset(evidence,genome)
 
 	// publish:
 	// gbk2augustus.out.dataset to: "${params.outdir}/augustus_training_dataset"
