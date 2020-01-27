@@ -108,7 +108,7 @@ workflow functional_annotation_input_preparation {
 process gff2protein {
 
     // tag "${gff_file.baseName}"
-    label 'GAAS'
+    label 'AGAT'
 
     input:
     path gff_file // from gff_for_gff2protein
@@ -172,7 +172,7 @@ process merge_functional_annotation {
     publishDir "${params.outdir}/blast_tsv", mode: 'copy', pattern: 'blast_merged.tsv'
     publishDir "${params.outdir}/interproscan_tsv", mode: 'copy', pattern: 'interproscan_merged.tsv'
     publishDir "${params.outdir}/final_annotation", mode: 'copy', pattern: "${gff_annotation.baseName}_plus-functional-annotation.gff"
-    label 'GAAS'
+    label 'AGAT'
 
     input:
     path gff_annotation //from gff_for_functional_merge
