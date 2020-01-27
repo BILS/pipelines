@@ -108,11 +108,11 @@ process gff2protein {
     label 'GAAS'
 
     input:
-    file gff_file from gff_for_gff2protein
-    file genome_fasta from genome_for_gff2protein.collect()
+    path gff_file // from gff_for_gff2protein
+    path genome_fasta // from genome_for_gff2protein.collect()
 
     output:
-    file "${gff_file.baseName}_proteins.fasta" into fasta_for_blast, fasta_for_interpro
+    path "${gff_file.baseName}_proteins.fasta"  //into fasta_for_blast, fasta_for_interpro
 
     script:
     """
@@ -128,16 +128,16 @@ process blastp {
     // tag "$database"
 
     input:
-    file fasta_file from fasta_for_blast.splitFasta(by: params.records_per_file)
-    file blastdb from blastdb_files.collect()
+    path fasta_file // from fasta_for_blast.splitFasta(by: params.records_per_file)
+    path blastdb // from blastdb_files.collect()
 
     output:
-    file "${fasta_file.baseName}_blast.tsv" into blast_tsvs
+    path "${fasta_file.baseName}_blast.tsv" //into blast_tsvs
 
     script:
     // database = blastdb[0].toString() - ~/.p\w\w$/
     """
-    blastp -query $fasta_file -db ${params.blast_db_fasta} -num_threads ${task.cpus} \\
+    blastp -query $fasta_file -db ${blastdb} -num_threads ${task.cpus} \\
         -outfmt 6 -out ${fasta_file.baseName}_blast.tsv
     """
 
@@ -148,12 +148,12 @@ process interproscan {
     // tag "InterProScan: Protein function classification"
 
     input:
-    file protein_fasta from fasta_for_interpro.splitFasta(by: params.records_per_file)
+    path protein_fasta // from fasta_for_interpro.splitFasta(by: params.records_per_file)
 
     output:
     // file '*.gff3' into interpro_gffs
     // file 'results/*.xml' into interpro_xmls
-    file '*.tsv' into interpro_tsvs
+    path '*.tsv' // into interpro_tsvs
 
     script:
     applications = { params.interproscan_db ? "-appl ${params.interproscan_db}" : '' }
@@ -172,13 +172,13 @@ process merge_functional_annotation {
     label 'GAAS'
 
     input:
-    file gff_annotation from gff_for_functional_merge
-    file merged_blast_results from blast_tsvs.collectFile(name:'blast_merged.tsv').collect()
-    file merged_interproscan_results from interpro_tsvs.collectFile(name:'interproscan_merged.tsv').collect()
-    file blast_files from blastdb_files_for_gff_merge.collect()
+    path gff_annotation //from gff_for_functional_merge
+    path merged_blast_results //from blast_tsvs.collectFile(name:'blast_merged.tsv').collect()
+    path merged_interproscan_results //from interpro_tsvs.collectFile(name:'interproscan_merged.tsv').collect()
+    path blast_files //from blastdb_files_for_gff_merge.collect()
 
     output:
-    file "${gff_annotation.baseName}_plus-functional-annotation.gff"
+    path "${gff_annotation.baseName}_plus-functional-annotation.gff"
 
     script:
     """
