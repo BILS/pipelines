@@ -1,4 +1,4 @@
-// nextflow.preview.dsl=2
+nextflow.preview.dsl=2
 
 /*
  * Default pipeline parameters. They can be overriden on the command line eg.
