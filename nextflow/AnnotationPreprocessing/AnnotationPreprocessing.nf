@@ -60,17 +60,16 @@ workflow annotation_preprocessing {
 
 }
 
-
 process fasta_filter_size {
 
     tag "${fasta_file.baseName} ; min length = ${params.min_length}"
     publishDir "${params.outdir}/assembly", mode: 'copy'
 
     input:
-    file fasta_file from genome_for_filter
+    path fasta_file // from genome_for_filter
 
     output:
-    file "${fasta_file.baseName}_min${params.min_length}.fasta" into genome_for_stats
+    path "${fasta_file.baseName}_min${params.min_length}.fasta" //into genome_for_stats
 
     script:
     """
@@ -81,15 +80,17 @@ process fasta_filter_size {
 
 process assembly_generate_stats {
 
+    // FIXME: Replace with agat script
+
     tag "${fasta_file.simpleName}"
     publishDir "${params.outdir}/stats", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
-    file fasta_file from genome_for_stats
+    path fasta_file //from genome_for_stats
 
     output:
-    file "${fasta_file.baseName}_assembly_report"
+    path "${fasta_file.baseName}_assembly_report"
 
     script:
     """
