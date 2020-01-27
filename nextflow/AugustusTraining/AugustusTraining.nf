@@ -7,8 +7,8 @@ nextflow.preview.dsl=2
  * given `params.foo` specify on the run command line `--foo some_value`.
  */
 
-params.maker_evidence_gff = "$baseDir/test_data/test.gff"
-params.genome = "$baseDir/test_data/genome.fasta"
+params.maker_evidence_gff = "/path/to/maker/annotation.gff"
+params.genome = "/path/to/genome/assembly.fasta"
 params.outdir = "results"
 
 params.gff_gene_model_filter_options = '-c -r -d 500 -a 0.3'
