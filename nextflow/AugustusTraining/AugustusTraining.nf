@@ -49,48 +49,54 @@ NBIS
 //
 // include './../workflows/annotation_workflows' params(params)
 //
-// workflow {
-//
-// 	main:
-// 	augustus_training_dataset(Channel.fromPath(gff_annotation, checkIfExists: true))
-//
-// 	publish:
-// 	gbk2augustus.out.dataset to: "${params.outdir}/augustus_training_dataset"
-//
-// }
-//
-// workflow augustus_training_dataset {
-//
-// 	get:
-// 		gff_annotation
-//
-// 	main:
-// 		gff_filter_gene_models(gff_annotation)
-// 		gff_longest_cds(gff_filter_gene_models.out)
-// 		gff2protein(gff_longest_cds.out)
-// 		blast_makeblastdb(gff2protein.out)
-// 		blast_recursive(gff2protein.out,blast_makeblastdb.out)
-// 		gff_filter_by_blast(gff_annotation,blast_recursive.out)
-// 		gff2gbk(gff_filter_by_blast.out)
-// 		gbk2augustus(gff2gbk.out)
-//
-// 	emit:
-// 		dataset = gbk2augustus.out
-//
-// }
+workflow {
 
-Channel.fromPath(params.maker_evidence_gff, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find gff file matching ${params.maker_evidence_gff}!\n" }
-    .set { gff_for_split_maker_evidence }
-Channel.fromPath(params.genome, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
-    .into { genome_for_gene_model; genome_for_gff2protein; genome_for_gff2gbk }
+	main:
+    evidence = Channel.fromPath(params.maker_evidence_gff, checkIfExists: true)
+        .ifEmpty { exit 1, "Cannot find gff file matching ${params.maker_evidence_gff}!\n" }
+    genome = Channel.fromPath(params.genome, checkIfExists: true)
+        .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
+
+	augustus_training_dataset(Channel.fromPath(gff_annotation, checkIfExists: true))
+
+	// publish:
+	// gbk2augustus.out.dataset to: "${params.outdir}/augustus_training_dataset"
+
+}
+
+workflow augustus_training_dataset {
+
+	get:
+		gff_annotation
+        genome
+
+	main:
+		gff_filter_gene_models(gff_annotation)
+		gff_longest_cds(gff_filter_gene_models.out)
+		gff2protein(gff_longest_cds.out)
+		blast_makeblastdb(gff2protein.out)
+		blast_recursive(gff2protein.out,blast_makeblastdb.out)
+		gff_filter_by_blast(gff_annotation,blast_recursive.out)
+		gff2gbk(gff_filter_by_blast.out)
+		gbk2augustus(gff2gbk.out)
+
+	// emit:
+	// 	dataset = gbk2augustus.out
+
+}
+
+// Channel.fromPath(params.maker_evidence_gff, checkIfExists: true)
+//     .ifEmpty { exit 1, "Cannot find gff file matching ${params.maker_evidence_gff}!\n" }
+//     .set { gff_for_split_maker_evidence }
+// Channel.fromPath(params.genome, checkIfExists: true)
+//     .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
+//     .into { genome_for_gene_model; genome_for_gff2protein; genome_for_gff2gbk }
 
 process split_maker_evidence {
 
     tag "${maker_evidence.baseName}"
     publishDir "${params.outdir}/maker_results_noAbinitio_clean", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
     file maker_evidence from gff_for_split_maker_evidence
@@ -110,7 +116,7 @@ process model_selection_by_AED {
 
     tag "${mrna_gff.baseName}"
     publishDir "${params.outdir}/filter", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
     file mrna_gff from gff_for_model_select_by_AED
@@ -129,7 +135,7 @@ process retain_longest_isoform {
 
     tag "${coding_gene_features_gff.baseName}"
     publishDir "${params.outdir}/filter", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
     file coding_gene_features_gff from gff_for_longest_isoform
@@ -148,7 +154,7 @@ process remove_incomplete_gene_models {
 
     tag "${coding_gene_features_gff.baseName}"
     publishDir "${params.outdir}/filter", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
     file coding_gene_features_gff from gff_for_incomplete_gene_model_removal
@@ -169,7 +175,7 @@ process filter_by_locus_distance {
 
     tag "${coding_gene_features_gff.baseName}"
     publishDir "${params.outdir}/filter", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
     file coding_gene_features_gff from gff_complete_gene_models
@@ -187,7 +193,7 @@ process filter_by_locus_distance {
 process extract_protein_sequence {
 
     tag "${gff_file.baseName}"
-    label 'GAAS'
+    label 'AGAT'
 
     input:
     file gff_file from gff_for_protein_extraction
@@ -246,7 +252,7 @@ process gff_filter_by_blast {
 
     tag "${gff_file.baseName}"
     publishDir "${params.outdir}/BlastFilteredGFF", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
     file gff_file from gff_for_blast_filter
