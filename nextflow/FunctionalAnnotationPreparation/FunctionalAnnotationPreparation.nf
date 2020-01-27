@@ -57,43 +57,50 @@ NBIS
 
 // include './../workflows/annotation_workflows' params(params)
 //
-// workflow {
-//
-// 	main:
-// 	functional_annotation_input_preparation(Channel.fromPath(params.gff_annotation, checkIfExists: true))
-//
-// 	publish:
-// 	functional_annotation_input_preparation.out to: "${params.outdir}"
-// }
+workflow {
 
-// workflow functional_annotation_input_preparation {
-//
-// 	get:
-// 		gff_file
-// 		genome
-//
-// 	main:
-// 		gff2protein(gff_file,genome.collect())
-// 		blastp(gff2protein.out.splitFasta(by: params.records_per_file))
-// 		merge_blast_tab(blastp.out.collect())
-// 		interpro(gff2protein.out.splitFasta(by: params.records_per_file))
-// 		merge_interpro_tsv(interpro.out.collect())
-//
-// 	emit:
-// 		blast_results = merge_blast_tab.out
-// 		interpro_tsv = merge_interpro_tsv.out
-//
-// }
+	main:
+    annotation = Channel.fromPath(params.gff_annotation, checkIfExists: true)
+        .ifEmpty { exit 1, "Cannot find gff file matching ${params.gff_annotation}!\n" }
+    genome = Channel.fromPath(params.genome, checkIfExists: true)
+        .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
+    blastdb = Channel.fromPath("${params.blast_db_fasta}{,.p*}", checkIfExists: true)
+        .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db_fasta}{,.p*}" }
+	functional_annotation_input_preparation(annotation,genome,blastdb)
 
-Channel.fromPath(params.gff_annotation, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find gff file matching ${params.gff_annotation}!\n" }
-    .into { gff_for_gff2protein; gff_for_functional_merge }
-Channel.fromPath(params.genome, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
-    .into { genome_for_gene_model; genome_for_gff2protein; genome_for_gff2gbk }
-Channel.fromPath("${params.blast_db_fasta}{,.p*}", checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db_fasta}{,.p*}" }
-    .into { blastdb_files; blastdb_files_for_gff_merge }
+	// publish:
+	// functional_annotation_input_preparation.out to: "${params.outdir}"
+}
+
+workflow functional_annotation_input_preparation {
+
+	get:
+		gff_file
+		genome
+        blastdb
+
+	main:
+		gff2protein(gff_file,genome.collect())
+		blastp(gff2protein.out.splitFasta(by: params.records_per_file))
+		merge_blast_tab(blastp.out.collect())
+		interpro(gff2protein.out.splitFasta(by: params.records_per_file))
+		merge_interpro_tsv(interpro.out.collect())
+
+	// emit:
+	// 	blast_results = merge_blast_tab.out
+	// 	interpro_tsv = merge_interpro_tsv.out
+
+}
+
+// Channel.fromPath(params.gff_annotation, checkIfExists: true)
+//     .ifEmpty { exit 1, "Cannot find gff file matching ${params.gff_annotation}!\n" }
+//     .into { gff_for_gff2protein; gff_for_functional_merge }
+// Channel.fromPath(params.genome, checkIfExists: true)
+//     .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
+//     .into { genome_for_gene_model; genome_for_gff2protein; genome_for_gff2gbk }
+// Channel.fromPath("${params.blast_db_fasta}{,.p*}", checkIfExists: true)
+//     .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db_fasta}{,.p*}" }
+//     .into { blastdb_files; blastdb_files_for_gff_merge }
 
 process gff2protein {
 
