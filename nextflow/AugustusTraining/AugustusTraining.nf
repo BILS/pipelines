@@ -46,54 +46,43 @@ NBIS
      flank_region_size             : ${params.flank_region_size}
 
  """
-//
-// include './../workflows/annotation_workflows' params(params)
-//
+
 workflow {
 
-	main:
-    evidence = Channel.fromPath(params.maker_evidence_gff, checkIfExists: true)
-        .ifEmpty { exit 1, "Cannot find gff file matching ${params.maker_evidence_gff}!\n" }
-    genome = Channel.fromPath(params.genome, checkIfExists: true)
-        .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
+    main:
+        evidence = Channel.fromPath(params.maker_evidence_gff, checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find gff file matching ${params.maker_evidence_gff}!\n" }
+        genome = Channel.fromPath(params.genome, checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
 
-	augustus_training_dataset(evidence,genome)
-
-	// publish:
-	// gbk2augustus.out.dataset to: "${params.outdir}/augustus_training_dataset"
+        augustus_training_dataset(evidence,genome)
 
 }
 
 workflow augustus_training_dataset {
 
-	get:
-		gff_annotation
+    get:
+        gff_annotation
         genome
 
-	main:
+    main:
         split_maker_evidence(gff_annotation)
         model_selection_by_AED(split_maker_evidence.out[0])
         retain_longest_isoform(model_selection_by_AED.out)
-        remove_incomplete_gene_models(retain_longest_isoform.out,genome.collect())
+        remove_incomplete_gene_models(retain_longest_isoform.out,
+            genome.collect())
         filter_by_locus_distance(remove_incomplete_gene_models.out)
-        extract_protein_sequence(filter_by_locus_distance.out,genome.collect())
+        extract_protein_sequence(filter_by_locus_distance.out,
+            genome.collect())
         blast_makeblastdb(extract_protein_sequence.out)
-        blast_recursive(extract_protein_sequence.out,blast_makeblastdb.out.collect())
-        gff_filter_by_blast(filter_by_locus_distance.out,blast_recursive.out.collect())
+        blast_recursive(extract_protein_sequence.out,
+            blast_makeblastdb.out.collect())
+        gff_filter_by_blast(filter_by_locus_distance.out,
+            blast_recursive.out.collect())
         gff2gbk(gff_filter_by_blast.out,genome.collect())
         gbk2augustus(gff2gbk.out)
 
-	// emit:
-	// 	dataset = gbk2augustus.out
-
 }
-
-// Channel.fromPath(params.maker_evidence_gff, checkIfExists: true)
-//     .ifEmpty { exit 1, "Cannot find gff file matching ${params.maker_evidence_gff}!\n" }
-//     .set { gff_for_split_maker_evidence }
-// Channel.fromPath(params.genome, checkIfExists: true)
-//     .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
-//     .into { genome_for_gene_model; genome_for_gff2protein; genome_for_gff2gbk }
 
 process split_maker_evidence {
 
@@ -102,10 +91,10 @@ process split_maker_evidence {
     label 'AGAT'
 
     input:
-    path maker_evidence // from gff_for_split_maker_evidence
+    path maker_evidence
 
     output:
-    path "maker_results_noAbinitio_clean/mrna.gff" //into gff_for_model_select_by_AED
+    path "maker_results_noAbinitio_clean/mrna.gff"
     path "maker_results_noAbinitio_clean/*"
 
     script:
@@ -122,10 +111,10 @@ process model_selection_by_AED {
     label 'AGAT'
 
     input:
-    path mrna_gff // from gff_for_model_select_by_AED
+    path mrna_gff
 
     output:
-    path "codingGeneFeatures.filter.gff" // into gff_for_longest_isoform
+    path "codingGeneFeatures.filter.gff"
 
     script:
     """
@@ -141,10 +130,10 @@ process retain_longest_isoform {
     label 'AGAT'
 
     input:
-    path coding_gene_features_gff // from gff_for_longest_isoform
+    path coding_gene_features_gff
 
     output:
-    path "codingGeneFeatures.filter.longest_cds.gff" // into gff_for_incomplete_gene_model_removal
+    path "codingGeneFeatures.filter.longest_cds.gff"
 
     script:
     """
@@ -160,11 +149,11 @@ process remove_incomplete_gene_models {
     label 'AGAT'
 
     input:
-    path coding_gene_features_gff // from gff_for_incomplete_gene_model_removal
-    path genome_fasta //from genome_for_gene_model.collect()
+    path coding_gene_features_gff
+    path genome_fasta
 
     output:
-    path "codingGeneFeatures.filter.longest_cds.complete.gff" // into gff_complete_gene_models
+    path "codingGeneFeatures.filter.longest_cds.complete.gff"
 
     script:
     """
@@ -181,10 +170,10 @@ process filter_by_locus_distance {
     label 'AGAT'
 
     input:
-    path coding_gene_features_gff // from gff_complete_gene_models
+    path coding_gene_features_gff
 
     output:
-    path "codingGeneFeatures.filter.longest_cds.complete.good_distance.gff" //into gff_for_protein_extraction, gff_for_blast_filter
+    path "codingGeneFeatures.filter.longest_cds.complete.good_distance.gff"
 
     script:
     """
@@ -199,11 +188,11 @@ process extract_protein_sequence {
     label 'AGAT'
 
     input:
-    path gff_file // from gff_for_protein_extraction
-    path genome_fasta // from genome_for_gff2protein.collect()
+    path gff_file
+    path genome_fasta
 
     output:
-    path "${gff_file.baseName}_proteins.fasta" // into fasta_for_blast, fasta_for_blastdb
+    path "${gff_file.baseName}_proteins.fasta"
 
     script:
     """
@@ -220,10 +209,10 @@ process blast_makeblastdb {
     label 'Blast'
 
     input:
-    path fasta_file // from fasta_for_blastdb
+    path fasta_file
 
     output:
-    path "*.{phr,pin,psq}" // into blastdb_files
+    path "*.{phr,pin,psq}"
 
     script:
     """
@@ -238,11 +227,11 @@ process blast_recursive {
     label 'Blast'
 
     input:
-    path fasta_file // from fasta_for_blast
-    path blastdb // from blastdb_files.collect()
+    path fasta_file
+    path blastdb
 
     output:
-    path "${fasta_file.baseName}_blast.tsv" // into blast_tsv
+    path "${fasta_file.baseName}_blast.tsv"
 
     script:
     database = blastdb[0].toString() - ~/.p\w\w$/
@@ -260,11 +249,11 @@ process gff_filter_by_blast {
     label 'AGAT'
 
     input:
-    path gff_file // from gff_for_blast_filter
-    path blast_file // from blast_tsv.collect()
+    path gff_file
+    path blast_file
 
     output:
-    path "${gff_file.baseName}_blast-filtered.gff3" // into blast_filtered_gff
+    path "${gff_file.baseName}_blast-filtered.gff3"
 
     script:
     """
@@ -281,11 +270,11 @@ process gff2gbk {
     label 'Augustus'
 
     input:
-    path gff_file // from blast_filtered_gff
-    path genome_fasta // from genome_for_gff2gbk.collect()
+    path gff_file
+    path genome_fasta
 
     output:
-    path "${gff_file.baseName}.gbk" // into genbank_files
+    path "${gff_file.baseName}.gbk"
 
     script:
     """
@@ -307,7 +296,7 @@ process gbk2augustus {
             else filename }
 
     input:
-    path genbank_file // from genbank_files
+    path genbank_file
 
     output:
     path "${genbank_file}.train"
