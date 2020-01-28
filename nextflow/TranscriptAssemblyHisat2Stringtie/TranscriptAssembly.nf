@@ -82,9 +82,13 @@ workflow transcript_assembly {
 		fastqc(reads)
 		trimmomatic(reads)
 		hisat2_index(genome)
-		hisat2(trimmomatic.out[0].mix(trimmomatic.out[2]),hisat2_index.out.collect())
-		stringtie(hisat2.out)
-		multiqc(fastqc.out.mix(trimmomatic.out).mix(hisat2.out).mix(stringtie.out))
+		hisat2(trimmomatic.out[0].mix(trimmomatic.out[2]),
+            hisat2_index.out.collect())
+		stringtie(hisat2.out[0])
+		multiqc(fastqc.out.collect(),
+            trimmomatic.out[3].collect(),
+            hisat2.out[2].collect(),
+            stringtie.out[1].collect())
 
 	// emit:
 	// 	fastqc = fastqc.out
