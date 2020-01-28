@@ -82,10 +82,10 @@ workflow functional_annotation_input_preparation {
 	main:
 		gff2protein(gff_file,genome.collect())
 		blastp(gff2protein.out.splitFasta(by: params.records_per_file),blastdb.collect())
-		interpro(gff2protein.out.splitFasta(by: params.records_per_file))
+		interproscan(gff2protein.out.splitFasta(by: params.records_per_file))
         merge_functional_annotation(gff_file,
             blastp.out.collectFile(name:'blast_merged.tsv').collect(),
-            interpro.out.collectFile(name:'interproscan_merged.tsv').collect(),
+            interproscan.out.collectFile(name:'interproscan_merged.tsv').collect(),
             blastdb.collect()
             )
 
