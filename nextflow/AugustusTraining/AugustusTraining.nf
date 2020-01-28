@@ -217,6 +217,7 @@ process extract_protein_sequence {
 process blast_makeblastdb {
 
     tag "${fasta_file.baseName} type: $dbtype"
+    label 'Blast'
 
     input:
     path fasta_file // from fasta_for_blastdb
@@ -234,6 +235,7 @@ process blast_makeblastdb {
 process blast_recursive {
 
     tag "${fasta_file.baseName}"
+    label 'Blast'
 
     input:
     path fasta_file // from fasta_for_blast
@@ -276,6 +278,7 @@ process gff_filter_by_blast {
 process gff2gbk {
 
     tag "${gff_file.baseName}"
+    label 'Augustus'
 
     input:
     path gff_file // from blast_filtered_gff
@@ -295,6 +298,7 @@ process gff2gbk {
 process gbk2augustus {
 
     tag "Make Augustus training set: ${genbank_file.baseName}"
+    label 'Augustus'
     publishDir "${params.outdir}/Augustus", mode: 'copy',
         saveAs: { filename ->
             if (filename.indexOf(".train") > 0)        "TrainingData/$filename"
