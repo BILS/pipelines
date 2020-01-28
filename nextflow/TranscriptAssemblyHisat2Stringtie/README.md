@@ -3,7 +3,7 @@
 ## Quickstart
 
 ```bash
-nextflow run -profile nbis,conda TranscriptAssemblyHisat2Stringtie.nf \
+nextflow run -profile nbis,conda TranscriptAssembly.nf \
   --reads '/path/to/reads*_{R1,R2}.fastq.gz' \
   --genome 'path/to/genome.fasta'
 ```
@@ -11,16 +11,16 @@ nextflow run -profile nbis,conda TranscriptAssemblyHisat2Stringtie.nf \
 Parameters can also be stored in a config file:
 ```bash
 # Put all available parameter settings in a file.
-grep "^params." TranscriptAssemblyHisat2Stringtie.nf > params.config
+grep "^params." TranscriptAssembly.nf > params.config
 # Edit config file parameter values.
 vim params.config
 # Run workflow with config file.
-nextflow run -c params.config -profile nbis,conda TranscriptAssemblyHisat2Stringtie.nf
+nextflow run -c params.config -profile nbis,conda TranscriptAssembly.nf
 ```
 
 Use `-resume` to restart failed jobs.
 ```bash
-nextflow run -resume -c params.config -profile nbis,conda TranscriptAssemblyHisat2Stringtie.nf
+nextflow run -resume -c params.config -profile nbis,conda TranscriptAssembly.nf
 ```
 
 
@@ -39,7 +39,7 @@ nextflow run -resume -c params.config -profile nbis,conda TranscriptAssemblyHisa
 | `hisat2_options` | Additional options for hisat2, e.g. strandedness (`--hisat2_options ' --fr'`). **Note:** Quote the options and preceed `--` with a space, otherwise nextflow interprets it as a workflow parameter. See the [Hisat2 Manual](https://ccb.jhu.edu/software/hisat2/manual.shtml) for the full range of options. (Default: `''`). |
 | **StringTie parameters** | |
 | `stringtie_options` | Additional options for stringtie, e.g. strandedness (`--stringtie_options ' --fr'`). **Note:** Quote the options and preceed `--` with a space, otherwise nextflow interprets it as a workflow parameter. See the [StringTie Manual](http://ccb.jhu.edu/software/stringtie/index.shtml?t=manual) for the full range of options. (Default: `''`). |
-  
+
 ## Stages
 
 1.
@@ -48,4 +48,4 @@ nextflow run -resume -c params.config -profile nbis,conda TranscriptAssemblyHisa
     3. **Hisat2 Build**: Builds an index database for the input genome.
 2. **Hisat2**: Align trimmed reads to the genome.
 3. **StringTie**: Assemble transcripts from the aligned reads.
-4. **MultiQC**: Provide a consolidated report of the statistics from each previous tool. 
+4. **MultiQC**: Provide a consolidated report of the statistics from each previous tool.
