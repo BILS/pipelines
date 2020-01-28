@@ -6,4 +6,4 @@ channels:
   - defaults
 
 dependencies:
-  - augustus=3.3.2
+  - augustus=3.3.3
