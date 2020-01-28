@@ -50,6 +50,7 @@ NBIS
  """
 
 // include './../workflows/annotation_workflows' params(params)
+// FIXME: No need to create channel. Just test for file existance if using trimmomatic as trimmer.
 Channel.fromPath(params.trimmomatic_adapter_path, checkIfExists: true)
         .ifEmpty { exit 1, "The adapter file '${params.trimmomatic_adapter_path}' does not exist!\n" }
 
