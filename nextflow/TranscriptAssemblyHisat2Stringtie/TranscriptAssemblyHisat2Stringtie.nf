@@ -50,10 +50,18 @@ NBIS
  """
 
 // include './../workflows/annotation_workflows' params(params)
+Channel.fromPath(params.trimmomatic_adapter_path, checkIfExists: true)
+        .ifEmpty { exit 1, "The adapter file '${params.trimmomatic_adapter_path}' does not exist!\n" }
 
-// workflow {
+workflow {
 //
-// 	main:
+ 	main:
+    reads = Channel.fromFilePairs(params.reads, size: params.single_end ? 1 : 2, checkIfExists: true)
+        .ifEmpty { exit 1, "Cannot find reads matching ${params.reads}!\n" }
+        .into { rnaseq_reads_2_fastqc; rnaseq_reads_2_trimmomatic }
+    genome = Channel.fromPath(params.genome, checkIfExists: true)
+        .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
+        .set { genome_hisat2 }
 // 	transcript_assembly_hisat2_stringtie(
 // 		Channel.fromFilePairs(params.reads, checkIfExists: true)
 // 		.ifEmpty { exit 1, "Cannot find reads matching ${params.reads}!\n" },
@@ -67,39 +75,39 @@ NBIS
 // 	transcript_assembly_hisat2_stringtie.out.stringtie to: "${params.outdir}/stringtie"
 // 	transcript_assembly_hisat2_stringtie.out.multiqc to: "${params.outdir}/multiqc"
 //
-// }
+}
 //
-// workflow transcript_assembly_hisat2_stringtie {
-//
-// 	get:
-// 		reads
-// 		genome
-//
-// 	main:
-// 		fastqc(reads)
-// 		trimmomatic(reads)
-// 		hisat2_index(genome)
-// 		hisat2(trimmomatic.out[0].mix(trimmomatic.out[2]),hisat2_index.out.collect())
-// 		stringtie(hisat2.out)
-// 		multiqc(fastqc.out.mix(trimmomatic.out).mix(hisat2.out).mix(stringtie.out))
-//
-// 	emit:
-// 		fastqc = fastqc.out
-// 		trimmomatic = trimmomatic.out
-// 		hisat2 = hisat2.out
-// 		stringtie = stringtie.out
-// 		multiqc = multiqc.out
-//
-// }
+workflow transcript_assembly_hisat2_stringtie {
 
-Channel.fromFilePairs(params.reads, size: params.single_end ? 1 : 2, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find reads matching ${params.reads}!\n" }
-    .into { rnaseq_reads_2_fastqc; rnaseq_reads_2_trimmomatic }
-Channel.fromPath(params.genome, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
-    .set { genome_hisat2 }
-Channel.fromPath(params.trimmomatic_adapter_path, checkIfExists: true)
-    .ifEmpty { exit 1, "The adapter file '${params.trimmomatic_adapter_path}' does not exist!\n" }
+	get:
+		reads
+		genome
+
+	main:
+		fastqc(reads)
+		trimmomatic(reads)
+		hisat2_index(genome)
+		hisat2(trimmomatic.out[0].mix(trimmomatic.out[2]),hisat2_index.out.collect())
+		stringtie(hisat2.out)
+		multiqc(fastqc.out.mix(trimmomatic.out).mix(hisat2.out).mix(stringtie.out))
+
+	// emit:
+	// 	fastqc = fastqc.out
+	// 	trimmomatic = trimmomatic.out
+	// 	hisat2 = hisat2.out
+	// 	stringtie = stringtie.out
+	// 	multiqc = multiqc.out
+
+}
+
+// Channel.fromFilePairs(params.reads, size: params.single_end ? 1 : 2, checkIfExists: true)
+//     .ifEmpty { exit 1, "Cannot find reads matching ${params.reads}!\n" }
+//     .into { rnaseq_reads_2_fastqc; rnaseq_reads_2_trimmomatic }
+// Channel.fromPath(params.genome, checkIfExists: true)
+//     .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
+//     .set { genome_hisat2 }
+// Channel.fromPath(params.trimmomatic_adapter_path, checkIfExists: true)
+//     .ifEmpty { exit 1, "The adapter file '${params.trimmomatic_adapter_path}' does not exist!\n" }
 
 process fastqc {
 
