@@ -12,7 +12,7 @@ params.min_length = 1000
 
 log.info """
 NBIS
- _   _ ____ _____  _____
+  _   _ ____ _____  _____
  | \\ | |  _ \\_   _|/ ____|
  |  \\| | |_) || | | (___
  | . ` |  _ < | |  \\___ \\
@@ -31,8 +31,6 @@ NBIS
 
  """
 
-// include './../workflows/annotation_workflows' params(params)
-//
 workflow {
 
 	main:
@@ -40,9 +38,6 @@ workflow {
         .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" } \
         | annotation_preprocessing
 
-	// publish:
-	// annotation_preprocessing.out.filtered_assembly to: "${params.outdir}/assembly"
-	// annotation_preprocessing.out.assembly_generate_stats to: "${params.outdir}/assembly_stats"
 }
 
 workflow annotation_preprocessing {
@@ -54,10 +49,6 @@ workflow annotation_preprocessing {
 		fasta_filter_size(genome_assembly)
 		assembly_generate_stats(fasta_filter_size.out)
 
-	// emit:
-	// 	filtered_assembly = fasta_filter_size.out
-	// 	assembly_stats = assembly_generate_stats.out
-
 }
 
 process fasta_filter_size {
@@ -66,10 +57,10 @@ process fasta_filter_size {
     publishDir "${params.outdir}/assembly", mode: 'copy'
 
     input:
-    path fasta_file // from genome_for_filter
+    path fasta_file
 
     output:
-    path "${fasta_file.baseName}_min${params.min_length}.fasta" //into genome_for_stats
+    path "${fasta_file.baseName}_min${params.min_length}.fasta"
 
     script:
     """
