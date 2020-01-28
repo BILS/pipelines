@@ -110,10 +110,10 @@ process fastqc {
     publishDir "${params.outdir}/FastQC", mode: 'copy'
 
     input:
-    set sample_id, file(reads) from rnaseq_reads_2_fastqc
+    tuple val(sample_id), path(reads) // from rnaseq_reads_2_fastqc
 
     output:
-    file "fastqc_${sample_id}_logs" into fqc_logs
+    path ("fastqc_${sample_id}_logs") // into fqc_logs
 
     script:
     """
@@ -129,13 +129,13 @@ process trimmomatic {
     publishDir "${params.outdir}/Trimmomatic", mode: 'copy'
 
     input:
-    set sample_id, file(reads) from rnaseq_reads_2_trimmomatic
+    tuple val(sample_id), path(reads) // from rnaseq_reads_2_trimmomatic
 
     output:
-    set sample_id, file('*_paired_*.fastq.gz') optional true into trimmomatic_paired_output
-    set sample_id, file('*_unpaired_*.fastq.gz') optional true
-    set sample_id, file('*_trimmed.fastq.gz') optional true into trimmomatic_single_output
-    file 'trimmomatic.log' into trimmomatic_logs
+    tuple val(sample_id), path('*_paired_*.fastq.gz') optional true // into trimmomatic_paired_output
+    tuple val(sample_id), path('*_unpaired_*.fastq.gz') optional true
+    tuple val(sample_id), path('*_trimmed.fastq.gz') optional true // into trimmomatic_single_output
+    path 'trimmomatic.log' into trimmomatic_logs
 
     script:
     if (params.single_end) {
@@ -163,10 +163,10 @@ process hisat2_index {
     publishDir "${params.outdir}/Hisat2_indicies", mode: 'copy'
 
     input:
-    file genome_fasta from genome_hisat2
+    path(genome_fasta) // from genome_hisat2
 
     output:
-    file('*.ht2') into hisat2_indicies
+    path('*.ht2') //into hisat2_indicies
 
     script:
     """
@@ -180,13 +180,13 @@ process hisat2 {
     publishDir "${params.outdir}/Hisat2_alignments", mode: 'copy'
 
     input:
-    set sample_id, file(reads) from trimmomatic_paired_output.mix(trimmomatic_single_output)
-    file hisat2_index_files from hisat2_indicies.collect()
+    tuple val(sample_id), path(reads) // from trimmomatic_paired_output.mix(trimmomatic_single_output)
+    path hisat2_index_files //  from hisat2_indicies.collect()
 
     output:
-    file "${sample_id}_sorted_alignment.bam" into hisat2_alignments
-    file 'splicesite.txt'
-    file "*hisat2_summary.txt" into hisat2_alignment_logs
+    path "${sample_id}_sorted_alignment.bam" // into hisat2_alignments
+    path 'splicesite.txt'
+    path "*hisat2_summary.txt" //into hisat2_alignment_logs
 
     script:
     hisat2_basename = hisat2_index_files[0].toString() - ~/.\d.ht2l?/
@@ -214,11 +214,11 @@ process stringtie {
     publishDir "${params.outdir}/Stringtie_transcripts", mode: 'copy'
 
     input:
-    file sorted_bam_file from hisat2_alignments
+    path sorted_bam_file // from hisat2_alignments
 
     output:
-    file "${sorted_bam_file.name}_transcripts.gtf" into stringtie_transcripts
-    file ".command.log" into stringtie_logs
+    path "${sorted_bam_file.name}_transcripts.gtf" // into stringtie_transcripts
+    path ".command.log" // into stringtie_logs
 
     script:
     """
@@ -232,14 +232,14 @@ process multiqc {
     publishDir "${params.outdir}/MultiQC", mode: 'copy'
 
     input:
-    file (fastqc:'fastqc/*') from fqc_logs.collect().ifEmpty([])
-    file ('trimmomatic/trimmomatic_log*') from trimmomatic_logs.collect()
-    file ('hisat2/*') from hisat2_alignment_logs.collect()
-    file ('stringtie/stringtie_log*') from stringtie_logs.collect()
+    path(fastqc:'fastqc/*') // from fqc_logs.collect().ifEmpty([])
+    path('trimmomatic/trimmomatic_log*') // from trimmomatic_logs.collect()
+    path('hisat2/*') // from hisat2_alignment_logs.collect()
+    path('stringtie/stringtie_log*') // from stringtie_logs.collect()
 
     output:
-    file "*multiqc_report.html" into multiqc_report
-    file "*_data"
+    path "*multiqc_report.html" // into multiqc_report
+    path "*_data"
 
     script:
     """
