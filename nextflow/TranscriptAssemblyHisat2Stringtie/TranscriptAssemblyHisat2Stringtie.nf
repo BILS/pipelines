@@ -59,15 +59,9 @@ workflow {
  	main:
     reads = Channel.fromFilePairs(params.reads, size: params.single_end ? 1 : 2, checkIfExists: true)
         .ifEmpty { exit 1, "Cannot find reads matching ${params.reads}!\n" }
-        .into { rnaseq_reads_2_fastqc; rnaseq_reads_2_trimmomatic }
     genome = Channel.fromPath(params.genome, checkIfExists: true)
         .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
-        .set { genome_hisat2 }
-// 	transcript_assembly_hisat2_stringtie(
-// 		Channel.fromFilePairs(params.reads, checkIfExists: true)
-// 		.ifEmpty { exit 1, "Cannot find reads matching ${params.reads}!\n" },
-// 		Channel.fromPath(params.genome, checkIfExists: true)
-// 		.ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" })
+	transcript_assembly(reads,genome)
 //
 // 	publish:
 // 	transcript_assembly_hisat2_stringtie.out.fastqc to: "${params.outdir}/fastqc"
@@ -78,7 +72,7 @@ workflow {
 //
 }
 //
-workflow transcript_assembly_hisat2_stringtie {
+workflow transcript_assembly {
 
 	get:
 		reads
