@@ -7,8 +7,8 @@
  * given `params.foo` specify on the run command line `--foo some_value`.
  */
 
-params.reads = "$baseDir/test_data/*.fastq.gz"
-params.genome = "$baseDir/test_data/genome.fa"
+params.reads = "/path/to/reads_{1,2}.fastq.gz"
+params.genome = "/path/to/genome.fa"
 params.single_end = false
 params.outdir = "results"
 
