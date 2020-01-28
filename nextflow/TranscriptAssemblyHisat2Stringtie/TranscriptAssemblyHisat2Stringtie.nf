@@ -12,7 +12,7 @@ params.genome = "/path/to/genome.fa"
 params.single_end = false
 params.outdir = "results"
 
-params.trimmomatic_adapter_path = ''
+params.trimmomatic_adapter_path = '/path/to/trimmomatic/adapters.fasta'
 params.trimmomatic_clip_options = 'LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36'
 
 params.hisat2_options = ''
