@@ -58,32 +58,32 @@ NBIS
 workflow {
 
     main:
-    annotation = Channel.fromPath(params.gff_annotation, checkIfExists: true)
-        .ifEmpty { exit 1, "Cannot find gff file matching ${params.gff_annotation}!\n" }
-    genome = Channel.fromPath(params.genome, checkIfExists: true)
-        .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
-    blastdb = Channel.fromPath("${params.blast_db_fasta}{,.p*}", checkIfExists: true)
-        .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db_fasta}{,.p*}" }
-    functional_annotation_input_preparation(annotation,genome,blastdb)
+        annotation = Channel.fromPath(params.gff_annotation, checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find gff file matching ${params.gff_annotation}!\n" }
+        genome = Channel.fromPath(params.genome, checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
+        blastdb = Channel.fromPath("${params.blast_db_fasta}{,.p*}", checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db_fasta}{,.p*}" }
+        functional_annotation_input_preparation(annotation,genome,blastdb)
 
 }
 
 workflow functional_annotation_input_preparation {
 
     get:
-    gff_file
-    genome
-    blastdb
+        gff_file
+        genome
+        blastdb
 
     main:
-    gff2protein(gff_file,genome.collect())
-    blastp(gff2protein.out.splitFasta(by: params.records_per_file, file: true),
-        blastdb.collect())
-    interproscan(gff2protein.out.splitFasta(by: params.records_per_file, file: true))
-    merge_functional_annotation(gff_file,
-        blastp.out.collectFile(name:'blast_merged.tsv').collect(),
-        interproscan.out.collectFile(name:'interproscan_merged.tsv').collect(),
-        blastdb.collect())
+        gff2protein(gff_file,genome.collect())
+        blastp(gff2protein.out.splitFasta(by: params.records_per_file, file: true),
+            blastdb.collect())
+        interproscan(gff2protein.out.splitFasta(by: params.records_per_file, file: true))
+        merge_functional_annotation(gff_file,
+            blastp.out.collectFile(name:'blast_merged.tsv').collect(),
+            interproscan.out.collectFile(name:'interproscan_merged.tsv').collect(),
+            blastdb.collect())
 }
 
 process gff2protein {

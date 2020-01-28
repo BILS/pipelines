@@ -34,20 +34,20 @@ NBIS
 workflow {
 
     main:
-    Channel.fromPath(params.genome_assembly, checkIfExists: true)
-        .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" } \
-    | annotation_preprocessing
+        Channel.fromPath(params.genome_assembly, checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" } \
+        | annotation_preprocessing
 
 }
 
 workflow annotation_preprocessing {
 
     get:
-    genome_assembly
+        genome_assembly
 
     main:
-    fasta_filter_size(genome_assembly)
-    assembly_generate_stats(fasta_filter_size.out)
+        fasta_filter_size(genome_assembly)
+        assembly_generate_stats(fasta_filter_size.out)
 
 }
 
