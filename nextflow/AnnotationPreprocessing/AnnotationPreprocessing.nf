@@ -33,21 +33,21 @@ NBIS
 
 workflow {
 
-	main:
+    main:
     Channel.fromPath(params.genome_assembly, checkIfExists: true)
         .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" } \
-        | annotation_preprocessing
+    | annotation_preprocessing
 
 }
 
 workflow annotation_preprocessing {
 
-	get:
-		genome_assembly
+    get:
+    genome_assembly
 
-	main:
-		fasta_filter_size(genome_assembly)
-		assembly_generate_stats(fasta_filter_size.out)
+    main:
+    fasta_filter_size(genome_assembly)
+    assembly_generate_stats(fasta_filter_size.out)
 
 }
 
@@ -81,7 +81,7 @@ process assembly_generate_stats {
     label 'AGAT'
 
     input:
-    path fasta_file //from genome_for_stats
+    path fasta_file
 
     output:
     path "${fasta_file.baseName}_assembly_report"
