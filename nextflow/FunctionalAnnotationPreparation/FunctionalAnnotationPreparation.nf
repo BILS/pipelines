@@ -138,9 +138,9 @@ process blastp {
     path "${fasta_file.baseName}_blast.tsv" //into blast_tsvs
 
     script:
-    // database = blastdb[0].toString() - ~/.p\w\w$/
+    database = blastdb[0].toString() - ~/.p\w\w$/
     """
-    blastp -query $fasta_file -db ${blastdb} -num_threads ${task.cpus} \\
+    blastp -query $fasta_file -db ${database} -num_threads ${task.cpus} \\
         -outfmt 6 -out ${fasta_file.baseName}_blast.tsv
     """
 
