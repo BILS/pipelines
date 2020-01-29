@@ -211,7 +211,7 @@ process multiqc {
     publishDir "${params.outdir}/MultiQC", mode: 'copy'
 
     input:
-    path(fastqc:'fastqc/*')
+    path('fastqc/*')
     path('trimmomatic/trimmomatic_log*')
     path('hisat2/*')
     path('stringtie/stringtie_log*')
