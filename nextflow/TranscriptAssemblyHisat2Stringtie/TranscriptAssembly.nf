@@ -12,6 +12,8 @@ params.genome = "/path/to/genome.fa"
 params.single_end = false
 params.outdir = "results"
 
+params.trimming_tool = 'trimmomatic'
+
 params.trimmomatic_adapter_path = '/path/to/trimmomatic/adapters.fasta'
 params.trimmomatic_clip_options = 'LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36'
 
@@ -36,6 +38,7 @@ NBIS
      reads                      : ${params.reads}
      single_end                 : ${params.single_end}
      outdir                     : ${params.outdir}
+     trimming_tool              : ${params.trimming_tool}
 
  Trimmomatic parameters
      trimmomatic_adapter_path   : ${params.trimmomatic_adapter_path}
@@ -49,9 +52,9 @@ NBIS
 
  """
 
-// FIXME: No need to create channel. Just test for file existance if using trimmomatic as trimmer.
-Channel.fromPath(params.trimmomatic_adapter_path, checkIfExists: true)
-        .ifEmpty { exit 1, "The adapter file '${params.trimmomatic_adapter_path}' does not exist!\n" }
+if( params.trimming_tool == 'trimmomatic' && !file(params.trimmomatic_adapter_path).exists() ){
+    exit 1, "The adapter file '${params.trimmomatic_adapter_path}' does not exist!\n"
+}
 
 workflow {
 
