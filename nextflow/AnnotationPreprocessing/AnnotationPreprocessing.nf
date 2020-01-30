@@ -10,8 +10,7 @@ params.outdir = "results"
 
 params.min_length = 1000
 
-params.busco_lineage_path = '/path/to/BUSCO/v3_lineage_sets'
-params.busco_lineage = [ 'eukaryota_odb9', 'bacteria_odb9' ]
+params.busco_lineage = [ 'eukaryota_odb10', 'bacteria_odb10' ]
 
 log.info """
 NBIS
@@ -33,7 +32,6 @@ NBIS
      min_length      : ${params.min_length}
 
  Busco parameters
-     busco_lineage_path : ${params.busco_lineage_path}
      busco_lineage      : ${params.busco_lineage}
 
  """
@@ -55,7 +53,7 @@ workflow annotation_preprocessing {
     main:
         fasta_filter_size(genome_assembly)
         assembly_generate_stats(fasta_filter_size.out)
-        busco(fasta_filter_size.out,params.busco_lineage_path,params.busco_lineage)
+        busco(fasta_filter_size.out,params.busco_lineage)
 
 }
 
@@ -108,7 +106,6 @@ process busco {
 
     input:
     path fasta
-    path busco_lineage_path
     each lineage
 
     output:
@@ -117,7 +114,7 @@ process busco {
     script:
     out = "busco_${fasta.baseName}_${lineage}"
     """
-    busco -c ${task.cpus} -i $fasta -l $busco_lineage_path/$lineage -m genome --out $out
+    busco -c ${task.cpus} -i $fasta -l $lineage -m genome --out $out
     """
 }
 
