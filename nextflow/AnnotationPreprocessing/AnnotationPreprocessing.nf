@@ -10,6 +10,9 @@ params.outdir = "results"
 
 params.min_length = 1000
 
+params.busco_lineage_path = '/path/to/BUSCO/v3_lineage_sets'
+params.busco_lineage = [ 'eukaryota_odb9', 'bacteria_odb9' ]
+
 log.info """
 NBIS
   _   _ ____ _____  _____
@@ -28,6 +31,10 @@ NBIS
 
  Filtering parameters
      min_length      : ${params.min_length}
+
+ Busco parameters
+     busco_lineage_path : ${params.busco_lineage_path}
+     busco_lineage      : ${params.busco_lineage}
 
  """
 
@@ -48,6 +55,7 @@ workflow annotation_preprocessing {
     main:
         fasta_filter_size(genome_assembly)
         assembly_generate_stats(fasta_filter_size.out)
+        busco(fasta_filter_size.out,params.busco_lineage_path,params.busco_lineage)
 
 }
 
@@ -91,6 +99,26 @@ process assembly_generate_stats {
     fasta_statisticsAndPlot.pl --infile $fasta_file --output ${fasta_file.baseName}_assembly_report
     """
     // fasta_statisticsAndPlot.pl can be found in the NBIS GAAS repository
+}
+
+process busco {
+
+    tag "$fasta"
+    publishDir "${params.outdir}/busco", mode: 'copy'
+
+    input:
+    path fasta
+    path busco_lineage_path
+    each lineage
+
+    output:
+    path out
+
+    script:
+    out = "busco_${fasta.baseName}_${lineage}"
+    """
+    busco -c ${task.cpus} -i $fasta -l $busco_lineage_path/$lineage -m genome --out $out
+    """
 }
 
 workflow.onComplete {
