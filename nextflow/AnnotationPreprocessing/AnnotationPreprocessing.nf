@@ -5,7 +5,7 @@ nextflow.preview.dsl=2
  * given `params.foo` specify on the run command line `--foo some_value`.
  */
 
-params.genome_assembly = "/path/to/genome/assembly.fasta"
+params.genome = "/path/to/genome/assembly.fasta"
 params.outdir = "results"
 
 params.min_length = 1000
@@ -23,7 +23,7 @@ NBIS
  ===================================
 
  General parameters
-     genome_assembly : ${params.genome_assembly}
+     genome          : ${params.genome}
      outdir          : ${params.outdir}
 
  Filtering parameters
@@ -34,7 +34,7 @@ NBIS
 workflow {
 
     main:
-        Channel.fromPath(params.genome_assembly, checkIfExists: true)
+        Channel.fromPath(params.genome, checkIfExists: true)
             .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" } \
         | annotation_preprocessing
 
