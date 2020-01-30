@@ -1,14 +1,14 @@
 #! /usr/bin/env nextflow
 
-// nextflow.preview.dsl=2
+nextflow.preview.dsl=2
 
 /*
  * Default pipeline parameters. They can be overridden on the command line eg.
  * given `params.foo` specify on the run command line `--foo some_value`.
  */
 
-params.maker_evidence_gff = "$baseDir/test_data/test.gff"
-params.genome = "$baseDir/test_data/genome.fasta"
+params.maker_evidence_gff = "/path/to/maker/evidence.gff"
+params.genome = "/path/to/genome/assembly.fasta"
 params.outdir = "results"
 
 params.gff_gene_model_filter_options = '-c -r -d 500 -a 0.3'
@@ -46,58 +46,56 @@ NBIS
      flank_region_size             : ${params.flank_region_size}
 
  """
-//
-// include './../workflows/annotation_workflows' params(params)
-//
-// workflow {
-//
-// 	main:
-// 	augustus_training_dataset(Channel.fromPath(gff_annotation, checkIfExists: true))
-//
-// 	publish:
-// 	gbk2augustus.out.dataset to: "${params.outdir}/augustus_training_dataset"
-//
-// }
-//
-// workflow augustus_training_dataset {
-//
-// 	get:
-// 		gff_annotation
-//
-// 	main:
-// 		gff_filter_gene_models(gff_annotation)
-// 		gff_longest_cds(gff_filter_gene_models.out)
-// 		gff2protein(gff_longest_cds.out)
-// 		blast_makeblastdb(gff2protein.out)
-// 		blast_recursive(gff2protein.out,blast_makeblastdb.out)
-// 		gff_filter_by_blast(gff_annotation,blast_recursive.out)
-// 		gff2gbk(gff_filter_by_blast.out)
-// 		gbk2augustus(gff2gbk.out)
-//
-// 	emit:
-// 		dataset = gbk2augustus.out
-//
-// }
 
-Channel.fromPath(params.maker_evidence_gff, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find gff file matching ${params.maker_evidence_gff}!\n" }
-    .set { gff_for_split_maker_evidence }
-Channel.fromPath(params.genome, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
-    .into { genome_for_gene_model; genome_for_gff2protein; genome_for_gff2gbk }
+workflow {
+
+    main:
+        evidence = Channel.fromPath(params.maker_evidence_gff, checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find gff file matching ${params.maker_evidence_gff}!\n" }
+        genome = Channel.fromPath(params.genome, checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
+
+        augustus_training_dataset(evidence,genome)
+
+}
+
+workflow augustus_training_dataset {
+
+    get:
+        gff_annotation
+        genome
+
+    main:
+        split_maker_evidence(gff_annotation)
+        model_selection_by_AED(split_maker_evidence.out[0])
+        retain_longest_isoform(model_selection_by_AED.out)
+        remove_incomplete_gene_models(retain_longest_isoform.out,
+            genome.collect())
+        filter_by_locus_distance(remove_incomplete_gene_models.out)
+        extract_protein_sequence(filter_by_locus_distance.out,
+            genome.collect())
+        blast_makeblastdb(extract_protein_sequence.out)
+        blast_recursive(extract_protein_sequence.out,
+            blast_makeblastdb.out.collect())
+        gff_filter_by_blast(filter_by_locus_distance.out,
+            blast_recursive.out.collect())
+        gff2gbk(gff_filter_by_blast.out,genome.collect())
+        gbk2augustus(gff2gbk.out)
+
+}
 
 process split_maker_evidence {
 
     tag "${maker_evidence.baseName}"
     publishDir "${params.outdir}/maker_results_noAbinitio_clean", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
-    file maker_evidence from gff_for_split_maker_evidence
+    path maker_evidence
 
     output:
-    file "maker_results_noAbinitio_clean/mrna.gff" into gff_for_model_select_by_AED
-    file "maker_results_noAbinitio_clean/*"
+    path "maker_results_noAbinitio_clean/mrna.gff"
+    path "maker_results_noAbinitio_clean/*"
 
     script:
     """
@@ -110,13 +108,13 @@ process model_selection_by_AED {
 
     tag "${mrna_gff.baseName}"
     publishDir "${params.outdir}/filter", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
-    file mrna_gff from gff_for_model_select_by_AED
+    path mrna_gff
 
     output:
-    file "codingGeneFeatures.filter.gff" into gff_for_longest_isoform
+    path "codingGeneFeatures.filter.gff"
 
     script:
     """
@@ -129,13 +127,13 @@ process retain_longest_isoform {
 
     tag "${coding_gene_features_gff.baseName}"
     publishDir "${params.outdir}/filter", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
-    file coding_gene_features_gff from gff_for_longest_isoform
+    path coding_gene_features_gff
 
     output:
-    file "codingGeneFeatures.filter.longest_cds.gff" into gff_for_incomplete_gene_model_removal
+    path "codingGeneFeatures.filter.longest_cds.gff"
 
     script:
     """
@@ -148,14 +146,14 @@ process remove_incomplete_gene_models {
 
     tag "${coding_gene_features_gff.baseName}"
     publishDir "${params.outdir}/filter", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
-    file coding_gene_features_gff from gff_for_incomplete_gene_model_removal
-    file genome_fasta from genome_for_gene_model.collect()
+    path coding_gene_features_gff
+    path genome_fasta
 
     output:
-    file "codingGeneFeatures.filter.longest_cds.complete.gff" into gff_complete_gene_models
+    path "codingGeneFeatures.filter.longest_cds.complete.gff"
 
     script:
     """
@@ -169,13 +167,13 @@ process filter_by_locus_distance {
 
     tag "${coding_gene_features_gff.baseName}"
     publishDir "${params.outdir}/filter", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
-    file coding_gene_features_gff from gff_complete_gene_models
+    path coding_gene_features_gff
 
     output:
-    file "codingGeneFeatures.filter.longest_cds.complete.good_distance.gff" into gff_for_protein_extraction, gff_for_blast_filter
+    path "codingGeneFeatures.filter.longest_cds.complete.good_distance.gff"
 
     script:
     """
@@ -187,14 +185,14 @@ process filter_by_locus_distance {
 process extract_protein_sequence {
 
     tag "${gff_file.baseName}"
-    label 'GAAS'
+    label 'AGAT'
 
     input:
-    file gff_file from gff_for_protein_extraction
-    file genome_fasta from genome_for_gff2protein.collect()
+    path gff_file
+    path genome_fasta
 
     output:
-    file "${gff_file.baseName}_proteins.fasta" into fasta_for_blast, fasta_for_blastdb
+    path "${gff_file.baseName}_proteins.fasta"
 
     script:
     """
@@ -208,12 +206,13 @@ process extract_protein_sequence {
 process blast_makeblastdb {
 
     tag "${fasta_file.baseName} type: $dbtype"
+    label 'Blast'
 
     input:
-    file fasta_file from fasta_for_blastdb
+    path fasta_file
 
     output:
-    file "*.{phr,pin,psq}" into blastdb_files
+    path "*.{phr,pin,psq}"
 
     script:
     """
@@ -225,13 +224,14 @@ process blast_makeblastdb {
 process blast_recursive {
 
     tag "${fasta_file.baseName}"
+    label 'Blast'
 
     input:
-    file fasta_file from fasta_for_blast
-    file blastdb from blastdb_files.collect()
+    path fasta_file
+    path blastdb
 
     output:
-    file "${fasta_file.baseName}_blast.tsv" into blast_tsv
+    path "${fasta_file.baseName}_blast.tsv"
 
     script:
     database = blastdb[0].toString() - ~/.p\w\w$/
@@ -246,14 +246,14 @@ process gff_filter_by_blast {
 
     tag "${gff_file.baseName}"
     publishDir "${params.outdir}/BlastFilteredGFF", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
-    file gff_file from gff_for_blast_filter
-    file blast_file from blast_tsv.collect()
+    path gff_file
+    path blast_file
 
     output:
-    file "${gff_file.baseName}_blast-filtered.gff3" into blast_filtered_gff
+    path "${gff_file.baseName}_blast-filtered.gff3"
 
     script:
     """
@@ -267,13 +267,14 @@ process gff_filter_by_blast {
 process gff2gbk {
 
     tag "${gff_file.baseName}"
+    label 'Augustus'
 
     input:
-    file gff_file from blast_filtered_gff
-    file genome_fasta from genome_for_gff2gbk.collect()
+    path gff_file
+    path genome_fasta
 
     output:
-    file "${gff_file.baseName}.gbk" into genbank_files
+    path "${gff_file.baseName}.gbk"
 
     script:
     """
@@ -286,6 +287,7 @@ process gff2gbk {
 process gbk2augustus {
 
     tag "Make Augustus training set: ${genbank_file.baseName}"
+    label 'Augustus'
     publishDir "${params.outdir}/Augustus", mode: 'copy',
         saveAs: { filename ->
             if (filename.indexOf(".train") > 0)        "TrainingData/$filename"
@@ -294,12 +296,12 @@ process gbk2augustus {
             else filename }
 
     input:
-    file genbank_file from genbank_files
+    path genbank_file
 
     output:
-    file "${genbank_file}.train"
-    file "${genbank_file}.test"
-    file "${genbank_file}"
+    path "${genbank_file}.train"
+    path "${genbank_file}.test"
+    path "${genbank_file}"
 
     script:
     """

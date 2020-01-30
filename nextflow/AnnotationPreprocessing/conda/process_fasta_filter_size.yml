@@ -1,11 +1,9 @@
 # conda env create -f environment.yml
-name: augustus-training
+name: seqtk
 channels:
   - conda-forge
   - bioconda
   - defaults
 
 dependencies:
-  - blast=2.9.0
-  - augustus=3.3.2
-  - agat=0.1.0
+  - seqtk=1.3

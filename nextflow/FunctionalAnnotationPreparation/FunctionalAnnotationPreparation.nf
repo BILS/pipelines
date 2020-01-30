@@ -1,14 +1,14 @@
 #! /usr/bin/env nextflow
 
-// nextflow.preview.dsl=2
+nextflow.preview.dsl=2
 
 /*
  * Default pipeline parameters. They can be overriden on the command line eg.
  * given `params.foo` specify on the run command line `--foo some_value`.
  */
 
-params.gff_annotation = "$baseDir/test_data/test.gff"
-params.genome = "$baseDir/test_data/genome.fasta"
+params.gff_annotation = "/path/to/annotation.gff"
+params.genome = "/path/to/genome.fasta"
 params.outdir = "results"
 
 params.codon_table = 1
@@ -23,7 +23,7 @@ params.merge_annotation_identifier = 'ID'
 
 log.info("""
 NBIS
- _   _ ____ _____  _____
+  _   _ ____ _____  _____
  | \\ | |  _ \\_   _|/ ____|
  |  \\| | |_) || | | (___
  | . ` |  _ < | |  \\___ \\
@@ -55,57 +55,47 @@ NBIS
 
  """)
 
-// include './../workflows/annotation_workflows' params(params)
-//
-// workflow {
-//
-// 	main:
-// 	functional_annotation_input_preparation(Channel.fromPath(params.gff_annotation, checkIfExists: true))
-//
-// 	publish:
-// 	functional_annotation_input_preparation.out to: "${params.outdir}"
-// }
+workflow {
 
-// workflow functional_annotation_input_preparation {
-//
-// 	get:
-// 		gff_file
-// 		genome
-//
-// 	main:
-// 		gff2protein(gff_file,genome.collect())
-// 		blastp(gff2protein.out.splitFasta(by: params.records_per_file))
-// 		merge_blast_tab(blastp.out.collect())
-// 		interpro(gff2protein.out.splitFasta(by: params.records_per_file))
-// 		merge_interpro_tsv(interpro.out.collect())
-//
-// 	emit:
-// 		blast_results = merge_blast_tab.out
-// 		interpro_tsv = merge_interpro_tsv.out
-//
-// }
+    main:
+        annotation = Channel.fromPath(params.gff_annotation, checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find gff file matching ${params.gff_annotation}!\n" }
+        genome = Channel.fromPath(params.genome, checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
+        blastdb = Channel.fromPath("${params.blast_db_fasta}{,.p*}", checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db_fasta}{,.p*}" }
+        functional_annotation_input_preparation(annotation,genome,blastdb)
 
-Channel.fromPath(params.gff_annotation, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find gff file matching ${params.gff_annotation}!\n" }
-    .into { gff_for_gff2protein; gff_for_functional_merge }
-Channel.fromPath(params.genome, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
-    .into { genome_for_gene_model; genome_for_gff2protein; genome_for_gff2gbk }
-Channel.fromPath("${params.blast_db_fasta}{,.p*}", checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find blast database files matching ${params.blast_db_fasta}{,.p*}" }
-    .into { blastdb_files; blastdb_files_for_gff_merge }
+}
+
+workflow functional_annotation_input_preparation {
+
+    get:
+        gff_file
+        genome
+        blastdb
+
+    main:
+        gff2protein(gff_file,genome.collect())
+        blastp(gff2protein.out.splitFasta(by: params.records_per_file, file: true),
+            blastdb.collect())
+        interproscan(gff2protein.out.splitFasta(by: params.records_per_file, file: true))
+        merge_functional_annotation(gff_file,
+            blastp.out.collectFile(name:'blast_merged.tsv').collect(),
+            interproscan.out.collectFile(name:'interproscan_merged.tsv').collect(),
+            blastdb.collect())
+}
 
 process gff2protein {
 
-    // tag "${gff_file.baseName}"
-    label 'GAAS'
+    label 'AGAT'
 
     input:
-    file gff_file from gff_for_gff2protein
-    file genome_fasta from genome_for_gff2protein.collect()
+    path gff_file
+    path genome_fasta
 
     output:
-    file "${gff_file.baseName}_proteins.fasta" into fasta_for_blast, fasta_for_interpro
+    path "${gff_file.baseName}_proteins.fasta"
 
     script:
     """
@@ -118,19 +108,17 @@ process gff2protein {
 
 process blastp {
 
-    // tag "$database"
-
     input:
-    file fasta_file from fasta_for_blast.splitFasta(by: params.records_per_file)
-    file blastdb from blastdb_files.collect()
+    path fasta_file
+    path blastdb
 
     output:
-    file "${fasta_file.baseName}_blast.tsv" into blast_tsvs
+    path "${fasta_file.baseName}_blast.tsv"
 
     script:
-    // database = blastdb[0].toString() - ~/.p\w\w$/
+    database = blastdb[0].toString() - ~/.p\w\w$/
     """
-    blastp -query $fasta_file -db ${params.blast_db_fasta} -num_threads ${task.cpus} \\
+    blastp -query $fasta_file -db ${database} -num_threads ${task.cpus} \\
         -outfmt 6 -out ${fasta_file.baseName}_blast.tsv
     """
 
@@ -138,15 +126,11 @@ process blastp {
 
 process interproscan {
 
-    // tag "InterProScan: Protein function classification"
-
     input:
-    file protein_fasta from fasta_for_interpro.splitFasta(by: params.records_per_file)
+    path protein_fasta
 
     output:
-    // file '*.gff3' into interpro_gffs
-    // file 'results/*.xml' into interpro_xmls
-    file '*.tsv' into interpro_tsvs
+    path '*.tsv'
 
     script:
     applications = { params.interproscan_db ? "-appl ${params.interproscan_db}" : '' }
@@ -162,16 +146,16 @@ process merge_functional_annotation {
     publishDir "${params.outdir}/blast_tsv", mode: 'copy', pattern: 'blast_merged.tsv'
     publishDir "${params.outdir}/interproscan_tsv", mode: 'copy', pattern: 'interproscan_merged.tsv'
     publishDir "${params.outdir}/final_annotation", mode: 'copy', pattern: "${gff_annotation.baseName}_plus-functional-annotation.gff"
-    label 'GAAS'
+    label 'AGAT'
 
     input:
-    file gff_annotation from gff_for_functional_merge
-    file merged_blast_results from blast_tsvs.collectFile(name:'blast_merged.tsv').collect()
-    file merged_interproscan_results from interpro_tsvs.collectFile(name:'interproscan_merged.tsv').collect()
-    file blast_files from blastdb_files_for_gff_merge.collect()
+    path gff_annotation
+    path merged_blast_results
+    path merged_interproscan_results
+    path blast_files
 
     output:
-    file "${gff_annotation.baseName}_plus-functional-annotation.gff"
+    path "${gff_annotation.baseName}_plus-functional-annotation.gff"
 
     script:
     """

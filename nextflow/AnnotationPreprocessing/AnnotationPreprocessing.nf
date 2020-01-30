@@ -1,18 +1,18 @@
-// nextflow.preview.dsl=2
+nextflow.preview.dsl=2
 
 /*
  * Default pipeline parameters. They can be overriden on the command line eg.
  * given `params.foo` specify on the run command line `--foo some_value`.
  */
 
-params.genome_assembly = "$baseDir/test_data/test_assembly.fa"
+params.genome = "/path/to/genome/assembly.fasta"
 params.outdir = "results"
 
 params.min_length = 1000
 
 log.info """
 NBIS
- _   _ ____ _____  _____
+  _   _ ____ _____  _____
  | \\ | |  _ \\_   _|/ ____|
  |  \\| | |_) || | | (___
  | . ` |  _ < | |  \\___ \\
@@ -23,7 +23,7 @@ NBIS
  ===================================
 
  General parameters
-     genome_assembly : ${params.genome_assembly}
+     genome          : ${params.genome}
      outdir          : ${params.outdir}
 
  Filtering parameters
@@ -31,36 +31,25 @@ NBIS
 
  """
 
-// include './../workflows/annotation_workflows' params(params)
-//
-// workflow {
-//
-// 	main:
-// 	annotation_preprocessing(Channel.fromPath(params.genome_assembly, checkIfExists: true))
-//
-// 	publish:
-// 	annotation_preprocessing.out.filtered_assembly to: "${params.outdir}/assembly"
-// 	annotation_preprocessing.out.assembly_generate_stats to: "${params.outdir}/assembly_stats"
-// }
+workflow {
 
-// workflow annotation_preprocessing {
-//
-// 	get:
-// 		genome_assembly
-//
-// 	main:
-// 		fasta_filter_size(genome_assembly)
-// 		assembly_generate_stats(fasta_filter_size.out)
-//
-// 	emit:
-// 		filtered_assembly = fasta_filter_size.out
-// 		assembly_stats = assembly_generate_stats.out
-//
-// }
+    main:
+        Channel.fromPath(params.genome, checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" } \
+        | annotation_preprocessing
 
-Channel.fromPath(params.genome_assembly, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
-    .set { genome_for_filter }
+}
+
+workflow annotation_preprocessing {
+
+    get:
+        genome_assembly
+
+    main:
+        fasta_filter_size(genome_assembly)
+        assembly_generate_stats(fasta_filter_size.out)
+
+}
 
 process fasta_filter_size {
 
@@ -68,10 +57,10 @@ process fasta_filter_size {
     publishDir "${params.outdir}/assembly", mode: 'copy'
 
     input:
-    file fasta_file from genome_for_filter
+    path fasta_file
 
     output:
-    file "${fasta_file.baseName}_min${params.min_length}.fasta" into genome_for_stats
+    path "${fasta_file.baseName}_min${params.min_length}.fasta"
 
     script:
     """
@@ -82,15 +71,20 @@ process fasta_filter_size {
 
 process assembly_generate_stats {
 
+    // FIXME: Options:
+    // a) Replace with agat script,
+    // b) Include script in bin directory,
+    // c) Include GAAS as subtree
+
     tag "${fasta_file.simpleName}"
     publishDir "${params.outdir}/stats", mode: 'copy'
-    label 'GAAS'
+    label 'AGAT'
 
     input:
-    file fasta_file from genome_for_stats
+    path fasta_file
 
     output:
-    file "${fasta_file.baseName}_assembly_report"
+    path "${fasta_file.baseName}_assembly_report"
 
     script:
     """

@@ -1,18 +1,20 @@
 #! /usr/bin/env nextflow
 
-// nextflow.preview.dsl=2
+nextflow.preview.dsl=2
 
 /*
  * Default pipeline parameters. They can be overriden on the command line eg.
  * given `params.foo` specify on the run command line `--foo some_value`.
  */
 
-params.reads = "$baseDir/test_data/*.fastq.gz"
-params.genome = "$baseDir/test_data/genome.fa"
+params.reads = "/path/to/reads_{1,2}.fastq.gz"
+params.genome = "/path/to/genome.fa"
 params.single_end = false
 params.outdir = "results"
 
-params.trimmomatic_adapter_path = ''
+params.trimming_tool = 'trimmomatic'
+
+params.trimmomatic_adapter_path = '/path/to/trimmomatic/adapters.fasta'
 params.trimmomatic_clip_options = 'LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36'
 
 params.hisat2_options = ''
@@ -36,6 +38,7 @@ NBIS
      reads                      : ${params.reads}
      single_end                 : ${params.single_end}
      outdir                     : ${params.outdir}
+     trimming_tool              : ${params.trimming_tool}
 
  Trimmomatic parameters
      trimmomatic_adapter_path   : ${params.trimmomatic_adapter_path}
@@ -49,57 +52,39 @@ NBIS
 
  """
 
-// include './../workflows/annotation_workflows' params(params)
+if( params.trimming_tool == 'trimmomatic' && !file(params.trimmomatic_adapter_path).exists() ){
+    exit 1, "The adapter file '${params.trimmomatic_adapter_path}' does not exist!\n"
+}
 
-// workflow {
-//
-// 	main:
-// 	transcript_assembly_hisat2_stringtie(
-// 		Channel.fromFilePairs(params.reads, checkIfExists: true)
-// 		.ifEmpty { exit 1, "Cannot find reads matching ${params.reads}!\n" },
-// 		Channel.fromPath(params.genome, checkIfExists: true)
-// 		.ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" })
-//
-// 	publish:
-// 	transcript_assembly_hisat2_stringtie.out.fastqc to: "${params.outdir}/fastqc"
-// 	transcript_assembly_hisat2_stringtie.out.trimmomatic to: "${params.outdir}/trimmomatic"
-// 	transcript_assembly_hisat2_stringtie.out.hisat2 to: "${params.outdir}/hisat2"
-// 	transcript_assembly_hisat2_stringtie.out.stringtie to: "${params.outdir}/stringtie"
-// 	transcript_assembly_hisat2_stringtie.out.multiqc to: "${params.outdir}/multiqc"
-//
-// }
-//
-// workflow transcript_assembly_hisat2_stringtie {
-//
-// 	get:
-// 		reads
-// 		genome
-//
-// 	main:
-// 		fastqc(reads)
-// 		trimmomatic(reads)
-// 		hisat2_index(genome)
-// 		hisat2(trimmomatic.out[0].mix(trimmomatic.out[2]),hisat2_index.out.collect())
-// 		stringtie(hisat2.out)
-// 		multiqc(fastqc.out.mix(trimmomatic.out).mix(hisat2.out).mix(stringtie.out))
-//
-// 	emit:
-// 		fastqc = fastqc.out
-// 		trimmomatic = trimmomatic.out
-// 		hisat2 = hisat2.out
-// 		stringtie = stringtie.out
-// 		multiqc = multiqc.out
-//
-// }
+workflow {
 
-Channel.fromFilePairs(params.reads, size: params.single_end ? 1 : 2, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find reads matching ${params.reads}!\n" }
-    .into { rnaseq_reads_2_fastqc; rnaseq_reads_2_trimmomatic }
-Channel.fromPath(params.genome, checkIfExists: true)
-    .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
-    .set { genome_hisat2 }
-Channel.fromPath(params.trimmomatic_adapter_path, checkIfExists: true)
-    .ifEmpty { exit 1, "The adapter file '${params.trimmomatic_adapter_path}' does not exist!\n" }
+    main:
+        reads = Channel.fromFilePairs(params.reads, size: params.single_end ? 1 : 2, checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find reads matching ${params.reads}!\n" }
+        genome = Channel.fromPath(params.genome, checkIfExists: true)
+            .ifEmpty { exit 1, "Cannot find genome matching ${params.genome}!\n" }
+        transcript_assembly(reads,genome)
+}
+
+workflow transcript_assembly {
+
+    get:
+        reads
+        genome
+
+    main:
+        fastqc(reads)
+        trimmomatic(reads)
+        hisat2_index(genome)
+        hisat2(trimmomatic.out[0].mix(trimmomatic.out[2]),
+                hisat2_index.out.collect())
+        stringtie(hisat2.out[0])
+        multiqc(fastqc.out.collect(),
+                trimmomatic.out[3].collect(),
+                hisat2.out[2].collect(),
+                stringtie.out[1].collect())
+
+}
 
 process fastqc {
 
@@ -107,10 +92,10 @@ process fastqc {
     publishDir "${params.outdir}/FastQC", mode: 'copy'
 
     input:
-    set sample_id, file(reads) from rnaseq_reads_2_fastqc
+    tuple val(sample_id), path(reads)
 
     output:
-    file "fastqc_${sample_id}_logs" into fqc_logs
+    path ("fastqc_${sample_id}_logs")
 
     script:
     """
@@ -126,13 +111,13 @@ process trimmomatic {
     publishDir "${params.outdir}/Trimmomatic", mode: 'copy'
 
     input:
-    set sample_id, file(reads) from rnaseq_reads_2_trimmomatic
+    tuple val(sample_id), path(reads)
 
     output:
-    set sample_id, file('*_paired_*.fastq.gz') optional true into trimmomatic_paired_output
-    set sample_id, file('*_unpaired_*.fastq.gz') optional true
-    set sample_id, file('*_trimmed.fastq.gz') optional true into trimmomatic_single_output
-    file 'trimmomatic.log' into trimmomatic_logs
+    tuple val(sample_id), path('*_paired_*.fastq.gz') optional true
+    tuple val(sample_id), path('*_unpaired_*.fastq.gz') optional true
+    tuple val(sample_id), path('*_trimmed.fastq.gz') optional true
+    path 'trimmomatic.log'
 
     script:
     if (params.single_end) {
@@ -160,10 +145,10 @@ process hisat2_index {
     publishDir "${params.outdir}/Hisat2_indicies", mode: 'copy'
 
     input:
-    file genome_fasta from genome_hisat2
+    path(genome_fasta)
 
     output:
-    file('*.ht2') into hisat2_indicies
+    path('*.ht2')
 
     script:
     """
@@ -177,13 +162,13 @@ process hisat2 {
     publishDir "${params.outdir}/Hisat2_alignments", mode: 'copy'
 
     input:
-    set sample_id, file(reads) from trimmomatic_paired_output.mix(trimmomatic_single_output)
-    file hisat2_index_files from hisat2_indicies.collect()
+    tuple val(sample_id), path(reads)
+    path hisat2_index_files
 
     output:
-    file "${sample_id}_sorted_alignment.bam" into hisat2_alignments
-    file 'splicesite.txt'
-    file "*hisat2_summary.txt" into hisat2_alignment_logs
+    path "${sample_id}_sorted_alignment.bam"
+    path 'splicesite.txt'
+    path "*hisat2_summary.txt"
 
     script:
     hisat2_basename = hisat2_index_files[0].toString() - ~/.\d.ht2l?/
@@ -211,11 +196,11 @@ process stringtie {
     publishDir "${params.outdir}/Stringtie_transcripts", mode: 'copy'
 
     input:
-    file sorted_bam_file from hisat2_alignments
+    path sorted_bam_file
 
     output:
-    file "${sorted_bam_file.name}_transcripts.gtf" into stringtie_transcripts
-    file ".command.log" into stringtie_logs
+    path "${sorted_bam_file.name}_transcripts.gtf"
+    path ".command.log"
 
     script:
     """
@@ -229,14 +214,14 @@ process multiqc {
     publishDir "${params.outdir}/MultiQC", mode: 'copy'
 
     input:
-    file (fastqc:'fastqc/*') from fqc_logs.collect().ifEmpty([])
-    file ('trimmomatic/trimmomatic_log*') from trimmomatic_logs.collect()
-    file ('hisat2/*') from hisat2_alignment_logs.collect()
-    file ('stringtie/stringtie_log*') from stringtie_logs.collect()
+    path('fastqc/*')
+    path('trimmomatic/trimmomatic_log*')
+    path('hisat2/*')
+    path('stringtie/stringtie_log*')
 
     output:
-    file "*multiqc_report.html" into multiqc_report
-    file "*_data"
+    path "*multiqc_report.html"
+    path "*_data"
 
     script:
     """

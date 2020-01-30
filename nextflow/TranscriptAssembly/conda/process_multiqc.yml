@@ -1,9 +1,9 @@
 # conda env create -f environment.yml
-name: annotation-preprocessing
+name: multiqc
 channels:
   - conda-forge
   - bioconda
   - defaults
 
 dependencies:
-  - seqtk=1.3
+  - multiqc=1.8
