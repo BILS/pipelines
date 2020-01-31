@@ -39,8 +39,7 @@ We don't approach tools here because so numerous exist. We advise to use as most
 ## Plan to develop a new pipeline?
 
 NBIS has currently two repositories for easy development of pipelines. They are modules based,
-which means each module is dedicated for one task. Modules can be picked and linked to create
-complex workflow.
+which means each module is dedicated for one task. Modules can be picked and connected to each other at your convenience to create complex workflows.
 
   * for *nextflow* pipelines see [pipelines-nextflow][nbis_nextflow].
   * for *bpipe* pipelines see [pipelines-bpipe][nbis_bpipe].
