@@ -30,7 +30,7 @@ Some pipelines are created within NBIS for internal use, while others originate 
  all pipelines are useful for all projects, but this list may at least be a good starting point to see if
 your project might be able to use something that already exists. If you feel
 that a pipeline is missing, please add it!  
-If you wish to develop a new pipeline please see the [Plan to develop a new pipeline?](#plan-to-develop-a-new-pipeline?) section.
+If you wish to develop a new pipeline please see the [Plan to develop a new pipeline?](#plan-to-develop-a-new-pipeline) section.
 
 We don't approach tools here because so numerous exist. We advise to use as most as possible tools available into [conda](https://anaconda.org), we emphase the tools developed at [SciLifeLab][slopen] and at [NBIS][nbis_tools], and promote the use of [bio.tools](https://bio.tools) for searching existing tools.
 
