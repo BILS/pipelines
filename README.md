@@ -130,9 +130,6 @@ complex workflow.
 
 
 
-
-[*(back to project home directory)*][sf-home]
-
 [nbis_bpipe]: https://github.com/NBISweden/pipelines-bpipe
 [nbis_nextflow]: https://github.com/NBISweden/pipelines-nextflow
 [lts-sauron]: https://bitbucket.org/scilifelab-lts/sauron/src/seurat3/
