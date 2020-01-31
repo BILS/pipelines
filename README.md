@@ -42,7 +42,7 @@ NBIS has currently two repositories for easy development of pipelines. They are 
 which means each module is dedicated for one task. Modules can be picked and linked to create
 complex workflow.
 
-  * for *nextflow* pipelines see [pielines-nextflow][nbis_nextflow].
+  * for *nextflow* pipelines see [pipelines-nextflow][nbis_nextflow].
   * for *bpipe* pipelines see [pipelines-bpipe][nbis_bpipe].
   * for *snakemake* -- TO DO --
 
