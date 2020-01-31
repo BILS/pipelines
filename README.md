@@ -5,7 +5,7 @@
 
 * [Foreword](#foreword)
 * [Pipelines](#pipelines)
-  * [Plan to develop a new pipeline?](#plan-to-develop-a-new-pipeline?)
+  * [Plan to develop a new pipeline?](#plan-to-develop-a-new-pipeline)
   * [Pipelines per workflow](#pipelines-per-workflow)
      * [Bash](#bash)
      * [Bpipe](#bpipe)
