@@ -1,7 +1,7 @@
 #		*NBIS pipeline collection*
 #		########################
 
-# Table of Contents
+### Table of Contents
 
 * [Foreword](#foreword)
 * [Pipelines](#pipelines)
