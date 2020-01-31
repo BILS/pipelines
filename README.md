@@ -68,6 +68,7 @@ complex workflow.
 
 ### Snakemake
 
+ * [SnakeMake Workflows](https://github.com/snakemake-workflows/docs): A collection of Bioinformatic SnakeMake workflows
  * [NBIS-MAGS][nbis-mags]: analyses of individual microbial genomes such as
    *metagenome assembled genomes* or *single amplified genomes*
  * [NBIS-Metagenomics][nbis-meta]: a workflow for metagenomic projects
