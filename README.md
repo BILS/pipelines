@@ -68,11 +68,6 @@ which means each module is dedicated for one task. Modules can be picked and con
 ### Snakemake
 
  * [SnakeMake Workflows](https://github.com/snakemake-workflows/docs): A collection of Bioinformatic SnakeMake workflows
- * [NBIS-MAGS][nbis-mags]: analyses of individual microbial genomes such as
-   *metagenome assembled genomes* or *single amplified genomes*
- * [NBIS-Metagenomics][nbis-meta]: a workflow for metagenomic projects
- * [NBIS-MAGS][nbis-mags]: analyses of individual microbial genomes such as
-   *metagenome assembled genomes* or *single amplified genomes*
  * [NBIS-Metagenomics][nbis-meta]: a workflow for metagenomic projects
  * [LTS-scRNA-seq][lts-scrnaseq]: a pipeline for running alignment, read
    counting and quality controls for single-cell RNA-seq data
@@ -81,8 +76,6 @@ which means each module is dedicated for one task. Modules can be picked and con
 
 ### Metagenomics
 
- * [NBIS-MAGS][nbis-mags]: analyses of individual microbial genomes such as
-   *metagenome assembled genomes* or *single amplified genomes*
  * [NBIS-Metagenomics][nbis-meta]: a workflow for metagenomic projects
 
 ### Single-cell
@@ -133,8 +126,7 @@ which means each module is dedicated for one task. Modules can be picked and con
 [nbis_nextflow]: https://github.com/NBISweden/pipelines-nextflow
 [lts-sauron]: https://bitbucket.org/scilifelab-lts/sauron/src/seurat3/
 [lts-scrnaseq]: https://bitbucket.org/scilifelab-lts/lts-workflows-sm-scrnaseq/src/master/
-[nbis-mags]: https://bitbucket.org/scilifelab-lts/nbis-mags/src/master/
-[nbis-meta]: https://bitbucket.org/scilifelab-lts/nbis-meta/src/master/
+[nbis-meta]: https://github.com/NBISweden/nbis-meta
 [nfcore]: https://nf-co.re/
 [sarek]: https://github.com/SciLifeLab/Sarek
 [sf-home]: https://github.com/NBISweden/NBIS-support-framework
